@@ -1,0 +1,49 @@
+name: Actualizar mapa desde OpenStreetMap
+
+# Se ejecuta a mano: pestaña "Actions" > "Actualizar mapa desde OpenStreetMap" > "Run workflow".
+# Baja los edificios y calles reales de Capitán Sarmiento y los guarda en data/.
+on:
+  workflow_dispatch:
+    inputs:
+      center:
+        description: 'Centro del mapa (LAT,LNG)'
+        default: '-34.1728,-59.7886'
+        required: true
+      half:
+        description: 'Mitad del lado del recuadro, en metros'
+        default: '2000'
+        required: true
+      pois:
+        description: 'Bajar también lugares candidatos (comercios, alojamientos, atractivos)'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  osm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Instalar dependencias
+        run: npm install --no-audit --no-fund
+      - name: Descargar mapa
+        run: |
+          ARGS="--center=${{ inputs.center }} --half=${{ inputs.half }}"
+          if [ "${{ inputs.pois }}" = "true" ]; then ARGS="$ARGS --pois"; fi
+          node tools/fetch-osm.mjs $ARGS
+      - name: Subir versión
+        run: node tools/bump-version.mjs patch
+      - name: Validar
+        run: node tools/check.mjs
+      - name: Guardar cambios
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Actualizar mapa desde OpenStreetMap" || echo "Sin cambios"
+          git push
