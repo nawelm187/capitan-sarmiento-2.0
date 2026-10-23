@@ -1,0 +1,84 @@
+[
+  {
+    "id": "centro-a-pie",
+    "title": "Paseo por el centro (ejemplo)",
+    "mode": "walk",
+    "durationMin": 45,
+    "intro": "Recorrido de ejemplo: reemplazalo por un paseo real, parada por parada.",
+    "stops": [
+      {
+        "placeId": "turismo",
+        "note": "Empezá acá: pedí un mapa y consejos del día.",
+        "tip": ""
+      },
+      {
+        "placeId": "plaza-principal",
+        "note": "Dale una vuelta a la plaza.",
+        "tip": "Mejor a la tarde."
+      },
+      {
+        "placeId": "iglesia",
+        "note": "Mirá la fachada y la torre.",
+        "tip": ""
+      },
+      {
+        "placeId": "cafe",
+        "note": "Un descanso con algo rico.",
+        "tip": ""
+      }
+    ]
+  },
+  {
+    "id": "comer-a-pie",
+    "title": "Para comer (ejemplo)",
+    "mode": "walk",
+    "durationMin": 60,
+    "intro": "Recorrido de ejemplo para ir de un lugar de comida a otro caminando.",
+    "stops": [
+      {
+        "placeId": "panaderia",
+        "note": "Desayuno o merienda.",
+        "tip": ""
+      },
+      {
+        "placeId": "cafe",
+        "note": "Segundo café.",
+        "tip": ""
+      },
+      {
+        "placeId": "parrilla",
+        "note": "Almuerzo o cena.",
+        "tip": ""
+      }
+    ]
+  },
+  {
+    "id": "hitos-en-auto",
+    "title": "Hitos del pueblo en auto (ejemplo)",
+    "mode": "car",
+    "durationMin": 30,
+    "intro": "Recorrido de ejemplo para ver los puntos más altos y los bordes del pueblo.",
+    "stops": [
+      {
+        "placeId": "plaza-principal",
+        "note": "Punto de partida.",
+        "tip": ""
+      },
+      {
+        "placeId": "tanque-agua",
+        "note": "El hito que se ve desde lejos.",
+        "tip": ""
+      },
+      {
+        "placeId": "estacion",
+        "note": "Cruzá hacia el sur hasta la estación.",
+        "tip": ""
+      },
+      {
+        "placeId": "laguna",
+        "note": "Cerrá el día en la laguna.",
+        "tip": "Ideal para el atardecer."
+      }
+    ]
+  }
+]

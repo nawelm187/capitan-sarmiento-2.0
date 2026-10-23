@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<title>Guía Sarmiento</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Maqueta 3D interactiva de Capitán Sarmiento: dónde comer, dónde dormir, qué ver y recorridos a pie o en auto.">
+<meta name="theme-color" content="#10151c">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Guía Sarmiento">
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="es_AR">
+<meta property="og:title" content="Capitán Sarmiento · Guía local en 3D">
+<meta property="og:description" content="Maqueta 3D del pueblo: dónde comer, dónde dormir, qué ver y recorridos.">
+<!-- site-url:start -->
+<meta property="og:image" content="og.jpg">
+<!-- site-url:end -->
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.min.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+} }
+</script>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.min.js" crossorigin>
+</head>
+<body>
+  <div id="splash" role="status" aria-live="polite">
+    <div class="splash__inner">
+      <p class="kicker" id="splash-kicker">Provincia de Buenos Aires</p>
+      <h2 class="splash__title">Capitán <em>Sarmiento</em></h2>
+      <p class="splash__msg" id="splash-msg">Armando la maqueta del pueblo…</p>
+      <div class="splash__bar"><span></span></div>
+      <p class="splash__credit">Datos del mapa © colaboradores de OpenStreetMap</p>
+    </div>
+  </div>
+
+  <canvas id="gl" aria-label="Maqueta 3D del pueblo" role="img"></canvas>
+  <div id="labels"></div>
+  <div id="ui"></div>
+
+  <noscript>
+    <div class="noscript">
+      <h1>Guía Sarmiento</h1>
+      <p>Esta guía necesita JavaScript para mostrar la maqueta 3D del pueblo. Activalo en tu navegador y volvé a cargar la página.</p>
+    </div>
+  </noscript>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

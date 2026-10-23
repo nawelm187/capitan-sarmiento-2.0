@@ -1,0 +1,50 @@
+{
+  "items": [
+    {
+      "id": "plaza",
+      "name": "Plaza principal (ejemplo)",
+      "kind": "plaza",
+      "lat": -34.1728,
+      "lng": -59.7886,
+      "size": [
+        92,
+        92
+      ],
+      "demo": true
+    },
+    {
+      "id": "iglesia",
+      "name": "Iglesia (ejemplo)",
+      "kind": "iglesia",
+      "lat": -34.171808,
+      "lng": -59.7886,
+      "rotY": 0,
+      "demo": true
+    },
+    {
+      "id": "estacion",
+      "name": "Estación (ejemplo)",
+      "kind": "estacion",
+      "lat": -34.179065,
+      "lng": -59.7886,
+      "rotY": 90,
+      "demo": true
+    },
+    {
+      "id": "tanque",
+      "name": "Tanque de agua (ejemplo)",
+      "kind": "tanque",
+      "lat": -34.175775,
+      "lng": -59.790986,
+      "demo": true
+    },
+    {
+      "id": "silo",
+      "name": "Silos (ejemplo)",
+      "kind": "silo",
+      "lat": -34.179516,
+      "lng": -59.786539,
+      "demo": true
+    }
+  ]
+}

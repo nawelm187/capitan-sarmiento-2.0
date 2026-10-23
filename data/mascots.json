@@ -1,0 +1,68 @@
+{
+  "items": [
+    {
+      "id": "perro-1",
+      "type": "perro",
+      "name": "Perro de ejemplo",
+      "lat": -34.17307,
+      "lng": -59.788275,
+      "radius": 35,
+      "scale": 2.6,
+      "color": "#b98a5e",
+      "demo": true
+    },
+    {
+      "id": "caballo-1",
+      "type": "caballo",
+      "name": "Caballo de ejemplo",
+      "lat": -34.176226,
+      "lng": -59.796843,
+      "radius": 40,
+      "scale": 3,
+      "color": "#7a4b2a",
+      "demo": true
+    },
+    {
+      "id": "caballo-2",
+      "type": "caballo",
+      "name": "Caballo de ejemplo",
+      "lat": -34.176406,
+      "lng": -59.797169,
+      "radius": 40,
+      "scale": 3,
+      "color": "#d8c7a8",
+      "demo": true
+    },
+    {
+      "id": "auto-1",
+      "type": "auto",
+      "name": "Auto de ejemplo",
+      "loop": [
+        [
+          -59.788003,
+          -34.173296
+        ],
+        [
+          -59.78681,
+          -34.173296
+        ],
+        [
+          -59.78681,
+          -34.174287
+        ],
+        [
+          -59.788003,
+          -34.174287
+        ],
+        [
+          -59.788003,
+          -34.173296
+        ]
+      ],
+      "speed": 8,
+      "scale": 1.8,
+      "color": "#c8372d",
+      "demo": true
+    }
+  ]
+}

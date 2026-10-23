@@ -1,0 +1,19 @@
+{
+  "name": "guia-sarmiento",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Guía 3D interactiva de Capitán Sarmiento (sitio estático, Three.js).",
+  "scripts": {
+    "serve": "python3 -m http.server 8080",
+    "check": "node tools/check.mjs",
+    "osm": "node tools/fetch-osm.mjs",
+    "demo": "node tools/generate-demo-data.mjs",
+    "bump": "node tools/bump-version.mjs",
+    "site-url": "node tools/set-site-url.mjs"
+  },
+  "devDependencies": {
+    "osmtogeojson": "3.0.0-beta.5"
+  },
+  "license": "UNLICENSED"
+}
