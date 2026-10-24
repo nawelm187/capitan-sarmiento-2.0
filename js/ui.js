@@ -287,6 +287,8 @@ export function initUI({ meta, places, tours, guides, nav, labels, controls, has
     <h3>Créditos</h3>
     <ul>
       <li>Mapa: © colaboradores de <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> (licencia ODbL).</li>
+      ${meta.approxBuildings ? '<li>Casas de las calles sin datos: generadas por la guía de forma aproximada; no son las construcciones reales.</li>' : ''}
+      ${(meta.buildingSources || []).map((t) => `<li>Edificios: ${esc(t)}.</li>`).join('')}
       ${meta.satellite ? '<li>Imagen satelital de los alrededores: <a href="https://s2maps.eu" target="_blank" rel="noopener noreferrer">Sentinel-2 cloudless</a> de EOX IT Services GmbH (contiene datos Copernicus Sentinel modificados; CC BY 4.0).</li>' : ''}
       <li>Motor 3D: <a href="https://threejs.org" target="_blank" rel="noopener noreferrer">three.js</a> (MIT). Tipografías: Fraunces e Inter (SIL OFL).</li>
       <li>Maqueta estilizada: las alturas están exageradas.</li>

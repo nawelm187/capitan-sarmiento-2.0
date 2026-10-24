@@ -38,10 +38,40 @@ async function getJSON(url, bust) {
 }
 const optional = (p, fallback) => p.catch(() => fallback);
 
+// Progreso de carga: el logo se va coloreando en círculo y se muestra el porcentaje.
+const logoEl = $('splash-logo');
+const pctEl = $('splash-pct');
+let shown = 0;
+let target = 0;
+let raf = 0;
+function paint() {
+  shown += (target - shown) * 0.25;
+  if (target - shown < 0.4) shown = target;
+  logoEl?.style.setProperty('--p', shown.toFixed(1));
+  if (pctEl) pctEl.textContent = `${Math.round(shown)} %`;
+  if (shown < target) raf = requestAnimationFrame(paint);
+}
+const setProgress = (p) => {
+  target = Math.max(target, Math.min(100, p));
+  cancelAnimationFrame(raf);
+  raf = requestAnimationFrame(paint);
+};
+// Deja que el navegador dibuje el avance antes de seguir con trabajo pesado.
+const tick = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+const stage = async (p, msg) => {
+  if (msg) setMsg(msg);
+  setProgress(p);
+  await tick();
+};
+const hideSplash = () => {
+  setProgress(100);
+  setTimeout(() => splash.classList.add('hide'), 450);
+};
+
 function fail(err) {
   console.error(err);
   setMsg('No se pudo cargar la guía. Revisá tu conexión y volvé a intentar.');
-  splash.querySelector('.splash__bar')?.remove();
+  pctEl?.remove();
 }
 
 /** Navegación mínima para cuando el navegador no soporta WebGL (solo lista). */
@@ -67,11 +97,10 @@ async function main() {
   const meta = await getJSON('data/meta.json');
   const v = meta.version;
   setCenter(meta.center);
-  $('splash-kicker').textContent = meta.kicker || '';
-  $('splash').querySelector('.splash__title').innerHTML = `${meta.title?.[0] ?? meta.town} <em>${meta.title?.[1] ?? ''}</em>`;
+  $('splash-title').textContent = `${meta.title?.[0] ?? meta.town} ${meta.title?.[1] ?? ''}`.trim();
   document.title = `${meta.name} · ${meta.town}`;
 
-  setMsg('Descargando datos…');
+  await stage(8, 'Descargando datos…');
   const [gj, places, tours, guides, landmarks, casonas, mascots] = await Promise.all([
     getJSON('data/sarmiento-osm.geojson', v),
     getJSON('data/places.json', v),
@@ -81,6 +110,8 @@ async function main() {
     optional(getJSON('data/casonas.json', v), { items: [] }),
     optional(getJSON('data/mascots.json', v), { items: [] }),
   ]);
+
+  await stage(40);
 
   // ---------- Renderer (con salida de emergencia sin WebGL) ----------
   const canvas = $('gl');
@@ -96,7 +127,7 @@ async function main() {
     warn.textContent = 'Tu navegador no pudo iniciar la maqueta 3D. Podés usar la guía en modo lista.';
     document.body.append(warn);
     initUI({ meta, places, tours, guides, nav: stubNav(tours, places), labels: stubLabels, controls: null, hasGL: false });
-    splash.classList.add('hide');
+    hideSplash();
     return;
   }
 
@@ -175,16 +206,20 @@ async function main() {
   resize();
 
   // ---------- Mundo ----------
-  setMsg('Armando la maqueta del pueblo…');
+  await stage(48, 'Armando la maqueta del pueblo…');
   const world = buildWorld(scene, gj, meta, { lowEnd: LOW_END });
+  await stage(62);
   await buildWide(scene, world, meta, { lowEnd: LOW_END });
+  await stage(76);
   await Promise.all([initLandmarks(scene, landmarks), initCasas(scene, casonas)]);
   const mascotas = await initMascotas(scene, mascots);
+  await stage(86);
   const life = initLife(scene, world, { lowEnd: LOW_END });
 
   const labels = initLabels(scene, places);
   const nav = initNav(scene, camera, controls, places, tours);
   const ui = initUI({ meta, places, tours, guides, nav, labels, controls, hasGL: true });
+  setProgress(95);
 
   // Doble toque / doble clic para acercar al punto tocado
   const ray = new THREE.Raycaster();
@@ -241,7 +276,7 @@ async function main() {
     labelRenderer.render(scene, camera);
     if (firstFrame) {
       firstFrame = false;
-      splash.classList.add('hide');
+      hideSplash();
     }
   });
 
