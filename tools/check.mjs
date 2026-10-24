@@ -163,7 +163,9 @@ if (gj) {
   else {
     const c = {};
     for (const f of gj.features) c[f.properties?.kind] = (c[f.properties?.kind] || 0) + 1;
-    if (!c.building) warn('sarmiento-osm.geojson: no tiene edificios');
+    if (!c.building) warn('sarmiento-osm.geojson: no tiene edificios (probá npm run fill)');
+    else if (c.road && c.building < Math.max(40, c.road / 5) && !meta?.approxBuildings && !meta?.importedBuildings) warn(`sarmiento-osm.geojson: solo ${c.building} edificios para ${c.road} calles; el mapa se va a ver vacío. Probá npm run fill o npm run buildings.`);
+    if (meta?.importedBuildings && !(meta.buildingSources || []).length) warn('hay edificios importados sin fuente en meta.buildingSources');
     if (!c.road) warn('sarmiento-osm.geojson: no tiene calles');
   }
 }

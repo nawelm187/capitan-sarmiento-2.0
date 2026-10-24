@@ -9,12 +9,13 @@
 //   --half=METROS      mitad del lado del recuadro (por defecto, el de meta.json: 2000)
 //   --pois             además baja comercios/alojamientos/atractivos a data/places.candidates.json
 //   --keep-demo        no borra el contenido de ejemplo (lugares, recorridos, hitos, etc.)
+//   --auto-center      guarda como centro la zona con más calles; después corré `npm run osm` de nuevo para bajar el mapa alrededor del nuevo centro
 //
 // Los datos de OpenStreetMap son © colaboradores de OpenStreetMap, licencia ODbL.
 // Usá el servidor público con moderación (no lo llames en bucle).
 
 import { readFile, writeFile } from 'node:fs/promises';
-import { setCenter, toLngLat } from '../js/geo.js';
+import { setCenter, toLngLat, toLocal } from '../js/geo.js';
 
 const dataDir = new URL('../data/', import.meta.url);
 const args = Object.fromEntries(process.argv.slice(2).map((a) => {
@@ -115,7 +116,51 @@ for (const f of gj.features) {
 
 await writeFile(new URL('sarmiento-osm.geojson', dataDir), JSON.stringify({ type: 'FeatureCollection', features }));
 console.log('Mapa guardado:', counts);
-if (!counts.building) console.warn('ATENCIÓN: no se encontraron edificios. Revisá --center y --half.');
+
+// ---------- Diagnóstico ----------
+const nBuild = counts.building || 0;
+const nRoad = counts.road || 0;
+if (!nRoad) console.warn('ATENCIÓN: no se encontraron calles. Revisá --center y --half.');
+else if (nBuild < Math.max(40, nRoad / 5)) {
+  console.warn(
+    `\nATENCIÓN: OpenStreetMap tiene muy pocos edificios cargados acá (${nBuild} edificios para ${nRoad} calles).\n` +
+      '  La maqueta se va a ver con calles pero casi sin casas. Opciones:\n' +
+      '   1) npm run fill      genera casas aproximadas a lo largo de las calles (rápido, no son las reales)\n' +
+      '   2) npm run buildings -- archivo.geojson   importa huellas reales de edificios (ver README)\n',
+  );
+}
+
+// Centro sugerido: donde más se concentran los vértices de calles (ventana de 5x5 celdas de 100 m)
+{
+  const cell = 100;
+  const grid = new Map();
+  for (const f of features) {
+    if (f.properties.kind !== 'road') continue;
+    for (const [lng, lat] of f.geometry.coordinates) {
+      const l = toLocal(lng, lat);
+      const k = `${Math.floor(l.x / cell)},${Math.floor(l.z / cell)}`;
+      grid.set(k, (grid.get(k) || 0) + 1);
+    }
+  }
+  let best = null;
+  for (const k of grid.keys()) {
+    const [cx, cz] = k.split(',').map(Number);
+    let sum = 0;
+    for (let dx = -2; dx <= 2; dx++) for (let dz = -2; dz <= 2; dz++) sum += grid.get(`${cx + dx},${cz + dz}`) || 0;
+    if (!best || sum > best.sum) best = { sum, x: (cx + 0.5) * cell, z: (cz + 0.5) * cell };
+  }
+  if (best) {
+    const c = toLngLat(best.x, best.z);
+    const dist = Math.round(Math.hypot(best.x, best.z));
+    console.log(`Zona con más calles: ${c.lat.toFixed(5)}, ${c.lng.toFixed(5)} (a ${dist} m del centro actual)`);
+    if (args['auto-center'] && dist > 150) {
+      meta.center = { lat: Number(c.lat.toFixed(6)), lng: Number(c.lng.toFixed(6)) };
+      console.log('Centro guardado en esa zona (--auto-center). Corré `npm run osm` otra vez para bajar el mapa centrado ahí (o fijá la plaza exacta con --center=LAT,LNG).');
+    } else if (dist > 300) {
+      console.log('  Si ahí está el centro del pueblo, usá --auto-center, o --center=LAT,LNG con las coordenadas de la plaza.');
+    }
+  }
+}
 
 // ---------- Lugares candidatos (opcional) ----------
 if (args.pois) {
