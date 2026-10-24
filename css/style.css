@@ -154,3 +154,7 @@ body.no-gl .fab-stack, body.no-gl .coords-hint { display: none; }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* Equipos lentos (o si la maqueta va a pocos cuadros por segundo): sin desenfoque de fondo, que obliga a redibujar detrás de cada cuadro. */
+.lowfx .panel, .lowfx .fab, .lowfx .modal { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+.lowfx .panel { background: rgba(16, 21, 28, .96); }

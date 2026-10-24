@@ -31,7 +31,14 @@ const setMsg = (t) => {
   if (el) el.textContent = t;
 };
 
+// index.html empieza a bajar los datos mientras carga three.js (window.__early); acá se aprovechan.
+const early = window.__early;
 async function getJSON(url, bust) {
+  const pre = early?.[url];
+  if (pre) {
+    delete early[url];
+    return pre;
+  }
   const res = await fetch(bust ? `${url}?v=${encodeURIComponent(bust)}` : url, { cache: bust ? 'default' : 'no-cache' });
   if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
   return res.json();
@@ -39,7 +46,7 @@ async function getJSON(url, bust) {
 const optional = (p, fallback) => p.catch(() => fallback);
 
 // Progreso de carga: el logo se va coloreando en círculo y se muestra el porcentaje.
-const logoEl = $('splash-logo');
+const logoEl = $('splash-logo'); // puede no existir si index.html es de una versión anterior
 const pctEl = $('splash-pct');
 let shown = 0;
 let target = 0;
@@ -67,6 +74,15 @@ const hideSplash = () => {
   setProgress(100);
   setTimeout(() => splash.classList.add('hide'), 450);
 };
+
+// Service worker (uso sin conexión y cargas siguientes más rápidas). Se registra recién con la maqueta
+// dibujada, para no competir por la red durante el arranque.
+function registerSW() {
+  if (!('serviceWorker' in navigator) || !(location.protocol === 'https:' || location.hostname === 'localhost')) return;
+  const go = () => navigator.serviceWorker.register('./sw.js').catch(() => {});
+  if ('requestIdleCallback' in window) requestIdleCallback(go, { timeout: 4000 });
+  else setTimeout(go, 1500);
+}
 
 function fail(err) {
   console.error(err);
@@ -97,7 +113,8 @@ async function main() {
   const meta = await getJSON('data/meta.json');
   const v = meta.version;
   setCenter(meta.center);
-  $('splash-title').textContent = `${meta.title?.[0] ?? meta.town} ${meta.title?.[1] ?? ''}`.trim();
+  const titleEl = $('splash-title') || splash.querySelector('.splash__title');
+  if (titleEl) titleEl.textContent = `${meta.title?.[0] ?? meta.town} ${meta.title?.[1] ?? ''}`.trim();
   document.title = `${meta.name} · ${meta.town}`;
 
   await stage(8, 'Descargando datos…');
@@ -117,7 +134,7 @@ async function main() {
   const canvas = $('gl');
   let renderer = null;
   try {
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: !LOW_END, powerPreference: 'high-performance' });
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
   } catch (e) {
     console.warn('WebGL no disponible', e);
   }
@@ -131,9 +148,11 @@ async function main() {
     return;
   }
 
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, LOW_END ? 1.5 : 2));
+  let pixelRatio = Math.min(window.devicePixelRatio || 1, LOW_END ? 1.5 : 2);
+  renderer.setPixelRatio(pixelRatio);
+  if (LOW_END) document.documentElement.classList.add('lowfx');
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.type = LOW_END ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
 
@@ -180,7 +199,8 @@ async function main() {
   // ---------- Postproceso ----------
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
-  if (!LOW_END) composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.16, 0.5, 0.92));
+  const bloom = LOW_END ? null : new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.16, 0.5, 0.92);
+  if (bloom) composer.addPass(bloom);
   const hTilt = new ShaderPass(HorizontalTiltShiftShader);
   const vTilt = new ShaderPass(VerticalTiltShiftShader);
   hTilt.uniforms.r.value = 0.5;
@@ -207,7 +227,7 @@ async function main() {
 
   // ---------- Mundo ----------
   await stage(48, 'Armando la maqueta del pueblo…');
-  const world = buildWorld(scene, gj, meta, { lowEnd: LOW_END });
+  const world = await buildWorld(scene, gj, meta, { lowEnd: LOW_END, onProgress: (f) => setProgress(48 + 14 * f) });
   await stage(62);
   await buildWide(scene, world, meta, { lowEnd: LOW_END });
   await stage(76);
@@ -248,6 +268,38 @@ async function main() {
     }
   });
 
+  // ---------- Calidad automática ----------
+  // Si la maqueta va lenta (menos de ~28 cuadros por segundo de forma sostenida), baja de a un escalón
+  // el costo gráfico: desenfoque de maqueta, resolución, brillo suave. Nunca vuelve a subir (evita saltos).
+  const steps = [
+    () => { hTilt.enabled = false; vTilt.enabled = false; },
+    () => setPixelRatio(Math.min(pixelRatio, 1.5)),
+    () => { if (bloom) bloom.enabled = false; },
+    () => { setPixelRatio(1); document.documentElement.classList.add('lowfx'); },
+  ];
+  function setPixelRatio(v) {
+    if (v === pixelRatio) return;
+    pixelRatio = v;
+    renderer.setPixelRatio(v);
+    composer.setPixelRatio(v);
+    resize();
+  }
+  const perf = { level: 0, n: 0, sum: 0, last: 0, since: 0 };
+  function watchPerf(now) {
+    const ft = now - perf.last;
+    perf.last = now;
+    if (ft <= 0 || ft > 250 || now < perf.since) return; // pestaña en segundo plano o arranque
+    perf.sum += ft;
+    if (++perf.n < 90) return;
+    const avg = perf.sum / perf.n;
+    perf.n = 0;
+    perf.sum = 0;
+    if (avg > 36 && perf.level < steps.length) {
+      steps[perf.level++]();
+      perf.since = now + 1500; // dejar que se estabilice antes de volver a medir
+    }
+  }
+
   // ---------- Bucle ----------
   const clock = new THREE.Clock();
   const prev = new THREE.Vector3();
@@ -274,16 +326,15 @@ async function main() {
 
     composer.render();
     labelRenderer.render(scene, camera);
+    if (!firstFrame) watchPerf(performance.now());
     if (firstFrame) {
       firstFrame = false;
+      perf.since = performance.now() + 3500; // los primeros segundos incluyen compilar shaders: no se miden
       hideSplash();
+      registerSW();
     }
   });
 
-  // ---------- PWA ----------
-  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
-  }
 }
 
 main().catch(fail);

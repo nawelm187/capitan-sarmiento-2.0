@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://nawelm187.github.io/guia-sarmiento/sitemap.xml

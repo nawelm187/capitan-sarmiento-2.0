@@ -93,6 +93,13 @@ for (const f of jsFiles) {
   if (!coreList.includes(`'js/${path.basename(f)}'`)) warn(`sw.js: js/${path.basename(f)} no está en CORE_FILES (no se guardará para uso sin conexión)`);
 }
 
+for (const f of jsFiles) {
+  if (path.basename(f) !== 'main.js' && !html.includes(`rel="modulepreload" href="js/${path.basename(f)}"`)) warn(`index.html: falta <link rel="modulepreload" href="js/${path.basename(f)}"> (el arranque sería más lento)`);
+}
+for (const m of (sw.match(/const DATA_FILES = \[([\s\S]*?)\]\.map/)?.[1] ?? '').matchAll(/'([^']+)'/g)) {
+  if (!existsSync(path.join(ROOT, 'data', m[1])) && !/guides|landmarks|casonas|mascots/.test(m[1])) err(`sw.js: DATA_FILES incluye "data/${m[1]}" que no existe`);
+}
+
 // ---------- 3. Versiones ----------
 const ver = (await readText('VERSION')).trim();
 const pkgVer = (await readJSON('package.json'))?.version;

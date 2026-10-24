@@ -1,26 +1,47 @@
 {
-  "version": "1.0.0",
-  "date": "2026-10-22",
+  "version": "1.1.1",
+  "date": "2026-10-24",
   "name": "Guía Sarmiento",
   "town": "Capitán Sarmiento",
   "kicker": "Provincia de Buenos Aires",
-  "title": ["Capitán", "Sarmiento"],
+  "title": [
+    "Capitán",
+    "Sarmiento"
+  ],
   "tagline": "Dónde comer, dónde dormir, qué ver y paseos para hacer a pie o en auto, sobre una maqueta 3D del pueblo.",
-  "center": { "lat": -34.1728, "lng": -59.7886 },
-  "osm": { "halfSizeMeters": 2000 },
+  "center": {
+    "lat": -34.1728,
+    "lng": -59.7886
+  },
+  "osm": {
+    "halfSizeMeters": 2000
+  },
   "wideExtentMeters": 9000,
   "satellite": null,
   "dataSource": "demo",
   "demoContent": true,
   "emergency": [
-    { "label": "Emergencias médicas", "number": "107" },
-    { "label": "Policía", "number": "911" },
-    { "label": "Bomberos", "number": "100" }
+    {
+      "label": "Emergencias médicas",
+      "number": "107"
+    },
+    {
+      "label": "Policía",
+      "number": "911"
+    },
+    {
+      "label": "Bomberos",
+      "number": "100"
+    }
   ],
   "legal": [
     "Esta guía es solo una guía. Todo lo que ves acá (lugares, recorridos, horarios y consejos) son sugerencias para conocer Capitán Sarmiento. Es un proyecto personal, hecho con cariño por el pueblo y sin fines de lucro.",
     "La información sale de fuentes públicas y de relevamientos propios, y puede tener errores o estar desactualizada. Antes de ir, confirmá horarios, precios y condiciones directamente con cada lugar.",
     "Hacer un paseo o visitar un lugar es una decisión tuya y la tomás bajo tu propia responsabilidad. Los trayectos son orientativos: el estado de las calles y las rutas, el clima, el tránsito y la seguridad pueden variar.",
     "Quien hace esta guía no se responsabiliza por accidentes, pérdidas, daños u otros inconvenientes que ocurran durante una visita, ni por lo que ofrezcan, cobren o hagan terceros."
-  ]
+  ],
+  "buildingSources": [
+    "Overture Maps Foundation (Google Open Buildings)"
+  ],
+  "importedBuildings": 10199
 }

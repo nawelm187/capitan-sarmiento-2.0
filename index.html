@@ -17,12 +17,36 @@
 <meta property="og:title" content="Capitán Sarmiento · Guía local en 3D">
 <meta property="og:description" content="Maqueta 3D del pueblo: dónde comer, dónde dormir, qué ver y recorridos.">
 <!-- site-url:start -->
-<meta property="og:image" content="og.jpg">
+<link rel="canonical" href="https://nawelm187.github.io/guia-sarmiento/">
+<meta property="og:url" content="https://nawelm187.github.io/guia-sarmiento/">
+<meta property="og:image" content="https://nawelm187.github.io/guia-sarmiento/og.jpg">
+<meta name="twitter:image" content="https://nawelm187.github.io/guia-sarmiento/og.jpg">
 <!-- site-url:end -->
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 
+<script>
+// Arranca la descarga de los datos YA, en paralelo con three.js (main.js los toma de window.__early).
+(function () {
+  try {
+    var get = function (u, v) {
+      return fetch(v ? u + '?v=' + encodeURIComponent(v) : u, { cache: v ? 'default' : 'no-cache' }).then(function (r) {
+        if (!r.ok) throw new Error(u + ': HTTP ' + r.status);
+        return r.json();
+      });
+    };
+    var meta = get('data/meta.json');
+    var e = { 'data/meta.json': meta };
+    ['sarmiento-osm.geojson', 'places.json', 'tours.json', 'guides.json', 'landmarks.json', 'casonas.json', 'mascots.json'].forEach(function (f) {
+      e['data/' + f] = meta.then(function (m) { return get('data/' + f, m.version); });
+    });
+    Object.keys(e).forEach(function (k) { e[k].catch(function () {}); });
+    window.__early = e;
+  } catch (_) {}
+})();
+</script>
+<link rel="preload" as="image" href="img/logo.webp" type="image/webp">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
@@ -30,7 +54,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Inter:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Inter:wght@400;500;600&display=swap"></noscript>
 <link rel="stylesheet" href="css/style.css">
 
 <script type="importmap">
@@ -40,14 +65,50 @@
 } }
 </script>
 <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.min.js" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/controls/OrbitControls.js" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/loaders/GLTFLoader.js" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/utils/BufferGeometryUtils.js" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/postprocessing/EffectComposer.js" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/postprocessing/Pass.js" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/postprocessing/MaskPass.js" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/postprocessing/RenderPass.js" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/postprocessing/ShaderPass.js" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/postprocessing/UnrealBloomPass.js" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/postprocessing/OutputPass.js" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/shaders/CopyShader.js" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/shaders/LuminosityHighPassShader.js" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/shaders/OutputShader.js" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/shaders/HorizontalTiltShiftShader.js" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/shaders/VerticalTiltShiftShader.js" crossorigin>
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/renderers/CSS2DRenderer.js" crossorigin>
+<link rel="modulepreload" href="js/bus.js">
+<link rel="modulepreload" href="js/buildings.js">
+<link rel="modulepreload" href="js/casas-destacadas.js">
+<link rel="modulepreload" href="js/config.js">
+<link rel="modulepreload" href="js/geo.js">
+<link rel="modulepreload" href="js/icons.js">
+<link rel="modulepreload" href="js/labels.js">
+<link rel="modulepreload" href="js/landmarks.js">
+<link rel="modulepreload" href="js/life.js">
+<link rel="modulepreload" href="js/mascotas.js">
+<link rel="modulepreload" href="js/nav.js">
+<link rel="modulepreload" href="js/route.js">
+<link rel="modulepreload" href="js/scene-utils.js">
+<link rel="modulepreload" href="js/ui.js">
+<link rel="modulepreload" href="js/util.js">
+<link rel="modulepreload" href="js/wide.js">
+<link rel="modulepreload" href="js/world.js">
 </head>
 <body>
   <div id="splash" role="status" aria-live="polite">
     <div class="splash__inner">
-      <p class="kicker" id="splash-kicker">Provincia de Buenos Aires</p>
-      <h2 class="splash__title">Capitán <em>Sarmiento</em></h2>
+      <div class="splash__logo" id="splash-logo" aria-hidden="true">
+        <img class="splash__img splash__img--base" src="img/logo.webp" alt="" width="560" height="560" decoding="async">
+        <img class="splash__img splash__img--fill" src="img/logo.webp" alt="" width="560" height="560" decoding="async">
+      </div>
+      <h2 class="splash__title sr-only" id="splash-title">Capitán Sarmiento</h2>
       <p class="splash__msg" id="splash-msg">Armando la maqueta del pueblo…</p>
-      <div class="splash__bar"><span></span></div>
+      <p class="splash__pct" id="splash-pct">0 %</p>
       <p class="splash__credit">Datos del mapa © colaboradores de OpenStreetMap</p>
     </div>
   </div>

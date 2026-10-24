@@ -2,7 +2,6 @@
 //  - agrega los scripts nuevos a package.json (serve con Node, fill, buildings)
 //  - cambia la pantalla de carga de index.html por el logo con progreso circular
 //    (respeta lo demás de tu index.html, incluida la URL del sitio)
-//  - agrega img/logo.png a la caché offline (sw.js)
 //  - importa los edificios reales de fuentes/edificios_capitan_sarmiento.geojson (si está)
 //  - sube la versión a 1.1.0 y anota el cambio en CHANGELOG.md
 //
@@ -29,8 +28,8 @@ console.log('✔ package.json: scripts serve (Node), fill y buildings');
 const SPLASH = `<div id="splash" role="status" aria-live="polite">
     <div class="splash__inner">
       <div class="splash__logo" id="splash-logo" aria-hidden="true">
-        <img class="splash__img splash__img--base" src="img/logo.png" alt="" width="560" height="560" decoding="async">
-        <img class="splash__img splash__img--fill" src="img/logo.png" alt="" width="560" height="560" decoding="async">
+        <img class="splash__img splash__img--base" src="img/logo.webp" alt="" width="560" height="560" decoding="async">
+        <img class="splash__img splash__img--fill" src="img/logo.webp" alt="" width="560" height="560" decoding="async">
       </div>
       <h2 class="splash__title sr-only" id="splash-title">Capitán Sarmiento</h2>
       <p class="splash__msg" id="splash-msg">Armando la maqueta del pueblo…</p>
@@ -51,25 +50,24 @@ else {
   }
 }
 
-// 3. Caché offline
-let sw = await rd('sw.js');
-if (!sw.includes('img/logo.png')) {
-  sw = sw.replace("'icons/icon-512.png',", "'icons/icon-512.png', 'img/logo.png',");
-  await wr('sw.js', sw);
-  console.log('✔ sw.js: logo en la caché offline');
-}
-
-// 4. Edificios reales
+// 3. Edificios reales
 const src = 'fuentes/edificios_capitan_sarmiento.geojson';
 if (existsSync(new URL(src, root))) {
   console.log('… importando edificios reales (puede tardar unos segundos)');
   node('tools/import-buildings.mjs', src, '--source=Overture Maps Foundation (Google Open Buildings)');
 } else console.log('• No encontré ' + src + ': se omite la importación de edificios.');
 
-// 5. Versión y changelog
+// 4. Versión y changelog
 const ver = (await rd('VERSION')).trim();
 const [A, B] = ver.split('.').map(Number);
-if (A === 1 && B < 1 || A < 1) {
+const metaNow = JSON.parse(await rd('data/meta.json'));
+if (A === 1 && B >= 1 && metaNow.version !== ver) {
+  // El zip completo ya trae VERSION y sw.js nuevos: solo falta que los datos lo sepan (renueva la caché de data/).
+  metaNow.version = ver;
+  metaNow.date = new Date().toLocaleDateString('sv-SE', { timeZone: 'America/Argentina/Buenos_Aires' });
+  await wr('data/meta.json', JSON.stringify(metaNow, null, 2) + '\n');
+  console.log(`✔ data/meta.json: versión ${ver}`);
+} else if (A === 1 && B < 1 || A < 1) {
   node('tools/bump-version.mjs', '1.1.0');
   let log = await rd('CHANGELOG.md');
   log = log.replace('- (completá qué cambió)', [
@@ -83,4 +81,4 @@ if (A === 1 && B < 1 || A < 1) {
 } else console.log(`• La versión ya es ${ver}; no se cambió.`);
 
 console.log('\nListo. Revisá con: npm run check   y   npm run serve');
-console.log('Después subí todo a GitHub (git add . / git commit -m "1.1.0" / git push).');
+console.log('Después subí todo a GitHub (git add . / git commit -m "actualización" / git push).');

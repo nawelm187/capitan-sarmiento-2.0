@@ -4,6 +4,7 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { toLocal } from './geo.js';
 import { hash2 } from './util.js';
 import { HEIGHT_FACTOR } from './config.js';
+import { ChunkedBuildings } from './buildings.js';
 
 const WALLS = [0xe9dcc4, 0xdccaa6, 0xd3dae0, 0xe6c8bc, 0xcdd6bd, 0xe2d2b0].map((c) => new THREE.Color(c));
 const ROOFS = [0xb5523b, 0x9c4a3a, 0x8a8f94, 0xa65f45, 0x6f7479].map((c) => new THREE.Color(c));
@@ -18,6 +19,7 @@ function ringToLocal(ring) {
   return ring.map(([lng, lat]) => toLocal(lng, lat));
 }
 
+// Método original (ExtrudeGeometry, un solo mesh). Se usa solo si el método rápido falla.
 function buildingGeometry(f, factor) {
   const g = f.geometry;
   const polys = g.type === 'Polygon' ? [g.coordinates] : g.type === 'MultiPolygon' ? g.coordinates : [];
@@ -58,7 +60,17 @@ function buildingGeometry(f, factor) {
   return out;
 }
 
-export function buildWorld(scene, gj, meta, { lowEnd = false } = {}) {
+const nextFrame = () =>
+  new Promise((resolve) => {
+    // setTimeout de respaldo: si la pestaña está en segundo plano, requestAnimationFrame se pausa.
+    const t = setTimeout(resolve, 60);
+    requestAnimationFrame(() => {
+      clearTimeout(t);
+      resolve();
+    });
+  });
+
+export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress = () => {} } = {}) {
   const half = meta.osm?.halfSizeMeters ?? 2000;
   const EXT = half * 2;
   const SIZE = lowEnd ? 2048 : 4096;
@@ -69,12 +81,12 @@ export function buildWorld(scene, gj, meta, { lowEnd = false } = {}) {
   const waters = [];
   const rails = [];
   const waterLines = [];
-  const geos = [];
+  const buildingFeatures = [];
 
   for (const f of gj.features) {
     const { kind } = f.properties;
     const g = f.geometry;
-    if (kind === 'building') geos.push(...buildingGeometry(f, HEIGHT_FACTOR));
+    if (kind === 'building') buildingFeatures.push(f);
     else if (kind === 'road' && g.type === 'LineString') {
       roads.push({ hw: f.properties.hw, pts: g.coordinates.map(([lng, lat]) => toLocal(lng, lat)) });
     } else if (kind === 'rail' && g.type === 'LineString') {
@@ -90,18 +102,67 @@ export function buildWorld(scene, gj, meta, { lowEnd = false } = {}) {
     }
   }
 
-  let buildings = null;
-  if (geos.length) {
-    buildings = new THREE.Mesh(
-      mergeGeometries(geos, false),
-      new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.88, metalness: 0 }),
-    );
-    buildings.castShadow = true;
-    buildings.receiveShadow = true;
-    buildings.name = 'buildings';
+  // ---- Edificios ----
+  // Se agrupan en celdas de 400 m (un mesh por celda): la cámara y las sombras descartan lo que no se ve.
+  // Se arman en tandas chicas para que la pantalla de carga siga animada.
+  const buildingMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.88, metalness: 0 });
+  const buildings = new THREE.Group();
+  buildings.name = 'buildings';
+  let chunksOk = false;
+  if (buildingFeatures.length) {
+    try {
+      const chunked = new ChunkedBuildings({ half, factor: HEIGHT_FACTOR, triangulate: (c, h) => THREE.ShapeUtils.triangulateShape(c, h) });
+      let t0 = performance.now();
+      for (let i = 0; i < buildingFeatures.length; i++) {
+        const f = buildingFeatures[i];
+        const g = f.geometry;
+        const polys = g.type === 'Polygon' ? [g.coordinates] : g.type === 'MultiPolygon' ? g.coordinates : [];
+        for (const rings of polys) {
+          try {
+            chunked.add(rings.map(ringToLocal), Number(f.properties.h), WALLS, ROOFS, hash2);
+          } catch {
+            /* un edificio con geometría rara no debe frenar el resto */
+          }
+        }
+        if (performance.now() - t0 > 18) {
+          onProgress((i + 1) / buildingFeatures.length);
+          await nextFrame();
+          t0 = performance.now();
+        }
+      }
+      for (const c of chunked.finish()) {
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.BufferAttribute(c.position, 3));
+        geo.setAttribute('normal', new THREE.BufferAttribute(c.normal, 3));
+        geo.setAttribute('color', new THREE.BufferAttribute(c.color, 3));
+        geo.computeBoundingSphere();
+        geo.computeBoundingBox();
+        const mesh = new THREE.Mesh(geo, buildingMat);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        mesh.matrixAutoUpdate = false; // estático
+        buildings.add(mesh);
+      }
+      chunksOk = buildings.children.length > 0;
+    } catch (e) {
+      console.warn('Edificios: método rápido falló, uso el método clásico.', e);
+      for (const m of buildings.children) m.geometry.dispose();
+      buildings.clear();
+    }
+    if (!chunksOk) {
+      const geos = [];
+      for (const f of buildingFeatures) geos.push(...buildingGeometry(f, HEIGHT_FACTOR));
+      if (geos.length) {
+        const mesh = new THREE.Mesh(mergeGeometries(geos, false), buildingMat);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        buildings.add(mesh);
+        for (const g of geos) g.dispose();
+      }
+    }
     scene.add(buildings);
-    for (const g of geos) g.dispose();
   }
+  onProgress(1);
 
   // ---- Suelo ----
   const cv = document.createElement('canvas');
