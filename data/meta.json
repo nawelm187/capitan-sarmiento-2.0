@@ -1,5 +1,5 @@
 {
-  "version": "1.1.1",
+  "version": "1.1.4",
   "date": "2026-10-24",
   "name": "Guía Sarmiento",
   "town": "Capitán Sarmiento",
@@ -18,8 +18,8 @@
   },
   "wideExtentMeters": 9000,
   "satellite": null,
-  "dataSource": "demo",
-  "demoContent": true,
+  "dataSource": "osm",
+  "demoContent": false,
   "emergency": [
     {
       "label": "Emergencias médicas",
@@ -43,5 +43,6 @@
   "buildingSources": [
     "Overture Maps Foundation (Google Open Buildings)"
   ],
-  "importedBuildings": 10199
+  "importedBuildings": 10976,
+  "osmFetchedAt": "2026-10-24"
 }

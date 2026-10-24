@@ -12,7 +12,7 @@ import { CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js';
 
 import { setCenter, toLngLat } from './geo.js';
 import { emit } from './bus.js';
-import { COLORS, LOW_END } from './config.js';
+import { COLORS, LOW_END, QUALITY } from './config.js';
 import { clamp } from './util.js';
 import { buildWorld } from './world.js';
 import { buildWide } from './wide.js';
@@ -55,6 +55,7 @@ function paint() {
   shown += (target - shown) * 0.25;
   if (target - shown < 0.4) shown = target;
   logoEl?.style.setProperty('--p', shown.toFixed(1));
+  logoEl?.classList.toggle('is-done', shown >= 99.5);
   if (pctEl) pctEl.textContent = `${Math.round(shown)} %`;
   if (shown < target) raf = requestAnimationFrame(paint);
 }
@@ -152,6 +153,7 @@ async function main() {
   renderer.setPixelRatio(pixelRatio);
   if (LOW_END) document.documentElement.classList.add('lowfx');
   renderer.shadowMap.enabled = true;
+  renderer.shadowMap.autoUpdate = false; // las sombras se redibujan solo cuando hace falta (ver el bucle)
   renderer.shadowMap.type = LOW_END ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
@@ -273,9 +275,11 @@ async function main() {
   // el costo gráfico: desenfoque de maqueta, resolución, brillo suave. Nunca vuelve a subir (evita saltos).
   const steps = [
     () => { hTilt.enabled = false; vTilt.enabled = false; },
-    () => setPixelRatio(Math.min(pixelRatio, 1.5)),
+    () => setPixelRatio(Math.min(pixelRatio, 1)),
     () => { if (bloom) bloom.enabled = false; },
-    () => { setPixelRatio(1); document.documentElement.classList.add('lowfx'); },
+    () => { sun.castShadow = false; document.documentElement.classList.add('lowfx'); },
+    () => setPixelRatio(0.75),
+    () => setPixelRatio(0.6),
   ];
   function setPixelRatio(v) {
     if (v === pixelRatio) return;
@@ -290,15 +294,25 @@ async function main() {
     perf.last = now;
     if (ft <= 0 || ft > 250 || now < perf.since) return; // pestaña en segundo plano o arranque
     perf.sum += ft;
-    if (++perf.n < 90) return;
+    if (++perf.n < 60) return;
     const avg = perf.sum / perf.n;
     perf.n = 0;
     perf.sum = 0;
-    if (avg > 36 && perf.level < steps.length) {
+    if (avg > 34 && perf.level < steps.length) {
       steps[perf.level++]();
-      perf.since = now + 1500; // dejar que se estabilice antes de volver a medir
+      perf.since = now + 1000; // dejar que se estabilice antes de volver a medir
     }
   }
+
+  // ?calidad=baja arranca directo en el modo más liviano; ?calidad=alta no baja nunca la calidad.
+  if (QUALITY === 'baja') {
+    steps.forEach((f) => f());
+    perf.level = steps.length;
+  } else if (QUALITY === 'alta') perf.level = steps.length;
+
+  // Sombras: la maqueta es estática, así que alcanza con redibujarlas cuando te movés por el mapa
+  // (o cada 0,2 s por los peatones y pájaros). Girar y acercar no las necesita.
+  const shadowAt = { x: 1e9, z: 1e9, t: 0 };
 
   // ---------- Bucle ----------
   const clock = new THREE.Clock();
@@ -323,6 +337,16 @@ async function main() {
     sun.position.copy(controls.target).add(SUN_OFFSET);
     labels.update(camera);
     ui.update();
+
+    {
+      const now = performance.now();
+      if (Math.hypot(controls.target.x - shadowAt.x, controls.target.z - shadowAt.z) > 4 || now - shadowAt.t > 200) {
+        renderer.shadowMap.needsUpdate = true;
+        shadowAt.x = controls.target.x;
+        shadowAt.z = controls.target.z;
+        shadowAt.t = now;
+      }
+    }
 
     composer.render();
     labelRenderer.render(scene, camera);

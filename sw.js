@@ -1,7 +1,7 @@
 // Service worker: la guía carga más rápido en las visitas siguientes y queda disponible sin conexión.
 // `VERSION` lo actualiza `npm run bump` (tools/bump-version.mjs); no lo cambies a mano.
 // IMPORTANTE: cada vez que cambies archivos de data/ o del código, corré `npm run bump -- patch`.
-const VERSION = '1.1.1';
+const VERSION = '1.1.4';
 const CORE = `sarmiento-core-${VERSION}`; // código y estáticos de esta versión
 const DATA = `sarmiento-data-${VERSION}`; // data/*.json de esta versión (la URL lleva ?v=VERSION)
 const RUNTIME = 'sarmiento-runtime-v1'; // three.js y tipografías (CDN)
@@ -15,7 +15,7 @@ const CORE_FILES = [
   'js/labels.js', 'js/landmarks.js', 'js/life.js', 'js/mascotas.js', 'js/nav.js', 'js/route.js',
   'js/scene-utils.js', 'js/ui.js', 'js/util.js', 'js/wide.js', 'js/world.js',
   'data/meta.json',
-  'icons/icon-192.png', 'icons/icon-512.png', 'img/logo.webp',
+  'icons/icon-192.png', 'icons/icon-512.png', 'img/logo-sarmiento.webp',
 ];
 const DATA_FILES = [
   'sarmiento-osm.geojson', 'places.json', 'tours.json', 'guides.json', 'landmarks.json', 'casonas.json', 'mascots.json',
@@ -36,8 +36,8 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     Promise.all([
       caches.open(RUNTIME).then((c) => Promise.all(CDN_FILES.map((u) => c.add(u).catch(() => null)))),
-      caches.open(CORE).then((c) => Promise.all(CORE_FILES.map((f) => c.add(f).catch(() => null)))),
-      caches.open(DATA).then((c) => Promise.all(DATA_FILES.map((f) => c.add(f).catch(() => null)))),
+      caches.open(CORE).then((c) => Promise.all(CORE_FILES.map((f) => c.add(new Request(f, { cache: 'reload' })).catch(() => null)))),
+      caches.open(DATA).then((c) => Promise.all(DATA_FILES.map((f) => c.add(new Request(f, { cache: 'reload' })).catch(() => null)))),
     ]).then(() => self.skipWaiting()),
   );
 });

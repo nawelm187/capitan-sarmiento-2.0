@@ -1,8 +1,9 @@
-VERSION COMPLETA 1.1.1 (optimizada)
+VERSION COMPLETA 1.1.4
 
-1. Descomprimí este zip y copiá TODO su contenido adentro de tu proyecto,
-   reemplazando archivos. NO borres tu carpeta data/ (tiene tu mapa real):
-   este zip no la incluye a propósito, para no pisarla.
-2. node tools/apply-update.mjs      (importa los edificios y actualiza la versión)
-3. npm run serve                    y abrí http://localhost:8080
-4. git add .   /   git commit -m "1.1.1"   /   git push
+1. Copiá TODO el contenido de esta carpeta adentro de tu proyecto, reemplazando archivos.
+   NO borres tu carpeta data/ (tiene tu mapa real).
+2. node tools/apply-update.mjs
+   (si dice que tus calles son de ejemplo, corré: npm run mapa -- --center=-34.1728,-59.7886)
+3. npm run serve  ->  http://localhost:8080
+4. Subilo a GitHub (git add . / git commit -m "1.1.4" / git push)
+5. En la PC lenta, si todavía va trabado, probá con ?calidad=baja al final de la dirección.

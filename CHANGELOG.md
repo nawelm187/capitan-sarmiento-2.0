@@ -1,5 +1,20 @@
 # Historial de cambios
 
+## 1.1.4 · 2026-10-24
+
+- Logo de carga con otro nombre de archivo (logo-sarmiento.webp) para que ningún navegador muestre la versión vieja con fondo blanco; el service worker ahora descarga sus archivos salteando la caché del navegador.
+- Más fluido en PC de pocos recursos: detecta placas de video integradas viejas y arranca en modo liviano; las sombras ya no se redibujan en cada cuadro; la calidad automática baja hasta 6 escalones (sombras, resolución) y reacciona más rápido.
+- `?calidad=baja` fuerza el modo liviano y `?calidad=alta` lo desactiva (se agrega al final de la dirección del sitio).
+
+## 1.1.3 · 2026-10-24
+
+- Nuevo `npm run mapa`: baja las calles reales y suma los edificios en un solo paso.
+- `apply-update` avisa si la carpeta data/ tiene las calles de ejemplo en vez de las reales.
+
+## 1.1.2 · 2026-10-24
+
+- Pantalla de carga: el logo ya no tiene fondo blanco (transparente), empieza en la punta verde de la derecha y termina en la cabeza del caballo.
+
 ## 1.1.1 · 2026-10-24
 
 - Arranque más rápido: los datos se bajan en paralelo con three.js, precarga de módulos, tipografías sin bloquear y logo en WebP (13 KB en vez de 130 KB).

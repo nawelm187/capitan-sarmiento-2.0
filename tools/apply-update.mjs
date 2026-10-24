@@ -20,7 +20,7 @@ const node = (...a) => execFileSync(process.execPath, a, { cwd: rootPath, stdio:
 
 // 1. package.json
 const pkg = JSON.parse(await rd('package.json'));
-pkg.scripts = { ...pkg.scripts, serve: 'node tools/serve.mjs', fill: 'node tools/fill-buildings.mjs', buildings: 'node tools/import-buildings.mjs' };
+pkg.scripts = { ...pkg.scripts, serve: 'node tools/serve.mjs', fill: 'node tools/fill-buildings.mjs', mapa: 'node tools/rebuild-map.mjs', buildings: 'node tools/import-buildings.mjs' };
 await wr('package.json', JSON.stringify(pkg, null, 2) + '\n');
 console.log('✔ package.json: scripts serve (Node), fill y buildings');
 
@@ -28,8 +28,8 @@ console.log('✔ package.json: scripts serve (Node), fill y buildings');
 const SPLASH = `<div id="splash" role="status" aria-live="polite">
     <div class="splash__inner">
       <div class="splash__logo" id="splash-logo" aria-hidden="true">
-        <img class="splash__img splash__img--base" src="img/logo.webp" alt="" width="560" height="560" decoding="async">
-        <img class="splash__img splash__img--fill" src="img/logo.webp" alt="" width="560" height="560" decoding="async">
+        <img class="splash__img splash__img--base" src="img/logo-sarmiento.webp" alt="" width="560" height="560" decoding="async">
+        <img class="splash__img splash__img--fill" src="img/logo-sarmiento.webp" alt="" width="560" height="560" decoding="async">
       </div>
       <h2 class="splash__title sr-only" id="splash-title">Capitán Sarmiento</h2>
       <p class="splash__msg" id="splash-msg">Armando la maqueta del pueblo…</p>
@@ -50,7 +50,28 @@ else {
   }
 }
 
-// 3. Edificios reales
+// 3. ¿Las calles son reales o de ejemplo?
+{
+  let roads = 0;
+  let far = 0;
+  try {
+    const gj = JSON.parse(await rd('data/sarmiento-osm.geojson'));
+    const m0 = JSON.parse(await rd('data/meta.json'));
+    for (const f of gj.features) {
+      if (f.properties?.kind !== 'road') continue;
+      roads++;
+      const [lng, lat] = f.geometry.coordinates[0];
+      if (Math.abs((lat - m0.center.lat) * 111000) > 800 || Math.abs((lng - m0.center.lng) * 92000) > 800) far++;
+    }
+  } catch { /* sin datos: se ignora */ }
+  if (roads < 80 && !far) {
+    console.warn('\n⚠ Tu data/ tiene las calles de EJEMPLO (solo ' + roads + ' calles en una grilla inventada), no las reales de Sarmiento.');
+    console.warn('  Corré:  npm run mapa -- --center=-34.1728,-59.7886   (baja las calles reales y suma los edificios)');
+    console.warn('  Ojo: los lugares de ejemplo (pines) se borran porque no están en el lugar real.\n');
+  }
+}
+
+// 3b. Edificios reales
 const src = 'fuentes/edificios_capitan_sarmiento.geojson';
 if (existsSync(new URL(src, root))) {
   console.log('… importando edificios reales (puede tardar unos segundos)');

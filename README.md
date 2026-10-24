@@ -136,6 +136,8 @@ npm run osm -- --center=-34.1728,-59.7886 --half=2000 --pois
 
 **Importante:** al bajar el mapa real, el script **borra el contenido de ejemplo** (lugares, recorridos, hitos, casonas y mascotas), porque sus coordenadas no coinciden con el pueblo real y se verían en cualquier lado. Con `--keep-demo` no lo borra.
 
+**Atajo para Capitán Sarmiento:** `npm run mapa -- --center=-34.1728,-59.7886` baja las calles reales y después suma los edificios de `fuentes/edificios_capitan_sarmiento.geojson`. Usalo siempre en vez de `npm run osm` solo, porque bajar el mapa borra los edificios importados (y la acción de GitHub "Actualizar mapa" también).
+
 ### Si el mapa sale con calles pero casi sin casas, o no es el centro del pueblo
 
 OpenStreetMap tiene pocos edificios cargados en Capitán Sarmiento (el script te avisa: "muy pocos edificios"). Dos remedios, que se pueden combinar con la descarga:
