@@ -51,11 +51,11 @@ guia-sarmiento/
 No se puede abrir `index.html` con doble clic (los módulos de JavaScript no cargan desde `file://`). Hace falta un servidor local, cualquiera de estos:
 
 ```bash
-# Con Python (ya viene en Mac y Linux; en Windows, instalalo desde python.org)
-python3 -m http.server 8080
-
-# o con Node
+# Con Node (funciona igual en Windows, Mac y Linux)
 npm run serve
+
+# o, si ya tenés Python (en Windows suele ser "python", no "python3")
+python -m http.server 8080
 ```
 
 Abrí <http://localhost:8080>. Deberías ver el splash "Armando la maqueta del pueblo…" y después la maqueta con el panel a la izquierda (o abajo, en el celular).
@@ -135,6 +135,17 @@ npm run osm -- --center=-34.1728,-59.7886 --half=2000 --pois
 - `--pois` guarda en `data/places.candidates.json` los comercios, alojamientos y atractivos que ya existen en OpenStreetMap, para que no empieces de cero.
 
 **Importante:** al bajar el mapa real, el script **borra el contenido de ejemplo** (lugares, recorridos, hitos, casonas y mascotas), porque sus coordenadas no coinciden con el pueblo real y se verían en cualquier lado. Con `--keep-demo` no lo borra.
+
+### Si el mapa sale con calles pero casi sin casas, o no es el centro del pueblo
+
+OpenStreetMap tiene pocos edificios cargados en Capitán Sarmiento (el script te avisa: "muy pocos edificios"). Dos remedios, que se pueden combinar con la descarga:
+
+1. **`npm run fill`** — genera casas **aproximadas** a lo largo de las calles (sin pisar calles, vías, plazas ni agua). Rápido, pero no son las construcciones reales; los créditos lo aclaran solos. `npm run fill -- --clear` las quita. Si salen pocas o demasiadas, probá `--min-road=500` (más casas) o `--min-road=1000` (menos).
+2. **`npm run buildings -- archivo.geojson --source="Overture Maps Foundation"`** — importa huellas **reales** desde un archivo que descargues vos (Overture Maps, Microsoft Building Footprints o Google Open Buildings; revisá su licencia). Descarta las que ya están en OpenStreetMap y reemplaza las aproximadas. Acepta `.geojson` y `.geojsonl`. `--source` es obligatorio para acreditar la fuente.
+
+**Centro equivocado:** el script imprime "Zona con más calles: LAT, LNG". Corré `npm run osm -- --auto-center` (guarda ese centro) y después `npm run osm` otra vez; o directamente `npm run osm -- --center=LAT,LNG` con las coordenadas exactas de la plaza (clic derecho en Google Maps → copiar coordenadas).
+
+Después: `npm run check`, `npm run bump -- patch`, y subí los cambios.
 
 El mapa de OpenStreetMap puede tener edificios sin cargar o con altura estimada (3 m por piso, o 4 m si no hay dato). Corregirlo en <https://www.openstreetmap.org> mejora el mapa para todos y se refleja la próxima vez que lo bajes.
 

@@ -1,0 +1,12 @@
+ACTUALIZACION 1.1.0  (no pisa tu carpeta data/)
+
+Trae: logo de la ciudad en la pantalla de carga, edificios reales de Sarmiento,
+servidor que funciona en Windows, y herramientas nuevas (fill / buildings).
+
+1. Descomprimí este zip DENTRO de tu proyecto (la carpeta que tiene package.json),
+   y aceptá reemplazar archivos. Si el zip te creó una carpeta de más, copiá su
+   contenido adentro del proyecto.
+2. En la terminal:   node tools/apply-update.mjs
+   (importa los edificios, cambia la pantalla de carga y sube la versión a 1.1.0)
+3. Probalo:          npm run serve      y abrí http://localhost:8080
+4. Subilo:           git add .   /   git commit -m "1.1.0"   /   git push
