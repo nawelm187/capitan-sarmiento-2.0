@@ -1,7 +1,7 @@
 // Interfaz: panel con pestañas, fichas, recorridos, guías, modales y controles del mapa.
 import { on, emit } from './bus.js';
 import { esc, safeUrl } from './util.js';
-import { CATS, ICONS, catIcon, catInfo } from './icons.js';
+import { CATS, ICONS, catIcon, catInfo, placeIcon, placeLabel } from './icons.js';
 
 const TABS = [
   { id: 'lugares', label: 'Lugares' },
@@ -62,8 +62,8 @@ export function initUI({ meta, places, tours, guides, nav, labels, controls, has
   function placeItem(p) {
     const info = catInfo(p.category);
     return `<li><button class="item" type="button" data-place="${esc(p.id)}" style="--pin:${info.color}">
-      <span class="item__ico">${catIcon(p.category)}</span>
-      <span><span class="item__name">${esc(p.name)}</span><span class="item__sub">${esc(info.label)}${p.address && !/a completar/i.test(p.address) ? ' · ' + esc(p.address) : ''}</span></span>
+      <span class="item__ico">${placeIcon(p)}</span>
+      <span><span class="item__name">${esc(p.name)}</span><span class="item__sub">${esc(placeLabel(p))}${p.address && !/a completar/i.test(p.address) ? ' · ' + esc(p.address) : ''}</span></span>
     </button></li>`;
   }
 
@@ -72,7 +72,7 @@ export function initUI({ meta, places, tours, guides, nav, labels, controls, has
     return `${demoNote()}
       <div class="chips" role="group" aria-label="Filtrar por tipo">
         <button class="chip" type="button" data-cat="" aria-pressed="${!state.cat}">Todos</button>
-        ${CATS.map((c) => `<button class="chip" type="button" data-cat="${c.id}" aria-pressed="${state.cat === c.id}">${ICONS[c.id] || ''}${c.label}</button>`).join('')}
+        ${CATS.map((c) => `<button class="chip" type="button" data-cat="${c.id}" aria-pressed="${state.cat === c.id}">${catIcon(c.id)}${c.label}</button>`).join('')}
       </div>
       ${list.length ? `<ul class="list">${list.map(placeItem).join('')}</ul>` : '<p class="empty">No hay lugares en esta categoría todavía.</p>'}`;
   }
@@ -89,7 +89,7 @@ export function initUI({ meta, places, tours, guides, nav, labels, controls, has
     if (web) rows.push(['Web', `<a href="${esc(web)}" target="_blank" rel="noopener noreferrer">${esc(web.replace(/^https?:\/\/(www\.)?/, ''))}</a>`]);
     return `<button class="back" type="button" data-action="back">${ICONS.back}Volver</button>
       <article class="card" style="--pin:${info.color}">
-        <span class="card__cat">${catIcon(p.category)}${esc(info.label)}${p.demo ? '<span class="demo-badge">Ejemplo</span>' : ''}</span>
+        <span class="card__cat">${placeIcon(p)}${esc(placeLabel(p))}${p.demo ? '<span class="demo-badge">Ejemplo</span>' : ''}</span>
         <h3>${esc(p.name)}</h3>
         ${p.description ? `<p>${esc(p.description)}</p>` : ''}
         ${p.localTip ? `<div class="tip"><b>Dato de local</b>${esc(p.localTip)}</div>` : ''}
@@ -139,7 +139,10 @@ export function initUI({ meta, places, tours, guides, nav, labels, controls, has
 
   function renderGuides() {
     if (!guides.length) {
-      return `<p class="empty">Todavía no hay guías de turismo cargados. Cuando haya, van a aparecer acá para que los contactes. Se publican solo con el consentimiento de cada guía.</p>`;
+      const info = places.filter((p) => p.icon === 'turismo' || /turismo/i.test(p.name));
+      return `<p class="empty">Todavía no hay guías de turismo cargados. Cuando los haya, van a aparecer acá para que los contactes (se publican solo con el consentimiento de cada guía).</p>${
+        info.length ? `<p class="empty">Mientras tanto, para pedir información:</p><ul class="list">${info.map(placeItem).join('')}</ul>` : ''
+      }`;
     }
     return guides
       .map((g) => {

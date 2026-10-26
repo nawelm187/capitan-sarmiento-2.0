@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import { CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 import { v3 } from './scene-utils.js';
-import { catIcon, catInfo } from './icons.js';
+import { placeIcon, placeLabel, catInfo } from './icons.js';
 import { emit } from './bus.js';
 import { esc } from './util.js';
 
@@ -20,8 +20,8 @@ export function initLabels(scene, places) {
     el.dataset.cat = p.category;
     el.style.setProperty('--pin', info.color);
     el.style.setProperty('--pin-ink', info.ink || '#fff');
-    el.setAttribute('aria-label', `${p.name}, ${info.label}`);
-    el.innerHTML = `<span class="pin__dot">${catIcon(p.category)}</span><span class="pin__name">${esc(p.name)}</span>`;
+    el.setAttribute('aria-label', `${p.name}, ${placeLabel(p)}`);
+    el.innerHTML = `<span class="pin__dot">${placeIcon(p)}</span><span class="pin__name">${esc(p.name)}</span>`;
     el.addEventListener('click', (e) => {
       e.stopPropagation();
       emit('place:select', p.id);

@@ -1,4 +1,5 @@
-// Categorías de lugares e íconos (SVG inline, sin dependencias).
+// Categorías de lugares e íconos (SVG inline de respaldo + íconos de Google).
+import { TYPES } from './kinds.js';
 
 const svg = (inner, size = 16) =>
   `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${inner}</svg>`;
@@ -16,11 +17,53 @@ export const ICONS = {
 };
 
 export const CATS = [
-  { id: 'comer', label: 'Comer', color: '#bf4a2a', ink: '#fff' },
-  { id: 'dormir', label: 'Dormir', color: '#2d6a9f', ink: '#fff' },
-  { id: 'ver', label: 'Qué ver', color: '#c98712', ink: '#fff' },
-  { id: 'servicios', label: 'Servicios', color: '#4e7f3a', ink: '#fff' },
+  { id: 'comer', label: 'Comer', color: '#bf4a2a', ink: '#fff', mi: 'restaurant' },
+  { id: 'dormir', label: 'Dormir', color: '#2d6a9f', ink: '#fff', mi: 'hotel' },
+  { id: 'ver', label: 'Qué ver', color: '#c98712', ink: '#fff', mi: 'attractions' },
+  { id: 'compras', label: 'Compras', color: '#7a4e8c', ink: '#fff', mi: 'shopping_bag' },
+  { id: 'salud', label: 'Salud', color: '#b53a4d', ink: '#fff', mi: 'local_hospital' },
+  { id: 'servicios', label: 'Servicios', color: '#4e7f3a', ink: '#fff', mi: 'info' },
 ];
 
 export const catInfo = (id) => CATS.find((c) => c.id === id) || CATS[2];
-export const catIcon = (id) => ICONS[id] || ICONS.pin;
+
+// ---- Íconos de Google (Material Symbols) ----
+// Se bajan de Google Fonts en una tipografía chica con SOLO los íconos que se usan. Mientras no cargan
+// (o sin internet) se ve el ícono simple de la categoría, así nunca aparecen palabras sueltas.
+const FALLBACK = {
+  compras: svg('<path d="M6 7h12l1 13H5zM9 7a3 3 0 0 1 6 0"/>'),
+  salud: svg('<path d="M10 4h4v6h6v4h-6v6h-4v-6H4v-4h6z"/>'),
+};
+const fb = (cat) => `<span class="mi-fb">${ICONS[cat] || FALLBACK[cat] || ICONS.pin}</span>`;
+const glyph = (mi, cat) => `<span class="mi" aria-hidden="true">${mi}</span>${fb(cat)}`;
+
+/** Ícono de una categoría. */
+export const catIcon = (id) => glyph(catInfo(id).mi, id);
+/** Ícono propio del lugar (ferretería, farmacia, iglesia…); si no tiene tipo, el de su categoría. */
+export const placeIcon = (p) => {
+  const t = TYPES[p?.icon];
+  return t ? glyph(t.mi, p.category) : catIcon(p?.category);
+};
+/** Nombre del tipo ("Ferretería") o, si no hay, el de la categoría. */
+export const placeLabel = (p) => TYPES[p?.icon]?.label || catInfo(p?.category).label;
+
+let fontStarted = false;
+export function loadIconFont(places = []) {
+  if (fontStarted || typeof document === 'undefined') return;
+  fontStarted = true;
+  const names = new Set(CATS.map((c) => c.mi));
+  for (const p of places) if (TYPES[p.icon]) names.add(TYPES[p.icon].mi);
+  const list = [...names].sort().join(',');
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = `https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,500,1,0&icon_names=${list}&display=block`;
+  link.onload = () => {
+    const probe = [...names][0];
+    (document.fonts?.load ? document.fonts.load('16px "Material Symbols Rounded"', probe) : Promise.resolve([{}]))
+      .then((f) => {
+        if (!document.fonts?.load || (f && f.length)) document.documentElement.classList.add('has-mi');
+      })
+      .catch(() => {});
+  };
+  document.head.append(link);
+}

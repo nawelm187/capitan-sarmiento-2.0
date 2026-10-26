@@ -1,5 +1,13 @@
 # Historial de cambios
 
+## 1.4.0 · 2026-10-26
+
+- Muchos más lugares: `npm run lugares` ahora baja todos los comercios, servicios y atractivos con nombre de OpenStreetMap (ferreterías, supermercados, ropa, farmacias, bancos, talleres, peluquerías, clubes, etc.). Nuevas categorías: Compras y Salud.
+- Cada tipo de lugar tiene su propio ícono de Google (Material Symbols): ferretería, farmacia, iglesia, escuela, parrilla, café… Se piden a Google Fonts en una tipografía chica con solo los íconos usados; sin internet se ven los íconos simples de respaldo.
+- Pestañas "A pie" y "En auto": recorridos armados automáticamente con los lugares (centro, comer, compras, vuelta al pueblo y servicios útiles) con `npm run recorridos` (se corre solo con `npm run lugares`). Los que escribas a mano se conservan.
+- Pestaña "Guías": `npm run guias -- --nombre=... --contacto=...` agrega guías; mientras no haya, muestra la oficina de turismo si existe.
+- `npm run lugares -- --agregar` acepta cualquier tipo de lugar (ferreteria, farmacia, club…).
+
 ## 1.3.6 · 2026-10-26
 
 - Edificios especiales que quedaban sobre la calle: si OpenStreetMap pone el punto en la vereda o la calle, ahora se usa el edificio real más cercano (hasta 40 m); si no hay ninguno, queda solo el pin, sin modelo (ya no existe el modelo "Escuela" genérico).

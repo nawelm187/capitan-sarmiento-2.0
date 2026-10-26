@@ -41,16 +41,6 @@
       "roofH": 8
     },
     {
-      "id": "osm-n3457372846",
-      "name": "Cine Italo-Argentino",
-      "kind": "cultura",
-      "lat": -34.176684,
-      "lng": -59.792732,
-      "rotY": 71,
-      "mode": "resaltar",
-      "roofH": 7
-    },
-    {
       "id": "osm-n3836695357",
       "name": "Escuela Primaria N° 1 Domingo Faustino Sarmiento",
       "kind": "escuela",
@@ -199,16 +189,6 @@
       "rotY": -55.8,
       "mode": "resaltar",
       "roofH": 6
-    },
-    {
-      "id": "osm-n14030290431",
-      "name": "Sarmiento Salud",
-      "kind": "hospital",
-      "lat": -34.178874,
-      "lng": -59.799043,
-      "rotY": -57.4,
-      "mode": "resaltar",
-      "roofH": 10
     },
     {
       "id": "osm-n14030290444",

@@ -1,1 +1,163 @@
-[]
+[
+  {
+    "id": "auto-centro",
+    "title": "Paseo por el centro",
+    "mode": "walk",
+    "durationMin": 60,
+    "intro": "Un paseo a pie por los lugares más emblemáticos del centro del pueblo.",
+    "stops": [
+      {
+        "placeId": "osm-w238110368",
+        "note": "Plaza",
+        "tip": ""
+      },
+      {
+        "placeId": "osm-n8909947001",
+        "note": "Municipalidad · Centenario 499",
+        "tip": ""
+      },
+      {
+        "placeId": "osm-n4213289215",
+        "note": "Iglesia · Vicente López y Planes y Centenario",
+        "tip": ""
+      },
+      {
+        "placeId": "osm-n3457369632",
+        "note": "Iglesia",
+        "tip": ""
+      },
+      {
+        "placeId": "osm-n14030290444",
+        "note": "Museo · Francia 137",
+        "tip": ""
+      },
+      {
+        "placeId": "osm-w238116755",
+        "note": "Plaza",
+        "tip": ""
+      }
+    ]
+  },
+  {
+    "id": "auto-comer",
+    "title": "Para comer y tomar algo",
+    "mode": "walk",
+    "durationMin": 20,
+    "intro": "De la panadería al café y la parrilla: lugares para comer y tomar algo, uno cerca del otro.",
+    "stops": [
+      {
+        "placeId": "osm-n5973696881",
+        "note": "Heladería",
+        "tip": ""
+      },
+      {
+        "placeId": "osm-n2520606078",
+        "note": "Pizzería · Avenida Presidente Perón",
+        "tip": ""
+      }
+    ]
+  },
+  {
+    "id": "auto-vuelta",
+    "title": "Vuelta al pueblo",
+    "mode": "car",
+    "durationMin": 40,
+    "intro": "Un recorrido en auto que da toda la vuelta: de los lugares del centro a los de las afueras.",
+    "stops": [
+      {
+        "placeId": "osm-n4213289215",
+        "note": "Iglesia · Vicente López y Planes y Centenario",
+        "tip": ""
+      },
+      {
+        "placeId": "osm-w238110368",
+        "note": "Plaza",
+        "tip": ""
+      },
+      {
+        "placeId": "osm-n3457367623",
+        "note": "Club",
+        "tip": ""
+      },
+      {
+        "placeId": "osm-n3457368093",
+        "note": "Club",
+        "tip": ""
+      },
+      {
+        "placeId": "osm-n14030290444",
+        "note": "Museo · Francia 137",
+        "tip": ""
+      },
+      {
+        "placeId": "osm-w335993992",
+        "note": "Club",
+        "tip": ""
+      },
+      {
+        "placeId": "osm-n3457369632",
+        "note": "Iglesia",
+        "tip": ""
+      },
+      {
+        "placeId": "osm-w238116755",
+        "note": "Plaza",
+        "tip": ""
+      }
+    ]
+  },
+  {
+    "id": "auto-servicios",
+    "title": "Servicios útiles",
+    "mode": "car",
+    "durationMin": 50,
+    "intro": "Hospital, farmacia, policía, bomberos, estación de servicio y más, por si los necesitás.",
+    "stops": [
+      {
+        "placeId": "osm-n5973696877",
+        "note": "Farmacia · Avenida Leandro N. Alem 504",
+        "tip": ""
+      },
+      {
+        "placeId": "osm-n2520503490",
+        "note": "Banco · Avenida Bartolomé Mitre 301",
+        "tip": ""
+      },
+      {
+        "placeId": "osm-n5757465694",
+        "note": "Correo · Avenida Bartolomé Mitre 272",
+        "tip": ""
+      },
+      {
+        "placeId": "osm-n8909947001",
+        "note": "Municipalidad · Centenario 499",
+        "tip": ""
+      },
+      {
+        "placeId": "osm-n2520503489",
+        "note": "Policía · Vicente López y Planes 586",
+        "tip": ""
+      },
+      {
+        "placeId": "osm-n4213267896",
+        "note": "Bomberos · Mármol 536",
+        "tip": ""
+      },
+      {
+        "placeId": "osm-n4213290589",
+        "note": "Hospital · Avenida San Martín 450",
+        "tip": ""
+      },
+      {
+        "placeId": "osm-w393286873",
+        "note": "Terminal de ómnibus",
+        "tip": ""
+      },
+      {
+        "placeId": "osm-n3420165272",
+        "note": "Estación de servicio",
+        "tip": ""
+      }
+    ]
+  }
+]

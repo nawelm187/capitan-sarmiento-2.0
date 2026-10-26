@@ -118,7 +118,7 @@ const casonas = (await readJSON('data/casonas.json')) ?? { items: [] };
 const mascots = (await readJSON('data/mascots.json')) ?? { items: [] };
 const gj = await readJSON('data/sarmiento-osm.geojson');
 
-const CATS = new Set(['comer', 'dormir', 'ver', 'servicios']);
+const CATS = new Set(['comer', 'dormir', 'ver', 'compras', 'salud', 'servicios']);
 const half = meta?.osm?.halfSizeMeters ?? 2000;
 const { setCenter, toLocal, toLngLat } = await import(pathToFileURL(path.join(ROOT, 'js/geo.js')).href);
 const { buildPath, sample } = await import(pathToFileURL(path.join(ROOT, 'js/route.js')).href);

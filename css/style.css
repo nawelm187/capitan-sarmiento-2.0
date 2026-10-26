@@ -183,3 +183,13 @@ body.no-gl .fab-stack, body.no-gl .coords-hint { display: none; }
 
 .fab--weather { white-space: nowrap; font-size: 14px; }
 .fab--weather[hidden] { display: none; }
+
+/* ---------- Íconos de Google (Material Symbols) ---------- */
+.mi { display: none; font-family: "Material Symbols Rounded"; font-weight: 500; font-style: normal; font-size: 20px; line-height: 1; letter-spacing: normal; text-transform: none; white-space: nowrap; direction: ltr; font-feature-settings: "liga"; -webkit-font-feature-settings: "liga"; -webkit-font-smoothing: antialiased; user-select: none; }
+html.has-mi .mi { display: inline-block; }
+html.has-mi .mi-fb { display: none; }
+.mi-fb { display: inline-grid; place-items: center; }
+.item__ico .mi { font-size: 21px; }
+.chip .mi { font-size: 17px; }
+.card__cat .mi { font-size: 18px; }
+.pin__dot .mi { font-size: 16px; transform: rotate(45deg); }

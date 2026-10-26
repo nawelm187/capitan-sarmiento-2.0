@@ -1,5 +1,5 @@
 {
-  "version": "1.3.6",
+  "version": "1.4.0",
   "date": "2026-10-26",
   "name": "Guía Sarmiento",
   "town": "Capitán Sarmiento",
@@ -45,5 +45,5 @@
     "Overture Maps Foundation (Google Open Buildings)"
   ],
   "importedBuildings": 10976,
-  "dataRev": "mvoq2j5w"
+  "dataRev": "mvp19nc7"
 }

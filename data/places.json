@@ -3,8 +3,8 @@
     "id": "osm-n2520503489",
     "name": "Estación Policía Comunal Capitán Sarmiento",
     "category": "servicios",
-    "lat": -34.171589,
-    "lng": -59.794575,
+    "lat": -34.171567,
+    "lng": -59.794565,
     "address": "Vicente López y Planes 586",
     "hours": "",
     "phone": "+54 2478 48 1255",
@@ -15,7 +15,9 @@
     "description": "Policía. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "policia",
+    "roofH": 5
   },
   {
     "id": "osm-n2520503490",
@@ -33,7 +35,8 @@
     "description": "Ficha creada a partir de OpenStreetMap: falta sumar la descripción.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "banco"
   },
   {
     "id": "osm-n2520504611",
@@ -51,7 +54,8 @@
     "description": "Ficha creada a partir de OpenStreetMap: falta sumar la descripción.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "banco"
   },
   {
     "id": "osm-n2520506062",
@@ -69,7 +73,8 @@
     "description": "Ficha creada a partir de OpenStreetMap: falta sumar la descripción.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "banco"
   },
   {
     "id": "osm-n2520507593",
@@ -87,7 +92,8 @@
     "description": "Ficha creada a partir de OpenStreetMap: falta sumar la descripción.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "banco"
   },
   {
     "id": "osm-n2520606078",
@@ -105,7 +111,8 @@
     "description": "Ficha creada a partir de OpenStreetMap: falta sumar la descripción.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "pizzeria"
   },
   {
     "id": "osm-n3420165272",
@@ -123,14 +130,15 @@
     "description": "Ficha creada a partir de OpenStreetMap: falta sumar la descripción.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "combustible"
   },
   {
     "id": "osm-n3452443048",
     "name": "Escuela Normal Superior Domingo Fidel Sarmiento",
     "category": "servicios",
-    "lat": -34.177319,
-    "lng": -59.790708,
+    "lat": -34.177301,
+    "lng": -59.7908,
     "address": "Avenida Presidente Perón 604",
     "hours": "",
     "phone": "+54 2478 48 1927",
@@ -141,12 +149,14 @@
     "description": "Escuela. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "escuela",
+    "roofH": 8
   },
   {
     "id": "osm-n3457367623",
     "name": "Club Ayacuá",
-    "category": "servicios",
+    "category": "ver",
     "lat": -34.178056,
     "lng": -59.789298,
     "address": "",
@@ -159,12 +169,13 @@
     "description": "Ficha creada a partir de OpenStreetMap: falta sumar la descripción.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "club"
   },
   {
     "id": "osm-n3457368093",
     "name": "Club Sarmiento Piletas",
-    "category": "servicios",
+    "category": "ver",
     "lat": -34.176893,
     "lng": -59.78934,
     "address": "",
@@ -177,14 +188,15 @@
     "description": "Ficha creada a partir de OpenStreetMap: falta sumar la descripción.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "club"
   },
   {
     "id": "osm-n3457369632",
     "name": "Iglesia San carlos Borromeo",
     "category": "ver",
-    "lat": -34.176066,
-    "lng": -59.793085,
+    "lat": -34.176104,
+    "lng": -59.792977,
     "address": "",
     "hours": "",
     "phone": "",
@@ -195,7 +207,8 @@
     "description": "Iglesia. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "iglesia"
   },
   {
     "id": "osm-n3457372846",
@@ -213,14 +226,15 @@
     "description": "Casa de la cultura. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "cine"
   },
   {
     "id": "osm-n3825846971",
     "name": "Escuela Secundaria n°2",
     "category": "servicios",
-    "lat": -34.177319,
-    "lng": -59.790791,
+    "lat": -34.177301,
+    "lng": -59.7908,
     "address": "Avenida Presidente Perón 604",
     "hours": "",
     "phone": "",
@@ -231,14 +245,16 @@
     "description": "Escuela. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "escuela",
+    "roofH": 8
   },
   {
     "id": "osm-n3836695357",
     "name": "Escuela Primaria N° 1 Domingo Faustino Sarmiento",
     "category": "servicios",
-    "lat": -34.177578,
-    "lng": -59.790013,
+    "lat": -34.177534,
+    "lng": -59.790033,
     "address": "Avenida Presidente Perón 604",
     "hours": "",
     "phone": "",
@@ -249,14 +265,16 @@
     "description": "Escuela. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "escuela",
+    "roofH": 6
   },
   {
     "id": "osm-n4213265403",
     "name": "Centro de Educación de Adultos 701",
     "category": "servicios",
-    "lat": -34.170327,
-    "lng": -59.785926,
+    "lat": -34.170289,
+    "lng": -59.785721,
     "address": "Sarmiento 1194",
     "hours": "",
     "phone": "",
@@ -267,14 +285,16 @@
     "description": "Escuela. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "escuela",
+    "roofH": 8
   },
   {
     "id": "osm-n4213265404",
     "name": "Escuela De Educación Secundaria Técnica 1 Segundo Agustín Luna",
     "category": "servicios",
-    "lat": -34.174483,
-    "lng": -59.7914,
+    "lat": -34.17433,
+    "lng": -59.791477,
     "address": "Italia 324",
     "hours": "",
     "phone": "",
@@ -285,14 +305,16 @@
     "description": "Escuela. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "escuela",
+    "roofH": 10
   },
   {
     "id": "osm-n4213266589",
     "name": "Escuela de Educación Secundaria 3",
     "category": "servicios",
-    "lat": -34.172348,
-    "lng": -59.797068,
+    "lat": -34.172365,
+    "lng": -59.7971,
     "address": "Colón 375",
     "hours": "",
     "phone": "",
@@ -303,14 +325,16 @@
     "description": "Escuela. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "escuela",
+    "roofH": 7
   },
   {
     "id": "osm-n4213267896",
     "name": "Bomberos Voluntarios de Capitan Sarmiento",
     "category": "servicios",
-    "lat": -34.172225,
-    "lng": -59.795475,
+    "lat": -34.172164,
+    "lng": -59.795466,
     "address": "Mármol 536",
     "hours": "",
     "phone": "+54 2478 481500",
@@ -321,14 +345,16 @@
     "description": "Bomberos. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "bomberos",
+    "roofH": 9
   },
   {
     "id": "osm-n4213289215",
     "name": "Parroquia Nuestra Señora de Pilar",
     "category": "ver",
-    "lat": -34.171882,
-    "lng": -59.792834,
+    "lat": -34.171764,
+    "lng": -59.792596,
     "address": "Vicente López y Planes y Centenario",
     "hours": "",
     "phone": "",
@@ -339,14 +365,15 @@
     "description": "Iglesia. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "iglesia"
   },
   {
     "id": "osm-n4213290589",
     "name": "Hospital Municipal \"San Carlos\"",
-    "category": "servicios",
-    "lat": -34.179225,
-    "lng": -59.799736,
+    "category": "salud",
+    "lat": -34.179468,
+    "lng": -59.799654,
     "address": "Avenida San Martín 450",
     "hours": "",
     "phone": "",
@@ -357,14 +384,16 @@
     "description": "Salud. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "hospital",
+    "roofH": 6
   },
   {
     "id": "osm-n5049882620",
     "name": "Escuela Primaria 9 Malvinas Argentinas",
     "category": "servicios",
-    "lat": -34.162139,
-    "lng": -59.780208,
+    "lat": -34.162059,
+    "lng": -59.780195,
     "address": "Avenida 29 de Junio 1278",
     "hours": "",
     "phone": "",
@@ -375,14 +404,16 @@
     "description": "Escuela. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "escuela",
+    "roofH": 6
   },
   {
     "id": "osm-n5757101829",
     "name": "Escuela De Educación Secundaria Nº1 Dr. Mateo V.Jelicich",
     "category": "servicios",
-    "lat": -34.171589,
-    "lng": -59.785761,
+    "lat": -34.171561,
+    "lng": -59.785841,
     "address": "Guido Lucotti 757",
     "hours": "",
     "phone": "",
@@ -393,7 +424,9 @@
     "description": "Escuela. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "escuela",
+    "roofH": 11
   },
   {
     "id": "osm-n5757465694",
@@ -411,14 +444,15 @@
     "description": "Ficha creada a partir de OpenStreetMap: falta sumar la descripción.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "correo"
   },
   {
     "id": "osm-n5757465695",
     "name": "Jardín De Infantes Nº906",
     "category": "servicios",
-    "lat": -34.177507,
-    "lng": -59.790315,
+    "lat": -34.177394,
+    "lng": -59.790327,
     "address": "Avenida Presidente Perón 604",
     "hours": "",
     "phone": "",
@@ -429,13 +463,15 @@
     "description": "Escuela. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "jardin",
+    "roofH": 13
   },
   {
     "id": "osm-n5757465696",
     "name": "Jardín De Infantes Nº 903 Martha Salotti",
     "category": "servicios",
-    "lat": -34.16808,
+    "lat": -34.168068,
     "lng": -59.79687,
     "address": "12 de Octubre 751",
     "hours": "",
@@ -447,14 +483,16 @@
     "description": "Escuela. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "escuela",
+    "roofH": 8
   },
   {
     "id": "osm-n5757465697",
     "name": "Escuela De Educación Primaria Nº 4 Juan Bautista Alberdi",
     "category": "servicios",
-    "lat": -34.170554,
-    "lng": -59.785848,
+    "lat": -34.17054,
+    "lng": -59.785851,
     "address": "Sarmiento 1194",
     "hours": "",
     "phone": "",
@@ -465,14 +503,16 @@
     "description": "Escuela. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "escuela",
+    "roofH": 7
   },
   {
     "id": "osm-n5757465698",
     "name": "Escuela De Educación Primaria Nº5 Bernardino Rivadavia",
     "category": "servicios",
-    "lat": -34.173206,
-    "lng": -59.795355,
+    "lat": -34.173195,
+    "lng": -59.795315,
     "address": "Alsina 312",
     "hours": "",
     "phone": "",
@@ -483,14 +523,16 @@
     "description": "Escuela. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "escuela",
+    "roofH": 7
   },
   {
     "id": "osm-n5757465699",
     "name": "Escuela De Educación Primaria 11 General José De San Martín",
     "category": "servicios",
-    "lat": -34.168783,
-    "lng": -59.793116,
+    "lat": -34.168773,
+    "lng": -59.793056,
     "address": "Sarmiento",
     "hours": "",
     "phone": "",
@@ -501,12 +543,14 @@
     "description": "Escuela. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "escuela",
+    "roofH": 8
   },
   {
     "id": "osm-n5973696877",
     "name": "Ruiz",
-    "category": "servicios",
+    "category": "salud",
     "lat": -34.173225,
     "lng": -59.78818,
     "address": "Avenida Leandro N. Alem 504",
@@ -519,12 +563,13 @@
     "description": "Ficha creada a partir de OpenStreetMap: falta sumar la descripción.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "farmacia"
   },
   {
     "id": "osm-n5973696878",
     "name": "Kovasevich",
-    "category": "servicios",
+    "category": "salud",
     "lat": -34.170265,
     "lng": -59.795365,
     "address": "",
@@ -537,12 +582,13 @@
     "description": "Ficha creada a partir de OpenStreetMap: falta sumar la descripción.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "farmacia"
   },
   {
     "id": "osm-n5973696880",
     "name": "Ibis",
-    "category": "servicios",
+    "category": "compras",
     "lat": -34.164876,
     "lng": -59.787536,
     "address": "",
@@ -555,7 +601,8 @@
     "description": "Ficha creada a partir de OpenStreetMap: falta sumar la descripción.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "supermercado"
   },
   {
     "id": "osm-n5973696881",
@@ -573,12 +620,13 @@
     "description": "Ficha creada a partir de OpenStreetMap: falta sumar la descripción.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "heladeria"
   },
   {
     "id": "osm-n5973696882",
     "name": "Bava",
-    "category": "servicios",
+    "category": "salud",
     "lat": -34.171241,
     "lng": -59.787383,
     "address": "",
@@ -591,12 +639,13 @@
     "description": "Ficha creada a partir de OpenStreetMap: falta sumar la descripción.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "farmacia"
   },
   {
     "id": "osm-n5973696883",
     "name": "Folguera",
-    "category": "servicios",
+    "category": "salud",
     "lat": -34.176589,
     "lng": -59.795338,
     "address": "",
@@ -609,12 +658,13 @@
     "description": "Ficha creada a partir de OpenStreetMap: falta sumar la descripción.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "farmacia"
   },
   {
     "id": "osm-n5973698085",
     "name": "Dia",
-    "category": "servicios",
+    "category": "compras",
     "lat": -34.173232,
     "lng": -59.795861,
     "address": "Avenida Rivadavia 536",
@@ -627,7 +677,8 @@
     "description": "Ficha creada a partir de OpenStreetMap: falta sumar la descripción.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "supermercado"
   },
   {
     "id": "osm-n5973698086",
@@ -645,7 +696,8 @@
     "description": "Ficha creada a partir de OpenStreetMap: falta sumar la descripción.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "restaurante"
   },
   {
     "id": "osm-n6546231587",
@@ -722,7 +774,7 @@
   {
     "id": "osm-n8909891877",
     "name": "Farmacia Del Pueblo",
-    "category": "servicios",
+    "category": "salud",
     "lat": -34.174134,
     "lng": -59.793603,
     "address": "",
@@ -735,14 +787,15 @@
     "description": "Ficha creada a partir de OpenStreetMap: falta sumar la descripción.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "farmacia"
   },
   {
     "id": "osm-n8909947001",
     "name": "Municipalidad de Capitán Sarmiento",
     "category": "servicios",
-    "lat": -34.171999,
-    "lng": -59.793139,
+    "lat": -34.17203,
+    "lng": -59.793148,
     "address": "Centenario 499",
     "hours": "",
     "phone": "",
@@ -753,14 +806,16 @@
     "description": "Municipalidad. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "municipalidad",
+    "roofH": 6
   },
   {
     "id": "osm-n14030279984",
     "name": "Jardín de Infantes 901 Martín Miguel De Güemes",
     "category": "servicios",
-    "lat": -34.178104,
-    "lng": -59.798695,
+    "lat": -34.178121,
+    "lng": -59.798737,
     "address": "Almafuerte 315",
     "hours": "",
     "phone": "",
@@ -771,12 +826,14 @@
     "description": "Escuela. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "escuela",
+    "roofH": 6
   },
   {
     "id": "osm-n14030290431",
     "name": "Sarmiento Salud",
-    "category": "servicios",
+    "category": "salud",
     "lat": -34.178796,
     "lng": -59.79909,
     "address": "Avenida San Martín 392",
@@ -789,14 +846,15 @@
     "description": "Salud. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "clinica"
   },
   {
     "id": "osm-n14030290444",
     "name": "Museo de la Recreación Histórica",
     "category": "ver",
-    "lat": -34.178157,
-    "lng": -59.792531,
+    "lat": -34.178205,
+    "lng": -59.792545,
     "address": "Francia 137",
     "hours": "",
     "phone": "",
@@ -807,12 +865,14 @@
     "description": "Museo. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "museo",
+    "roofH": 6
   },
   {
     "id": "osm-n14030290445",
     "name": "El Oriental",
-    "category": "servicios",
+    "category": "compras",
     "lat": -34.178753,
     "lng": -59.78717,
     "address": "",
@@ -825,7 +885,8 @@
     "description": "Ficha creada a partir de OpenStreetMap: falta sumar la descripción.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "supermercado"
   },
   {
     "id": "osm-w238110368",
@@ -843,7 +904,8 @@
     "description": "Plaza. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "plaza"
   },
   {
     "id": "osm-w238116755",
@@ -861,12 +923,13 @@
     "description": "Plaza. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "plaza"
   },
   {
     "id": "osm-w335993992",
     "name": "Club San Carlos - Capitán Sarmiento - BA",
-    "category": "servicios",
+    "category": "ver",
     "lat": -34.181149,
     "lng": -59.796769,
     "address": "",
@@ -879,7 +942,8 @@
     "description": "Ficha creada a partir de OpenStreetMap: falta sumar la descripción.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-26"
+    "updated": "2026-10-26",
+    "icon": "club"
   },
   {
     "id": "osm-w697036033",
@@ -949,6 +1013,63 @@
     "reviewsUrl": "",
     "photo": "",
     "description": "Escuela. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
+    "localTip": "",
+    "source": "OpenStreetMap (revisar y completar)",
+    "updated": "2026-10-26"
+  },
+  {
+    "id": "osm-n3965009169",
+    "name": "Remis Primero",
+    "category": "servicios",
+    "icon": "taxi",
+    "lat": -34.15967,
+    "lng": -59.788002,
+    "address": "",
+    "hours": "",
+    "phone": "",
+    "web": "",
+    "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=-34.15967,-59.788002",
+    "reviewsUrl": "",
+    "photo": "",
+    "description": "Taxi / remís. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
+    "localTip": "",
+    "source": "OpenStreetMap (revisar y completar)",
+    "updated": "2026-10-26"
+  },
+  {
+    "id": "osm-n8303057838",
+    "name": "Gimnasio Crom",
+    "category": "ver",
+    "icon": "gimnasio",
+    "lat": -34.176211,
+    "lng": -59.792429,
+    "address": "Juan Manuel de Rosas 465",
+    "hours": "Mo-Fr 08:00-22:00",
+    "phone": "",
+    "web": "",
+    "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=-34.176211,-59.792429",
+    "reviewsUrl": "",
+    "photo": "",
+    "description": "Gimnasio. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
+    "localTip": "",
+    "source": "OpenStreetMap (revisar y completar)",
+    "updated": "2026-10-26"
+  },
+  {
+    "id": "osm-w393286873",
+    "name": "Terminal de Ómnibus de Capitán Sarmiento",
+    "category": "servicios",
+    "icon": "terminal",
+    "lat": -34.159524,
+    "lng": -59.788113,
+    "address": "",
+    "hours": "",
+    "phone": "",
+    "web": "",
+    "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=-34.159524,-59.788113",
+    "reviewsUrl": "",
+    "photo": "",
+    "description": "Terminal de ómnibus. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
     "updated": "2026-10-26"

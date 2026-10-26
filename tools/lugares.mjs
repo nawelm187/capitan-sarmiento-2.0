@@ -13,6 +13,7 @@
 
 import { readFile, writeFile } from 'node:fs/promises';
 import { setCenter, toLngLat, toLocal } from '../js/geo.js';
+import { TYPES, LANDMARK_OF, classify } from '../js/kinds.js';
 
 const dataDir = new URL('../data/', import.meta.url);
 const args = Object.fromEntries(process.argv.slice(2).map((a) => {
@@ -34,26 +35,15 @@ if (!meta) throw new Error('No encuentro data/meta.json. Corré el comando dentr
 setCenter(meta.center);
 const half = meta.osm?.halfSizeMeters ?? 2000;
 
-// Tipos de edificio especial → categoría de la ficha
-const KIND_CAT = {
-  iglesia: 'ver', municipalidad: 'servicios', cultura: 'ver', museo: 'ver', biblioteca: 'ver', escuela: 'servicios',
-  hospital: 'servicios', bomberos: 'servicios', policia: 'servicios', estacion: 'ver', monumento: 'ver', plaza: 'ver',
-  tanque: 'ver', silo: 'ver', edificio: 'ver',
-};
-const KIND_LABEL = {
-  iglesia: 'Iglesia', municipalidad: 'Municipalidad', cultura: 'Casa de la cultura', museo: 'Museo', biblioteca: 'Biblioteca',
-  escuela: 'Escuela', hospital: 'Salud', bomberos: 'Bomberos', policia: 'Policía', estacion: 'Estación de tren',
-  monumento: 'Monumento', plaza: 'Plaza', tanque: 'Tanque de agua', silo: 'Silos', edificio: 'Edificio',
-};
-
 // ---------- Modo manual ----------
 if (args.agregar) {
   const lat = Number(args.lat);
   const lng = Number(args.lng);
-  const kind = String(args.tipo || 'edificio');
+  const type = String(args.tipo || 'servicio');
+  const kind = LANDMARK_OF[type] || null;
   if (!args.nombre || !Number.isFinite(lat) || !Number.isFinite(lng)) {
     console.error('Uso: npm run lugares -- --agregar --nombre="Iglesia San José" --tipo=iglesia --lat=-34.17 --lng=-59.78');
-    console.error('Tipos de edificio con forma propia: ' + Object.keys(KIND_CAT).join(', '));
+    console.error('Tipos: ' + Object.keys(TYPES).join(', '));
     console.error('Tip: en Google Maps, clic derecho sobre el lugar → el primer renglón son "lat, lng".');
     process.exit(1);
   }
@@ -61,9 +51,13 @@ if (args.agregar) {
   const places = (await readJSON('places.json', [])).filter((p) => p.id !== id);
   const lm = await readJSON('landmarks.json', { items: [] });
   lm.items = (lm.items || []).filter((l) => l.id !== id);
-  const cat = String(args.cat || KIND_CAT[kind] || 'ver');
-  places.push(placeObj({ id, name: String(args.nombre), category: cat, lat, lng, kind, source: 'Cargado a mano' }));
-  if (args.tipo) lm.items.push({ id, name: String(args.nombre), kind, lat, lng, rotY: Number(args.rot || 0), ...(args.w ? { w: Number(args.w), d: Number(args.d || args.w) } : {}) });
+  if (!TYPES[type]) {
+    console.error(`Tipo desconocido "${type}". Tipos: ` + Object.keys(TYPES).join(', '));
+    process.exit(1);
+  }
+  const cat = String(args.cat || TYPES[type].cat);
+  places.push(placeObj({ id, name: String(args.nombre), category: cat, lat, lng, type, source: 'Cargado a mano' }));
+  if (kind) lm.items.push({ id, name: String(args.nombre), kind, lat, lng, rotY: Number(args.rot || 0), ...(args.w ? { w: Number(args.w), d: Number(args.d || args.w) } : {}) });
   await writeJSON('places.json', places);
   await writeJSON('landmarks.json', lm);
   meta.dataRev = Date.now().toString(36);
@@ -72,12 +66,13 @@ if (args.agregar) {
   process.exit(0);
 }
 
-function placeObj({ id, name, category, lat, lng, kind, roofH = 0, address = '', hours = '', phone = '', web = '', source }) {
-  const what = KIND_LABEL[kind] || '';
+function placeObj({ id, name, category, lat, lng, type, roofH = 0, address = '', hours = '', phone = '', web = '', source }) {
+  const what = TYPES[type]?.label || '';
   return {
     id,
     name,
     category,
+    icon: type,
     lat: r6(lat),
     lng: r6(lng),
     address,
@@ -123,46 +118,23 @@ async function overpass(query) {
 }
 
 console.log('Bajando lugares y edificios especiales de OpenStreetMap…');
-const query = `[out:json][timeout:120];
+const query = `[out:json][timeout:180];
 (
-  nwr["amenity"~"^(restaurant|cafe|bar|pub|fast_food|ice_cream|hospital|clinic|pharmacy|police|fire_station|fuel|bank|post_office|townhall|place_of_worship|library|school|kindergarten|college|marketplace|arts_centre|community_centre|theatre|cinema|courthouse)$"](${bbox});
-  nwr["shop"~"^(bakery|butcher|supermarket|convenience|kiosk)$"](${bbox});
-  nwr["tourism"~"^(hotel|hostel|guest_house|motel|apartment|chalet|camp_site|attraction|museum|viewpoint|information|artwork|gallery)$"](${bbox});
+  nwr["amenity"]["name"](${bbox});
+  nwr["shop"]["name"](${bbox});
+  nwr["office"]["name"](${bbox});
+  nwr["craft"]["name"](${bbox});
+  nwr["tourism"]["name"](${bbox});
+  nwr["leisure"]["name"](${bbox});
   nwr["historic"](${bbox});
+  nwr["amenity"~"^(place_of_worship|school|kindergarten|hospital|clinic|police|fire_station|townhall|library|community_centre)$"](${bbox});
   nwr["building"~"^(church|chapel|cathedral|train_station|civic|government|hospital|school|silo)$"](${bbox});
   nwr["railway"="station"](${bbox});
   nwr["man_made"~"^(water_tower|silo)$"](${bbox});
-  nwr["leisure"~"^(stadium|sports_centre)$"](${bbox});
   nwr["place"="square"](${bbox});
-  nwr["leisure"="park"]["name"~"[Pp]laza"](${bbox});
 );
 out tags geom center;`;
 const data = await overpass(query);
-
-function kindOf(t) {
-  if (t.amenity === 'place_of_worship' || /^(church|chapel|cathedral)$/.test(t.building || '')) return 'iglesia';
-  if (t.amenity === 'townhall' || /^(civic|government)$/.test(t.building || '') || /municipalidad|palacio municipal/i.test(t.name || '')) return 'municipalidad';
-  if (t.tourism === 'museum' || /museo/i.test(t.name || '')) return 'museo';
-  if (/^(arts_centre|community_centre|theatre|cinema)$/.test(t.amenity || '') || /cultura|teatro|cine /i.test(t.name || '')) return 'cultura';
-  if (t.amenity === 'library' || /biblioteca/i.test(t.name || '')) return 'biblioteca';
-  if (/^(school|kindergarten|college)$/.test(t.amenity || '') || t.building === 'school') return 'escuela';
-  if (/^(hospital|clinic)$/.test(t.amenity || '') || t.building === 'hospital') return 'hospital';
-  if (t.amenity === 'fire_station') return 'bomberos';
-  if (t.amenity === 'police') return 'policia';
-  if (t.railway === 'station' || t.building === 'train_station') return 'estacion';
-  if (t.man_made === 'water_tower') return 'tanque';
-  if (t.man_made === 'silo' || t.building === 'silo') return 'silo';
-  if (/^(monument|memorial)$/.test(t.historic || '')) return 'monumento';
-  if (t.place === 'square' || (t.leisure === 'park' && /plaza/i.test(t.name || ''))) return 'plaza';
-  return null;
-}
-const catOf = (t, kind) => {
-  if (/^(restaurant|cafe|bar|pub|fast_food|ice_cream)$/.test(t.amenity || '') || /^(bakery|butcher)$/.test(t.shop || '')) return 'comer';
-  if (/^(hotel|hostel|guest_house|motel|apartment|chalet|camp_site)$/.test(t.tourism || '')) return 'dormir';
-  if (kind) return KIND_CAT[kind];
-  if (/^(attraction|museum|viewpoint|artwork|gallery)$/.test(t.tourism || '') || t.historic) return 'ver';
-  return 'servicios';
-};
 
 /** Rectángulo orientado que envuelve la geometría: centro, largo, ancho y rotación (para rotation.y). */
 /** Rectángulo orientado que envuelve unos puntos locales: centro, largo, ancho y rotación (para rotation.y). */
@@ -276,7 +248,9 @@ for (const e of data.elements) {
   const id = `osm-${e.type[0]}${e.id}`;
   if (seen.has(id)) continue;
   seen.add(id);
-  const kind = kindOf(t);
+  const type = classify(t);
+  if (!type) continue; // cosas que no son lugares para visitar (bancos de plaza, estacionamientos…)
+  const kind = LANDMARK_OF[type] || null;
   const buildable = kind && !['plaza', 'tanque', 'silo', 'monumento'].includes(kind);
   let fp = null;
   let mark = null; // { group, main, rect } cuando se resalta un edificio real
@@ -329,7 +303,7 @@ for (const e of data.elements) {
   const lat = ref?.lat ?? e.lat ?? e.center?.lat;
   const lng = ref?.lng ?? e.lon ?? e.center?.lon;
   if (lat == null || lng == null) continue;
-  const name = t.name || (kind ? KIND_LABEL[kind] : null);
+  const name = t.name || (kind ? TYPES[type].label : null);
   if (!name) continue; // un comercio sin nombre no sirve como ficha
   let roofH = 0;
   if (mark) {
@@ -353,10 +327,10 @@ for (const e of data.elements) {
   places.push(placeObj({
     id,
     name,
-    category: catOf(t, kind),
+    category: TYPES[type].cat,
     lat,
     lng,
-    kind,
+    type,
     roofH,
     address: street,
     hours: t.opening_hours || '',
@@ -383,6 +357,16 @@ const handNames = new Set(oldPlaces.filter((p) => !String(p.id).startsWith('osm-
 const placesNew = [];
 for (const p of places.filter((x) => !handNames.has(nameKey(x.name)))) {
   if (!placesNew.some((o) => nameKey(o.name) === nameKey(p.name) && dist(o, p) < 60)) placesNew.push(p);
+}
+// Los lugares de OSM que ya estaban conservan tus textos; se actualizan solo categoría, ícono, posición y altura.
+const newById = new Map(placesNew.map((p) => [p.id, p]));
+for (const o of oldPlaces) {
+  const n = newById.get(o.id);
+  if (!n || !String(o.id).startsWith('osm-')) continue;
+  Object.assign(o, { category: n.category, icon: n.icon, lat: n.lat, lng: n.lng });
+  if (n.roofH) o.roofH = n.roofH;
+  else delete o.roofH;
+  if (!o.address && n.address) o.address = n.address;
 }
 const placesOut = mergeBy(oldPlaces, placesNew);
 // Sin duplicados: dos edificios del mismo tipo a menos de 30 m son el mismo (gana el que tiene huella real).
@@ -413,6 +397,13 @@ console.log(`${lmOut.length} edificios especiales en data/landmarks.json  ${JSON
 if (placesOut.length < 8) {
   console.log('\nOpenStreetMap tiene pocos lugares cargados en Capitán Sarmiento. Podés sumar los que falten a mano:');
   console.log('  npm run lugares -- --agregar --nombre="Iglesia San José" --tipo=iglesia --lat=-34.17 --lng=-59.78');
-  console.log('  (tipos: ' + Object.keys(KIND_CAT).join(', ') + ')');
+  console.log('  (tipos: ' + Object.keys(TYPES).join(', ') + ')');
+}
+// Recorridos a pie y en auto armados con estos lugares
+try {
+  const { execFileSync } = await import('node:child_process');
+  execFileSync(process.execPath, [(await import('node:url')).fileURLToPath(new URL('./recorridos.mjs', import.meta.url))], { stdio: 'inherit' });
+} catch {
+  console.warn('No se pudieron armar los recorridos (se puede reintentar con: npm run recorridos).');
 }
 console.log('\nListo. Probalo con: npm run serve');

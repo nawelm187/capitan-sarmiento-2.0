@@ -23,6 +23,7 @@ import { initNav } from './nav.js';
 import { initLife } from './life.js';
 import { initMascotas } from './mascotas.js';
 import { initUI } from './ui.js';
+import { loadIconFont } from './icons.js';
 import { initAtmosphere } from './atmosphere.js';
 
 const $ = (id) => document.getElementById(id);
@@ -130,6 +131,7 @@ async function main() {
     optional(getJSON('data/mascots.json', v), { items: [] }),
   ]);
 
+  loadIconFont(places); // íconos de Google (tipografía chica); mientras tanto se ven los de respaldo
   await stage(40);
 
   // ---------- Renderer (con salida de emergencia sin WebGL) ----------
