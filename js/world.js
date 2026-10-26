@@ -5,15 +5,27 @@ import { toLocal } from './geo.js';
 import { hash2 } from './util.js';
 import { HEIGHT_FACTOR } from './config.js';
 import { ChunkedBuildings } from './buildings.js';
+import { roadWidth, makeGrid, findMedians } from './roads.js';
+import { buildRoadMeshes } from './road-mesh.js';
 
 const WALLS = [0xe9dcc4, 0xdccaa6, 0xd3dae0, 0xe6c8bc, 0xcdd6bd, 0xe2d2b0].map((c) => new THREE.Color(c));
 const ROOFS = [0xb5523b, 0x9c4a3a, 0x8a8f94, 0xa65f45, 0x6f7479].map((c) => new THREE.Color(c));
 
-// Ancho de calle en metros según el tipo de OSM.
-const ROAD_W = {
-  motorway: 24, trunk: 22, primary: 16, secondary: 14, tertiary: 12, unclassified: 10,
-  residential: 10, living_street: 8, service: 6, track: 5, path: 2.5, footway: 2.5, pedestrian: 6,
+// Edificios especiales: se resaltan los edificios REALES (misma forma que en el pueblo) con techo y paredes de color propio.
+const SPECIAL = {
+  escuela: [0xf1e2bd, 0xe8a23a],
+  hospital: [0xffffff, 0xf2f4f5],
+  bomberos: [0xe9d2c8, 0xc9382c],
+  policia: [0xdde3ee, 0x2f55a8],
+  municipalidad: [0xf3ead2, 0x2d80c4],
+  cultura: [0xf0e0d8, 0x8d54b8],
+  museo: [0xf1e6c8, 0xc98712],
+  biblioteca: [0xe4eadb, 0x3f8f67],
+  iglesia: [0xefe6d0, 0xd9cfae],
+  estacion: [0xe7dac2, 0x8a6a4a],
+  edificio: [0xeee3dc, 0xb07ad0],
 };
+const SPECIAL_COLORS = Object.fromEntries(Object.entries(SPECIAL).map(([k, [w, r]]) => [k, [[new THREE.Color(w)], [new THREE.Color(r)]]]));
 
 function ringToLocal(ring) {
   return ring.map(([lng, lat]) => toLocal(lng, lat));
@@ -70,7 +82,7 @@ const nextFrame = () =>
     });
   });
 
-export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress = () => {} } = {}) {
+export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress = () => {}, skipRects = [] } = {}) {
   const half = meta.osm?.halfSizeMeters ?? 2000;
   const EXT = half * 2;
   const SIZE = lowEnd ? 2048 : 4096;
@@ -88,7 +100,7 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
     const g = f.geometry;
     if (kind === 'building') buildingFeatures.push(f);
     else if (kind === 'road' && g.type === 'LineString') {
-      roads.push({ hw: f.properties.hw, pts: g.coordinates.map(([lng, lat]) => toLocal(lng, lat)) });
+      roads.push({ hw: f.properties.hw, name: f.properties.name || null, pts: g.coordinates.map(([lng, lat]) => toLocal(lng, lat)) });
     } else if (kind === 'rail' && g.type === 'LineString') {
       rails.push({ pts: g.coordinates.map(([lng, lat]) => toLocal(lng, lat)) });
     } else if (kind === 'green' && (g.type === 'Polygon' || g.type === 'MultiPolygon')) {
@@ -102,6 +114,34 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
     }
   }
 
+  // Los edificios que están bajo un edificio especial (iglesia, museo…) se sacan: lo reemplaza el modelo propio.
+  if (skipRects.length) {
+    const inside = (x, z) =>
+      skipRects.some((r) => {
+        const dx = x - r.x;
+        const dz = z - r.z;
+        const c = Math.cos(r.rot);
+        const sn = Math.sin(r.rot);
+        // rotation.y = rot  →  eje local x = (cos, -sin)
+        const lx = dx * c - dz * sn;
+        const lz = dx * sn + dz * c;
+        return Math.abs(lx) <= r.w / 2 + 1.5 && Math.abs(lz) <= r.d / 2 + 1.5;
+      });
+    for (let i = buildingFeatures.length - 1; i >= 0; i--) {
+      const g = buildingFeatures[i].geometry;
+      const ring = g.type === 'Polygon' ? g.coordinates[0] : g.type === 'MultiPolygon' ? g.coordinates[0]?.[0] : null;
+      if (!ring || ring.length < 3) continue;
+      let cx = 0;
+      let cz = 0;
+      for (const [lng, lat] of ring) {
+        const p = toLocal(lng, lat);
+        cx += p.x;
+        cz += p.z;
+      }
+      if (inside(cx / ring.length, cz / ring.length)) buildingFeatures.splice(i, 1);
+    }
+  }
+
   // ---- Edificios ----
   // Se agrupan en celdas de 400 m (un mesh por celda): la cámara y las sombras descartan lo que no se ve.
   // Se arman en tandas chicas para que la pantalla de carga siga animada.
@@ -109,6 +149,7 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
   const buildings = new THREE.Group();
   buildings.name = 'buildings';
   let chunksOk = false;
+  let buildingCenters = new Float32Array(0);
   if (buildingFeatures.length) {
     try {
       const chunked = new ChunkedBuildings({ half, factor: HEIGHT_FACTOR, triangulate: (c, h) => THREE.ShapeUtils.triangulateShape(c, h) });
@@ -119,7 +160,8 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
         const polys = g.type === 'Polygon' ? [g.coordinates] : g.type === 'MultiPolygon' ? g.coordinates : [];
         for (const rings of polys) {
           try {
-            chunked.add(rings.map(ringToLocal), Number(f.properties.h), WALLS, ROOFS, hash2);
+            const sp = SPECIAL_COLORS[f.properties.special];
+            chunked.add(rings.map(ringToLocal), Number(f.properties.h), sp ? sp[0] : WALLS, sp ? sp[1] : ROOFS, hash2);
           } catch {
             /* un edificio con geometría rara no debe frenar el resto */
           }
@@ -144,6 +186,7 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
         buildings.add(mesh);
       }
       chunksOk = buildings.children.length > 0;
+      buildingCenters = Float32Array.from(chunked.centers);
     } catch (e) {
       console.warn('Edificios: método rápido falló, uso el método clásico.', e);
       for (const m of buildings.children) m.geometry.dispose();
@@ -163,6 +206,10 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
     scene.add(buildings);
   }
   onProgress(1);
+
+  // ---- Calles: cruces y avenidas con cantero ----
+  const roadGrid = makeGrid(roads);
+  const medians = findMedians(roads, roadGrid);
 
   // ---- Suelo ----
   const cv = document.createElement('canvas');
@@ -200,8 +247,8 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
   waterLines.forEach((w) => strokeLine(w.pts, '#5f93b4', 5));
-  roads.forEach((r) => strokeLine(r.pts, '#a39d90', (ROAD_W[r.hw] || 8) + 1.6)); // borde
-  roads.forEach((r) => strokeLine(r.pts, '#d9d4c8', ROAD_W[r.hw] || 8)); // calzada
+  roads.forEach((r) => strokeLine(r.pts, '#cbc7bd', roadWidth(r) + 4.6)); // vereda
+  roads.forEach((r) => strokeLine(r.pts, '#b0ada5', roadWidth(r))); // calzada (cemento)
   rails.forEach((r) => {
     strokeLine(r.pts, '#6b655c', 3.2);
     ctx.setLineDash([2.5 * m2px, 3 * m2px]);
@@ -222,5 +269,16 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
   ground.name = 'ground';
   scene.add(ground);
 
-  return { EXT, half, roads, rails, greens, waters, ground, buildings };
+  const world = { EXT, half, roads, rails, greens, waters, ground, buildings, buildingCenters, medians, roadGrid };
+  try {
+    const rm = buildRoadMeshes(scene, world, { lowEnd });
+    world.medianTrees = rm.treeSpots;
+    world.statues = rm.statueSpots;
+    world.roadMaterial = rm.roadMaterial;
+  } catch (e) {
+    console.warn('No se pudieron armar las calles 3D (se ve el suelo dibujado):', e);
+    world.medianTrees = [];
+    world.statues = [];
+  }
+  return world;
 }

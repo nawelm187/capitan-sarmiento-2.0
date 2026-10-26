@@ -20,7 +20,7 @@ const node = (...a) => execFileSync(process.execPath, a, { cwd: rootPath, stdio:
 
 // 1. package.json
 const pkg = JSON.parse(await rd('package.json'));
-pkg.scripts = { ...pkg.scripts, serve: 'node tools/serve.mjs', fill: 'node tools/fill-buildings.mjs', mapa: 'node tools/rebuild-map.mjs', buildings: 'node tools/import-buildings.mjs' };
+pkg.scripts = { ...pkg.scripts, serve: 'node tools/serve.mjs', fill: 'node tools/fill-buildings.mjs', mapa: 'node tools/rebuild-map.mjs', buildings: 'node tools/import-buildings.mjs', lugares: 'node tools/lugares.mjs' };
 await wr('package.json', JSON.stringify(pkg, null, 2) + '\n');
 console.log('✔ package.json: scripts serve (Node), fill y buildings');
 
@@ -100,6 +100,12 @@ if (A === 1 && B >= 1 && metaNow.version !== ver) {
   ].join('\n'));
   await wr('CHANGELOG.md', log);
 } else console.log(`• La versión ya es ${ver}; no se cambió.`);
+
+// 5. Lugares y edificios especiales: si todavía no hay ninguno, avisa cómo cargarlos
+try {
+  const pl = JSON.parse(await rd('data/places.json'));
+  if (!pl.length || pl.every((p) => p.demo)) console.log('\n⚠ data/places.json está vacío: por eso no aparecían los puntos de interés.\n  Corré:  npm run lugares   (baja los de OpenStreetMap y arma los edificios especiales)');
+} catch { /* sin data/: lo resuelve npm run mapa */ }
 
 console.log('\nListo. Revisá con: npm run check   y   npm run serve');
 console.log('Después subí todo a GitHub (git add . / git commit -m "actualización" / git push).');

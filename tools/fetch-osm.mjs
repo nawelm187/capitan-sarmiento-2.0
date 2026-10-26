@@ -224,6 +224,7 @@ if (meta.dataSource === 'demo' && !args['keep-demo']) {
   console.log('Se borró el contenido de ejemplo (sus coordenadas no coinciden con el pueblo real).');
 }
 meta.dataSource = 'osm';
+meta.dataRev = Date.now().toString(36); // cambia la clave de caché de los datos: el navegador baja los nuevos
 meta.osmFetchedAt = new Date().toISOString().slice(0, 10);
 await writeFile(metaUrl, JSON.stringify(meta, null, 2) + '\n');
 console.log('Listo. Probalo con: npm run serve');

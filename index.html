@@ -5,7 +5,7 @@
 <title>Guía Sarmiento</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Maqueta 3D interactiva de Capitán Sarmiento: dónde comer, dónde dormir, qué ver y recorridos a pie o en auto.">
-<meta name="theme-color" content="#10151c">
+<meta name="theme-color" content="#0f1d33">
 <meta name="color-scheme" content="dark">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -39,7 +39,7 @@
     var meta = get('data/meta.json');
     var e = { 'data/meta.json': meta };
     ['sarmiento-osm.geojson', 'places.json', 'tours.json', 'guides.json', 'landmarks.json', 'casonas.json', 'mascots.json'].forEach(function (f) {
-      e['data/' + f] = meta.then(function (m) { return get('data/' + f, m.version); });
+      e['data/' + f] = meta.then(function (m) { return get('data/' + f, m.version + (m.dataRev ? '.' + m.dataRev : '')); });
     });
     Object.keys(e).forEach(function (k) { e[k].catch(function () {}); });
     window.__early = e;
@@ -83,6 +83,10 @@
 <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/renderers/CSS2DRenderer.js" crossorigin>
 <link rel="modulepreload" href="js/bus.js">
 <link rel="modulepreload" href="js/buildings.js">
+<link rel="modulepreload" href="js/atmosphere.js">
+<link rel="modulepreload" href="js/sky-model.js">
+<link rel="modulepreload" href="js/sun.js">
+<link rel="modulepreload" href="js/weather.js">
 <link rel="modulepreload" href="js/casas-destacadas.js">
 <link rel="modulepreload" href="js/config.js">
 <link rel="modulepreload" href="js/geo.js">
@@ -90,6 +94,8 @@
 <link rel="modulepreload" href="js/labels.js">
 <link rel="modulepreload" href="js/landmarks.js">
 <link rel="modulepreload" href="js/life.js">
+<link rel="modulepreload" href="js/roads.js">
+<link rel="modulepreload" href="js/road-mesh.js">
 <link rel="modulepreload" href="js/mascotas.js">
 <link rel="modulepreload" href="js/nav.js">
 <link rel="modulepreload" href="js/route.js">

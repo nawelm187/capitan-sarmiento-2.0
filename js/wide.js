@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { mulberry32 } from './util.js';
 import { mat } from './scene-utils.js';
+import { onPavement, roadWidth, CAR_HW } from './roads.js';
 
 function pointInPoly(x, z, pts) {
   let inside = false;
@@ -92,11 +93,16 @@ export async function buildWide(scene, world, meta, { lowEnd = false } = {}) {
       for (let d = 12; d < len; d += 22 + rand() * 10) {
         if (rand() < 0.5) continue;
         const side = rand() < 0.5 ? -1 : 1;
-        const off = 6.2 * side;
-        spots.push([a.x + ((b.x - a.x) * d) / len + nx * off, a.z + ((b.z - a.z) * d) / len + nz * off, 0.6 + rand() * 0.4]);
+        const off = ((CAR_HW.has(r.hw) ? roadWidth(r) / 2 : 3) + 2.3) * side; // sobre la vereda
+        const tx = a.x + ((b.x - a.x) * d) / len + nx * off;
+        const tz = a.z + ((b.z - a.z) * d) / len + nz * off;
+        if (world.roadGrid && onPavement(world.roadGrid, world.roads, tx, tz, 0.6)) continue; // nunca en medio de una calle
+        spots.push([tx, tz, 0.6 + rand() * 0.4]);
       }
     }
   }
+  // 2b) cánteros de las avenidas
+  for (const t of world.medianTrees || []) spots.push(t);
   // 3) montes y cortinas en el campo
   const nField = lowEnd ? 120 : 320;
   for (let i = 0; i < nField; i++) {

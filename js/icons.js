@@ -16,10 +16,10 @@ export const ICONS = {
 };
 
 export const CATS = [
-  { id: 'comer', label: 'Comer', color: '#e8795a' },
-  { id: 'dormir', label: 'Dormir', color: '#6aa7e8' },
-  { id: 'ver', label: 'Qué ver', color: '#e0a53a' },
-  { id: 'servicios', label: 'Servicios', color: '#7ccfa0' },
+  { id: 'comer', label: 'Comer', color: '#bf4a2a', ink: '#fff' },
+  { id: 'dormir', label: 'Dormir', color: '#2d6a9f', ink: '#fff' },
+  { id: 'ver', label: 'Qué ver', color: '#c98712', ink: '#fff' },
+  { id: 'servicios', label: 'Servicios', color: '#4e7f3a', ink: '#fff' },
 ];
 
 export const catInfo = (id) => CATS.find((c) => c.id === id) || CATS[2];

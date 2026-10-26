@@ -1,7 +1,7 @@
 // Service worker: la guía carga más rápido en las visitas siguientes y queda disponible sin conexión.
 // `VERSION` lo actualiza `npm run bump` (tools/bump-version.mjs); no lo cambies a mano.
 // IMPORTANTE: cada vez que cambies archivos de data/ o del código, corré `npm run bump -- patch`.
-const VERSION = '1.1.4';
+const VERSION = '1.3.6';
 const CORE = `sarmiento-core-${VERSION}`; // código y estáticos de esta versión
 const DATA = `sarmiento-data-${VERSION}`; // data/*.json de esta versión (la URL lleva ?v=VERSION)
 const RUNTIME = 'sarmiento-runtime-v1'; // three.js y tipografías (CDN)
@@ -11,8 +11,8 @@ const CORE_FILES = [
   'index.html',
   'manifest.webmanifest',
   'css/style.css',
-  'js/main.js', 'js/bus.js', 'js/buildings.js', 'js/casas-destacadas.js', 'js/config.js', 'js/geo.js', 'js/icons.js',
-  'js/labels.js', 'js/landmarks.js', 'js/life.js', 'js/mascotas.js', 'js/nav.js', 'js/route.js',
+  'js/main.js', 'js/bus.js', 'js/atmosphere.js', 'js/buildings.js', 'js/sky-model.js', 'js/sun.js', 'js/weather.js', 'js/casas-destacadas.js', 'js/config.js', 'js/geo.js', 'js/icons.js',
+  'js/labels.js', 'js/landmarks.js', 'js/life.js', 'js/mascotas.js', 'js/nav.js', 'js/route.js', 'js/roads.js', 'js/road-mesh.js',
   'js/scene-utils.js', 'js/ui.js', 'js/util.js', 'js/wide.js', 'js/world.js',
   'data/meta.json',
   'icons/icon-192.png', 'icons/icon-512.png', 'img/logo-sarmiento.webp',
@@ -89,6 +89,7 @@ self.addEventListener('fetch', (event) => {
   if (req.method !== 'GET' || req.headers.has('range')) return;
   const url = new URL(req.url);
 
+  if (url.hostname === 'api.open-meteo.com') return; // el clima siempre en vivo, nunca de la caché
   if (url.origin !== self.location.origin) {
     event.respondWith(staleWhileRevalidate(req)); // three.js (CDN) y tipografías
     return;

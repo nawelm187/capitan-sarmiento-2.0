@@ -166,6 +166,7 @@ meta.buildingSources = [source || 'Huellas de edificios importadas (completar fu
 meta.importedBuildings = stat.ok;
 delete meta.approxBuildings;
 await writeFile(geoUrl, JSON.stringify(gj));
+meta.dataRev = Date.now().toString(36); // cambia la clave de caché de los datos: el navegador baja los nuevos
 await writeFile(metaUrl, JSON.stringify(meta, null, 2) + '\n');
 
 console.log(`Edificios importados: ${stat.ok}`);

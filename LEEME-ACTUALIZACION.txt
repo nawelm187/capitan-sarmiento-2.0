@@ -1,9 +1,15 @@
-VERSION COMPLETA 1.1.4
+VERSION COMPLETA 1.3.6  (calles de cemento, tránsito, lugares, edificios especiales, canteros)
 
 1. Copiá TODO el contenido de esta carpeta adentro de tu proyecto, reemplazando archivos.
    NO borres tu carpeta data/ (tiene tu mapa real).
-2. node tools/apply-update.mjs
-   (si dice que tus calles son de ejemplo, corré: npm run mapa -- --center=-34.1728,-59.7886)
+2. En la terminal, dentro de tu proyecto:
+     node tools/apply-update.mjs
+     npm run lugares
+   (npm run lugares baja de OpenStreetMap los puntos de interés y los edificios especiales:
+    iglesias, municipalidad, museo, escuelas, hospital, bomberos, estación...)
 3. npm run serve  ->  http://localhost:8080
-4. Subilo a GitHub (git add . / git commit -m "1.1.4" / git push)
-5. En la PC lenta, si todavía va trabado, probá con ?calidad=baja al final de la dirección.
+4. Subilo a GitHub (git add . / git commit -m "1.3.6" / git push)
+
+Si falta algún lugar o edificio, agregalo a mano (las coordenadas salen de Google Maps con clic derecho):
+   npm run lugares -- --agregar --nombre="Iglesia San José" --tipo=iglesia --lat=-34.17 --lng=-59.78
+Tipos: iglesia, municipalidad, cultura, museo, biblioteca, escuela, hospital, bomberos, policia, estacion, monumento, plaza, edificio

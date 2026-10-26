@@ -32,10 +32,11 @@ export function initUI({ meta, places, tours, guides, nav, labels, controls, has
       <div class="notice"><span><strong>Son sugerencias</strong> · idea personal, sin fines de lucro · <button type="button" data-open="legal">Aviso importante</button></span></div>
     </aside>
     <div class="fab-stack">
+      <button class="fab fab--text fab--weather" id="btn-weather" type="button" aria-label="Clima y hora del día" hidden></button>
       <button class="fab fab--text" id="btn-list" type="button" aria-controls="panel" aria-expanded="true">Mapa</button>
       <button class="fab fab--compass" id="btn-north" type="button" aria-label="Orientar el mapa al norte" title="Norte">
         <span class="compass-n" aria-hidden="true">N</span>
-        <span class="compass-needle" id="needle" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l4 9h-8z" fill="#e0a53a"/><path d="M12 21l-4-9h8z" fill="#8892a0"/></svg></span>
+        <span class="compass-needle" id="needle" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l4 9h-8z" fill="#f0c14b"/><path d="M12 21l-4-9h8z" fill="#9fb0cb"/></svg></span>
       </button>
       <button class="fab" id="btn-help" type="button" aria-label="Ayuda y créditos" aria-haspopup="dialog">?</button>
     </div>
@@ -48,6 +49,7 @@ export function initUI({ meta, places, tours, guides, nav, labels, controls, has
   const btnList = root.querySelector('#btn-list');
   const needle = root.querySelector('#needle');
   const modalRoot = root.querySelector('#modal-root');
+  const btnWeather = root.querySelector('#btn-weather');
 
   if (!hasGL) document.body.classList.add('no-gl');
 
@@ -105,7 +107,7 @@ export function initUI({ meta, places, tours, guides, nav, labels, controls, has
     if (!list.length) return `<p class="empty">Todavía no hay recorridos ${mode === 'walk' ? 'a pie' : 'en auto'}.</p>`;
     return `${demoNote()}<ul class="list">${list
       .map(
-        (t) => `<li><button class="item" type="button" data-tour="${esc(t.id)}" style="--pin:#e0a53a">
+        (t) => `<li><button class="item" type="button" data-tour="${esc(t.id)}" style="--pin:#c98712">
         <span class="item__ico">${ICONS[t.mode] || ICONS.pin}</span>
         <span><span class="item__name">${esc(t.title)}</span><span class="item__sub">${t.stops.length} paradas${t.durationMin ? ` · ${t.durationMin} min` : ''}</span></span>
       </button></li>`,
@@ -287,6 +289,7 @@ export function initUI({ meta, places, tours, guides, nav, labels, controls, has
     <h3>Créditos</h3>
     <ul>
       <li>Mapa: © colaboradores de <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> (licencia ODbL).</li>
+      <li>Clima: datos de <a href="https://open-meteo.com" target="_blank" rel="noopener noreferrer">Open-Meteo.com</a> (CC BY 4.0). Día y noche calculados con la posición real del sol.</li>
       ${meta.approxBuildings ? '<li>Casas de las calles sin datos: generadas por la guía de forma aproximada; no son las construcciones reales.</li>' : ''}
       ${(meta.buildingSources || []).map((t) => `<li>Edificios: ${esc(t)}.</li>`).join('')}
       ${meta.satellite ? '<li>Imagen satelital de los alrededores: <a href="https://s2maps.eu" target="_blank" rel="noopener noreferrer">Sentinel-2 cloudless</a> de EOX IT Services GmbH (contiene datos Copernicus Sentinel modificados; CC BY 4.0).</li>' : ''}
@@ -313,6 +316,30 @@ export function initUI({ meta, places, tours, guides, nav, labels, controls, has
     if (o?.dataset.open === 'legal') openLegal();
   });
   root.querySelector('#btn-help').addEventListener('click', openHelp);
+
+  // ---------- Clima y hora ----------
+  const hhmm = (h) => `${String(Math.floor(h)).padStart(2, '0')}:${String(Math.floor((h % 1) * 60)).padStart(2, '0')}`;
+  function weatherIcon(i) {
+    if (i.storm) return '⛈️';
+    if (i.rain > 0.05) return '🌧️';
+    if (i.snow > 0.05) return '❄️';
+    if (i.fog > 0.4) return '🌫️';
+    if (i.cloud > 0.75) return '☁️';
+    if (i.cloud > 0.35) return i.night ? '☁️' : '⛅';
+    return i.night ? '🌙' : '☀️';
+  }
+  on('weather:update', (i) => {
+    if (!btnWeather) return;
+    const temp = i.temp != null ? `${Math.round(i.temp)}°` : '';
+    const sim = i.simulated ? ` ${hhmm(i.hour)}` : '';
+    btnWeather.hidden = false;
+    btnWeather.textContent = `${weatherIcon(i)}${temp ? ' ' + temp : ''}${sim}`;
+    const desc = `${i.label}${temp ? ', ' + temp.replace('°', ' °C') : ''}`;
+    const tip = `${desc}${i.simulated ? ` · simulando las ${hhmm(i.hour)}` : ''}. Tocá para ver el pueblo en otro momento del día.`;
+    btnWeather.title = tip;
+    btnWeather.setAttribute('aria-label', `Clima: ${tip}`);
+  });
+  btnWeather?.addEventListener('click', () => emit('sky:cycle'));
 
   // ---------- Inicio ----------
   render();

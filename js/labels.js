@@ -19,6 +19,7 @@ export function initLabels(scene, places) {
     el.className = 'pin';
     el.dataset.cat = p.category;
     el.style.setProperty('--pin', info.color);
+    el.style.setProperty('--pin-ink', info.ink || '#fff');
     el.setAttribute('aria-label', `${p.name}, ${info.label}`);
     el.innerHTML = `<span class="pin__dot">${catIcon(p.category)}</span><span class="pin__name">${esc(p.name)}</span>`;
     el.addEventListener('click', (e) => {
@@ -31,7 +32,7 @@ export function initLabels(scene, places) {
     anchor.className = 'pin-anchor';
     anchor.append(el);
     const obj = new CSS2DObject(anchor);
-    const pos = v3(p.lng, p.lat, 16);
+    const pos = v3(p.lng, p.lat, (p.roofH || 0) + 4); // la punta del pin queda sobre el techo (antes flotaba a 16 m y parecía corrido)
     obj.position.copy(pos);
     group.add(obj);
     items.set(p.id, { obj, el, place: p, pos });

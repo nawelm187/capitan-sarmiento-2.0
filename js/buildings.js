@@ -37,6 +37,7 @@ export class ChunkedBuildings {
     this.cell = cell;
     this.chunks = new Map();
     this.count = 0;
+    this.centers = []; // x, z, altura de cada edificio (para las luces de noche)
   }
 
   /**
@@ -109,6 +110,13 @@ export class ChunkedBuildings {
     };
     walls(outer, false);
     for (const r of holes) walls(r, true);
+    let sx = 0;
+    let sz = 0;
+    for (const p of outer) {
+      sx += p.x;
+      sz += p.z;
+    }
+    this.centers.push(sx / outer.length, sz / outer.length, h);
     this.count++;
   }
 

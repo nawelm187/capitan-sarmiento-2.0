@@ -45,7 +45,8 @@ const removed = before - gj.features.length;
 if (args.clear) {
   delete meta.approxBuildings;
   await writeFile(geoUrl, JSON.stringify(gj));
-  await writeFile(metaUrl, JSON.stringify(meta, null, 2) + '\n');
+  meta.dataRev = Date.now().toString(36); // cambia la clave de caché de los datos: el navegador baja los nuevos
+await writeFile(metaUrl, JSON.stringify(meta, null, 2) + '\n');
   console.log(`Se borraron ${removed} casas generadas.`);
   process.exit(0);
 }
@@ -255,6 +256,7 @@ for (const b of generated) {
 }
 meta.approxBuildings = generated.length;
 await writeFile(geoUrl, JSON.stringify(gj));
+meta.dataRev = Date.now().toString(36); // cambia la clave de caché de los datos: el navegador baja los nuevos
 await writeFile(metaUrl, JSON.stringify(meta, null, 2) + '\n');
 
 const xs = generated.map((b) => b.cx);

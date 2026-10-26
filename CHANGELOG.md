@@ -1,5 +1,47 @@
 # Historial de cambios
 
+## 1.3.6 · 2026-10-26
+
+- Edificios especiales que quedaban sobre la calle: si OpenStreetMap pone el punto en la vereda o la calle, ahora se usa el edificio real más cercano (hasta 40 m); si no hay ninguno, queda solo el pin, sin modelo (ya no existe el modelo "Escuela" genérico).
+- Los elementos de OSM sin nombre ya no crean fichas ni modelos repetidos: el edificio se resalta una sola vez. El pin se acomoda sobre el edificio.
+
+## 1.3.5 · 2026-10-26
+
+- Escuelas, hospital, bomberos, policía, municipalidad, museo, biblioteca y casa de la cultura ya no se dibujan con un modelo inventado: se resaltan los edificios REALES del pueblo (mismo contorno) con techo de color propio, y arriba lleva una marca (bandera de color; cruz roja en el hospital). Solo la iglesia chica se reemplaza por el modelo en cruz.
+- Los pines ya no flotan a 16 m: la punta queda sobre el techo del edificio, así no se ven corridos.
+
+## 1.3.4 · 2026-10-26
+
+- Arreglo de edificios especiales (escuelas, hospital…) duplicados o encima de la calle: OpenStreetMap suele marcar el terreno entero, así que ahora `npm run lugares` busca el edificio real que está adentro y usa su tamaño y orientación. Los repetidos (mismo tipo a menos de 30 m) se unen en uno y los modelos tienen un tamaño máximo.
+
+## 1.3.3 · 2026-10-26
+
+- Noches más claras: luz de luna y de cielo más fuertes y más exposición, para que se distingan calles y edificios.
+- Cada farol deja un charco de luz cálida sobre la calle, más fuerte cuando está nublado o llueve (ahí manda el alumbrado y no la luna). Los puntos de luz son más grandes.
+
+## 1.3.2 · 2026-10-25
+
+- Paleta nueva "papel y tinta", sacada del escudo de la ciudad: azul profundo, papel crema, ladrillo de las casas, trigo y verde pampa. El panel de lugares pasa a ser de papel crema con encabezado azul (sin vidrio ni degradados), los botones flotantes son azules, los pines y categorías usan colores sobrios (ladrillo, azul laguna, trigo, verde).
+
+## 1.3.1 · 2026-10-25
+
+- Los datos nuevos (`npm run lugares`, `npm run mapa`) ahora se ven enseguida: antes el navegador podía seguir mostrando la lista de lugares vieja (vacía) guardada en caché.
+- Calles que se cruzan sin parpadeos de textura; luces de calle sobre la vereda.
+
+## 1.3.0 · 2026-10-25
+
+- Calles de cemento con losas y juntas, veredas, línea central (amarilla doble en avenidas, blanca cortada en calles), líneas de borde y sendas peatonales en los cruces. Se ven nítidas de cerca y mojadas cuando llueve.
+- Tránsito: autos, camiones, motos y bicis circulan por las calles por la mano derecha y siguen por la calle que se junta al final del tramo.
+- Avenidas con cantero central: se detectan solas (dos calzadas con el mismo nombre en sentido opuesto) y se dibuja el cantero con cordón, pasto, árboles y estatuas. Los árboles de vereda ya no caen en medio de la calle y las luces de calle quedan sobre la vereda.
+- Edificios especiales con forma propia vista desde arriba: iglesia en cruz con torre, municipalidad con torre de reloj, casa de la cultura con cúpula, museo con columnata, biblioteca, escuela en U, hospital con cruz roja, bomberos, policía, estación y monumentos. Cada uno tiene una base de color y reemplaza al edificio común que estaba ahí.
+- Nuevo `npm run lugares`: baja de OpenStreetMap los lugares (pines) y los edificios especiales y los deja en data/places.json y data/landmarks.json. `npm run lugares -- --agregar ...` suma uno a mano. `npm run mapa` ahora también lo ejecuta.
+
+## 1.2.0 · 2026-10-25
+
+- Ciclo día/noche con la posición real del sol en Capitán Sarmiento: amanecer, atardecer, noche con estrellas, luces de calles y de casas.
+- Clima en vivo (Open-Meteo): nublado, lluvia, tormenta con relámpagos, niebla y nieve; suelo mojado y sombras de nubes. Botón con el clima y la temperatura; al tocarlo se ve el pueblo a otras horas. Pruebas con ?hora= y ?clima=.
+- Calidad liviana por defecto; la alta solo en PC con placa de video potente.
+
 ## 1.1.4 · 2026-10-24
 
 - Logo de carga con otro nombre de archivo (logo-sarmiento.webp) para que ningún navegador muestre la versión vieja con fondo blanco; el service worker ahora descarga sus archivos salteando la caché del navegador.

@@ -232,6 +232,18 @@ Al activarla, el crédito de Sentinel-2 aparece solo en el "Aviso importante" (e
 
 ---
 
+## Clima y ciclo del día (en tiempo real)
+
+La maqueta usa la fecha y hora reales de Capitán Sarmiento: el sol sale y se pone donde corresponde, de noche oscurece, se ven estrellas y se prenden las luces de calles y casas. El clima sale de [Open-Meteo](https://open-meteo.com) (gratis, sin clave): nublado, lluvia, tormenta con relámpagos, niebla, nieve. Se actualiza cada 10 minutos. Si no hay internet, queda cielo despejado (el día y la noche siguen funcionando).
+
+- El botón de arriba a la derecha (☀️ 18°) muestra el clima. **Tocalo** para ver el pueblo al amanecer, al mediodía, al atardecer o de noche.
+- Para probar sin esperar, agregá a la dirección del sitio: `?hora=22` (o `?hora=6:30`) y/o `?clima=lluvia`. Climas: `despejado`, `nublado`, `lluvia`, `lluviafuerte`, `tormenta`, `niebla`, `nieve`. Ejemplo: `.../guia-sarmiento/?hora=23&clima=tormenta`.
+- Los colores e intensidades están en `js/sky-model.js`; las luces de noche, la lluvia y los relámpagos en `js/atmosphere.js`.
+
+## Calidad gráfica
+
+Por defecto la maqueta arranca en modo **liviano**. Usa calidad alta solo en una PC (no celular) con placa de video potente (NVIDIA, AMD dedicada, Apple, Intel Arc). Además baja sola la calidad si va lenta. Para forzar: `?calidad=baja` o `?calidad=alta` al final de la dirección.
+
 ## 6. Versiones
 
 El número de versión vive en `VERSION`, `package.json`, `data/meta.json` y `sw.js`; el **service worker lo usa para renovar la caché** (si no cambia, los visitantes pueden seguir viendo la versión vieja). Para no desincronizarlo:

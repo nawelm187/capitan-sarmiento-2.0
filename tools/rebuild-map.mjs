@@ -16,7 +16,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const run = (...a) => execFileSync(process.execPath, a, { cwd: root, stdio: 'inherit' });
 const extra = process.argv.slice(2);
 
-console.log('1/3  Bajando calles reales de OpenStreetMap…');
+console.log('1/4  Bajando calles reales de OpenStreetMap…');
 try {
   run('tools/fetch-osm.mjs', ...extra);
 } catch {
@@ -26,13 +26,20 @@ try {
 
 const src = 'fuentes/edificios_capitan_sarmiento.geojson';
 if (existsSync(root + src)) {
-  console.log('\n2/3  Sumando los edificios reales…');
+  console.log('\n2/4  Sumando los edificios reales…');
   run('tools/import-buildings.mjs', src, '--source=Overture Maps Foundation (Google Open Buildings)');
 } else {
-  console.log(`\n2/3  No encontré ${src}: el mapa queda con los edificios de OpenStreetMap solamente (npm run fill agrega casas aproximadas).`);
+  console.log(`\n2/4  No encontré ${src}: el mapa queda con los edificios de OpenStreetMap solamente (npm run fill agrega casas aproximadas).`);
 }
 
-console.log('\n3/3  Revisando…');
+console.log('\n3/4  Bajando lugares y edificios especiales (iglesias, museo, municipalidad…)…');
+try {
+  run('tools/lugares.mjs');
+} catch {
+  console.warn('No se pudieron bajar los lugares (se puede reintentar con: npm run lugares).');
+}
+
+console.log('\n4/4  Revisando…');
 try {
   run('tools/check.mjs');
 } catch {

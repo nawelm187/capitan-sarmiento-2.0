@@ -10,8 +10,8 @@ import { HorizontalTiltShiftShader } from 'three/addons/shaders/HorizontalTiltSh
 import { VerticalTiltShiftShader } from 'three/addons/shaders/VerticalTiltShiftShader.js';
 import { CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js';
 
-import { setCenter, toLngLat } from './geo.js';
-import { emit } from './bus.js';
+import { setCenter, toLngLat, toLocal } from './geo.js';
+import { emit, on } from './bus.js';
 import { COLORS, LOW_END, QUALITY } from './config.js';
 import { clamp } from './util.js';
 import { buildWorld } from './world.js';
@@ -23,6 +23,7 @@ import { initNav } from './nav.js';
 import { initLife } from './life.js';
 import { initMascotas } from './mascotas.js';
 import { initUI } from './ui.js';
+import { initAtmosphere } from './atmosphere.js';
 
 const $ = (id) => document.getElementById(id);
 const splash = $('splash');
@@ -112,7 +113,7 @@ const stubLabels = { setFilter() {}, highlight() {}, update() {} };
 
 async function main() {
   const meta = await getJSON('data/meta.json');
-  const v = meta.version;
+  const v = meta.version + (meta.dataRev ? '.' + meta.dataRev : '');
   setCenter(meta.center);
   const titleEl = $('splash-title') || splash.querySelector('.splash__title');
   if (titleEl) titleEl.textContent = `${meta.title?.[0] ?? meta.town} ${meta.title?.[1] ?? ''}`.trim();
@@ -186,9 +187,9 @@ async function main() {
   addEventListener('blur', () => setAlt(false));
 
   // ---------- Luces ----------
-  scene.add(new THREE.HemisphereLight(0xcfdcff, 0x3a3326, 1.0));
+  const hemi = new THREE.HemisphereLight(0xcfdcff, 0x3a3326, 1.0);
+  scene.add(hemi);
   const sun = new THREE.DirectionalLight(0xffe5b8, 2.3);
-  const SUN_OFFSET = new THREE.Vector3(-420, 620, 260);
   sun.castShadow = true;
   const sm = LOW_END ? 1024 : 2048;
   sun.shadow.mapSize.set(sm, sm);
@@ -229,7 +230,10 @@ async function main() {
 
   // ---------- Mundo ----------
   await stage(48, 'Armando la maqueta del pueblo…');
-  const world = await buildWorld(scene, gj, meta, { lowEnd: LOW_END, onProgress: (f) => setProgress(48 + 14 * f) });
+  const skipRects = (landmarks.items || [])
+    .filter((it) => it.w && it.d && it.w <= 70 && it.d <= 50 && it.replaceBuilding !== false)
+    .map((it) => ({ ...toLocal(it.lng, it.lat), w: it.w, d: it.d, rot: ((it.rotY || 0) * Math.PI) / 180 }));
+  const world = await buildWorld(scene, gj, meta, { lowEnd: LOW_END, skipRects, onProgress: (f) => setProgress(48 + 14 * f) });
   await stage(62);
   await buildWide(scene, world, meta, { lowEnd: LOW_END });
   await stage(76);
@@ -237,10 +241,13 @@ async function main() {
   const mascotas = await initMascotas(scene, mascots);
   await stage(86);
   const life = initLife(scene, world, { lowEnd: LOW_END });
+  const atm = initAtmosphere({ scene, renderer, sun, hemi, world, meta, lowEnd: LOW_END });
+  on('sky:cycle', () => atm.cycleTime());
 
   const labels = initLabels(scene, places);
   const nav = initNav(scene, camera, controls, places, tours);
   const ui = initUI({ meta, places, tours, guides, nav, labels, controls, hasGL: true });
+  atm.onInfo((i) => emit('weather:update', i));
   setProgress(95);
 
   // Doble toque / doble clic para acercar al punto tocado
@@ -276,8 +283,8 @@ async function main() {
   const steps = [
     () => { hTilt.enabled = false; vTilt.enabled = false; },
     () => setPixelRatio(Math.min(pixelRatio, 1)),
-    () => { if (bloom) bloom.enabled = false; },
-    () => { sun.castShadow = false; document.documentElement.classList.add('lowfx'); },
+    () => { if (bloom) bloom.enabled = false; atm.lite = true; },
+    () => { sun.userData.noShadow = true; sun.castShadow = false; document.documentElement.classList.add('lowfx'); },
     () => setPixelRatio(0.75),
     () => setPixelRatio(0.6),
   ];
@@ -334,7 +341,8 @@ async function main() {
     camera.position.add(prev.subVectors(controls.target, prev));
 
     sun.target.position.copy(controls.target);
-    sun.position.copy(controls.target).add(SUN_OFFSET);
+    sun.position.copy(controls.target).add(atm.sunOffset);
+    atm.update(dt, camera, controls.target);
     labels.update(camera);
     ui.update();
 
