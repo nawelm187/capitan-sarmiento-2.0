@@ -1,3 +1,258 @@
 {
-  "items": []
+  "items": [
+    {
+      "id": "osm-n3457369632",
+      "name": "Iglesia San carlos Borromeo",
+      "kind": "iglesia",
+      "lat": -34.176104,
+      "lng": -59.792977,
+      "rotY": -19.3,
+      "w": 45,
+      "d": 13
+    },
+    {
+      "id": "osm-n4213289215",
+      "name": "Parroquia Nuestra Señora de Pilar",
+      "kind": "iglesia",
+      "lat": -34.171764,
+      "lng": -59.792596,
+      "rotY": 71.7,
+      "w": 34,
+      "d": 22
+    },
+    {
+      "id": "osm-n2520503489",
+      "name": "Estación Policía Comunal Capitán Sarmiento",
+      "kind": "policia",
+      "lat": -34.171567,
+      "lng": -59.794565,
+      "rotY": -18.5,
+      "mode": "resaltar",
+      "roofH": 5
+    },
+    {
+      "id": "osm-n3452443048",
+      "name": "Escuela Normal Superior Domingo Fidel Sarmiento",
+      "kind": "escuela",
+      "lat": -34.177301,
+      "lng": -59.7908,
+      "rotY": 71.4,
+      "mode": "resaltar",
+      "roofH": 8
+    },
+    {
+      "id": "osm-n3457372846",
+      "name": "Cine Italo-Argentino",
+      "kind": "cultura",
+      "lat": -34.176684,
+      "lng": -59.792732,
+      "rotY": 71,
+      "mode": "resaltar",
+      "roofH": 7
+    },
+    {
+      "id": "osm-n3836695357",
+      "name": "Escuela Primaria N° 1 Domingo Faustino Sarmiento",
+      "kind": "escuela",
+      "lat": -34.177534,
+      "lng": -59.790033,
+      "rotY": 71,
+      "mode": "resaltar",
+      "roofH": 6
+    },
+    {
+      "id": "osm-n4213265403",
+      "name": "Centro de Educación de Adultos 701",
+      "kind": "escuela",
+      "lat": -34.170289,
+      "lng": -59.785721,
+      "rotY": 70.9,
+      "mode": "resaltar",
+      "roofH": 8
+    },
+    {
+      "id": "osm-n4213265404",
+      "name": "Escuela De Educación Secundaria Técnica 1 Segundo Agustín Luna",
+      "kind": "escuela",
+      "lat": -34.17433,
+      "lng": -59.791477,
+      "rotY": -19.3,
+      "mode": "resaltar",
+      "roofH": 10
+    },
+    {
+      "id": "osm-n4213266589",
+      "name": "Escuela de Educación Secundaria 3",
+      "kind": "escuela",
+      "lat": -34.172365,
+      "lng": -59.7971,
+      "rotY": 72.1,
+      "mode": "resaltar",
+      "roofH": 7
+    },
+    {
+      "id": "osm-n4213267896",
+      "name": "Bomberos Voluntarios de Capitan Sarmiento",
+      "kind": "bomberos",
+      "lat": -34.172164,
+      "lng": -59.795466,
+      "rotY": -18.5,
+      "mode": "resaltar",
+      "roofH": 9
+    },
+    {
+      "id": "osm-n4213290589",
+      "name": "Hospital Municipal \"San Carlos\"",
+      "kind": "hospital",
+      "lat": -34.179468,
+      "lng": -59.799654,
+      "rotY": 31.4,
+      "mode": "resaltar",
+      "roofH": 6
+    },
+    {
+      "id": "osm-n5049882620",
+      "name": "Escuela Primaria 9 Malvinas Argentinas",
+      "kind": "escuela",
+      "lat": -34.162059,
+      "lng": -59.780195,
+      "rotY": 69.3,
+      "mode": "resaltar",
+      "roofH": 6
+    },
+    {
+      "id": "osm-n5757101829",
+      "name": "Escuela De Educación Secundaria Nº1 Dr. Mateo V.Jelicich",
+      "kind": "escuela",
+      "lat": -34.171561,
+      "lng": -59.785841,
+      "rotY": 71.3,
+      "mode": "resaltar",
+      "roofH": 11
+    },
+    {
+      "id": "osm-n5757465695",
+      "name": "Jardín De Infantes Nº906",
+      "kind": "escuela",
+      "lat": -34.177394,
+      "lng": -59.790327,
+      "rotY": 71.2,
+      "mode": "resaltar",
+      "roofH": 13
+    },
+    {
+      "id": "osm-n5757465696",
+      "name": "Jardín De Infantes Nº 903 Martha Salotti",
+      "kind": "escuela",
+      "lat": -34.168068,
+      "lng": -59.79687,
+      "rotY": 71.7,
+      "mode": "resaltar",
+      "roofH": 8
+    },
+    {
+      "id": "osm-n5757465697",
+      "name": "Escuela De Educación Primaria Nº 4 Juan Bautista Alberdi",
+      "kind": "escuela",
+      "lat": -34.17054,
+      "lng": -59.785851,
+      "rotY": 71.1,
+      "mode": "resaltar",
+      "roofH": 7
+    },
+    {
+      "id": "osm-n5757465698",
+      "name": "Escuela De Educación Primaria Nº5 Bernardino Rivadavia",
+      "kind": "escuela",
+      "lat": -34.173195,
+      "lng": -59.795315,
+      "rotY": 71.6,
+      "mode": "resaltar",
+      "roofH": 7
+    },
+    {
+      "id": "osm-n5757465699",
+      "name": "Escuela De Educación Primaria 11 General José De San Martín",
+      "kind": "escuela",
+      "lat": -34.168773,
+      "lng": -59.793056,
+      "rotY": -19.5,
+      "mode": "resaltar",
+      "roofH": 8
+    },
+    {
+      "id": "osm-n8909947001",
+      "name": "Municipalidad de Capitán Sarmiento",
+      "kind": "municipalidad",
+      "lat": -34.17203,
+      "lng": -59.793148,
+      "rotY": -16.6,
+      "mode": "resaltar",
+      "roofH": 6
+    },
+    {
+      "id": "osm-n14030279984",
+      "name": "Jardín de Infantes 901 Martín Miguel De Güemes",
+      "kind": "escuela",
+      "lat": -34.178121,
+      "lng": -59.798737,
+      "rotY": -55.8,
+      "mode": "resaltar",
+      "roofH": 6
+    },
+    {
+      "id": "osm-n14030290431",
+      "name": "Sarmiento Salud",
+      "kind": "hospital",
+      "lat": -34.178874,
+      "lng": -59.799043,
+      "rotY": -57.4,
+      "mode": "resaltar",
+      "roofH": 10
+    },
+    {
+      "id": "osm-n14030290444",
+      "name": "Museo de la Recreación Histórica",
+      "kind": "museo",
+      "lat": -34.178205,
+      "lng": -59.792545,
+      "rotY": -58.4,
+      "mode": "resaltar",
+      "roofH": 6
+    },
+    {
+      "id": "osm-w238110368",
+      "name": "Plaza San Martín",
+      "kind": "plaza",
+      "lat": -34.171238,
+      "lng": -59.793616,
+      "rotY": 0
+    },
+    {
+      "id": "osm-w238116755",
+      "name": "Plaza San Carlos",
+      "kind": "plaza",
+      "lat": -34.177797,
+      "lng": -59.797877,
+      "rotY": 0
+    },
+    {
+      "id": "osm-n6546231587",
+      "name": "Silos",
+      "kind": "silo",
+      "lat": -34.175667,
+      "lng": -59.791554,
+      "rotY": 0
+    },
+    {
+      "id": "osm-w697036033",
+      "name": "Estación de tren",
+      "kind": "estacion",
+      "lat": -34.175564,
+      "lng": -59.793236,
+      "rotY": 69.2,
+      "mode": "resaltar",
+      "roofH": 6
+    }
+  ]
 }
