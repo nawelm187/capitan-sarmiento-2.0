@@ -38,13 +38,20 @@ export function initLabels(scene, places) {
     items.set(p.id, { obj, el, place: p, pos });
   }
 
+  // Con muchos lugares, de lejos se muestran solo los importantes (así se entiende el mapa y el navegador trabaja menos).
+  const IMPORTANT = new Set(['iglesia', 'municipalidad', 'museo', 'cultura', 'biblioteca', 'escuela', 'hospital', 'bomberos', 'policia', 'estacion', 'plaza', 'monumento', 'hotel', 'hospedaje', 'camping', 'club', 'turismo', 'mirador', 'atractivo', 'tanque', 'silo', 'terminal', 'farmacia', 'combustible', 'banco']);
+  const important = (p) => !p.icon || IMPORTANT.has(p.icon) || Boolean(p.roofH);
   let filter = null;
   let activeId = null;
+  let level = 0; // 0 cerca (todo con nombre) · 1 media (solo punto) · 2 lejos (solo importantes)
   const apply = () => {
-    items.forEach(({ obj, place }) => {
-      obj.visible = !filter || place.category === filter;
+    items.forEach(({ obj, el, place }, id) => {
+      const on = id === activeId;
+      obj.visible = (!filter || place.category === filter) && (level < 2 || on || important(place) || Boolean(filter));
+      el.classList.toggle('is-far', level >= 1 && !on);
     });
   };
+  apply();
 
   return {
     setFilter(cat) {
@@ -54,11 +61,15 @@ export function initLabels(scene, places) {
     highlight(id) {
       activeId = id;
       items.forEach(({ el }, k) => el.classList.toggle('is-on', k === id));
+      apply();
     },
-    /** Oculta los nombres cuando la cámara está lejos (queda solo el punto). */
+    /** Según la distancia de la cámara: nombres (cerca), solo puntos (medio) o solo lugares importantes (lejos). */
     update(camera) {
-      const far = camera.position.length() > 700;
-      items.forEach(({ el }, id) => el.classList.toggle('is-far', far && id !== activeId));
+      const d = camera.position.length();
+      const lv = d > 1100 ? 2 : d > 600 ? 1 : 0;
+      if (lv === level) return; // casi todos los cuadros no hay nada que hacer
+      level = lv;
+      apply();
     },
   };
 }

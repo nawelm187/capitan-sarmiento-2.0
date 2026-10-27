@@ -20,7 +20,7 @@ const node = (...a) => execFileSync(process.execPath, a, { cwd: rootPath, stdio:
 
 // 1. package.json
 const pkg = JSON.parse(await rd('package.json'));
-pkg.scripts = { ...pkg.scripts, serve: 'node tools/serve.mjs', fill: 'node tools/fill-buildings.mjs', mapa: 'node tools/rebuild-map.mjs', buildings: 'node tools/import-buildings.mjs', lugares: 'node tools/lugares.mjs', recorridos: 'node tools/recorridos.mjs', guias: 'node tools/guias.mjs' };
+pkg.scripts = { ...pkg.scripts, serve: 'node tools/serve.mjs', fill: 'node tools/fill-buildings.mjs', mapa: 'node tools/rebuild-map.mjs', buildings: 'node tools/import-buildings.mjs', calles: 'node tools/calles.mjs', lugares: 'node tools/lugares.mjs', recorridos: 'node tools/recorridos.mjs', guias: 'node tools/guias.mjs' };
 await wr('package.json', JSON.stringify(pkg, null, 2) + '\n');
 console.log('✔ package.json: scripts serve (Node), fill y buildings');
 
@@ -50,6 +50,17 @@ else {
   }
 }
 
+// 2b. Versión y fecha de data/meta.json = las del proyecto (las actualizaciones no incluyen tus datos)
+try {
+  const ver = (await rd('VERSION')).trim();
+  const top = /^## (\d+\.\d+\.\d+) · (\d{4}-\d{2}-\d{2})/m.exec(await rd('CHANGELOG.md'));
+  const mm = JSON.parse(await rd('data/meta.json'));
+  mm.version = ver;
+  if (top && top[1] === ver) mm.date = top[2];
+  await wr('data/meta.json', JSON.stringify(mm, null, 2) + '\n');
+  console.log('✔ data/meta.json: versión ' + ver);
+} catch { /* sin meta.json: se ignora */ }
+
 // 3. ¿Las calles son reales o de ejemplo?
 {
   let roads = 0;
@@ -66,8 +77,12 @@ else {
   } catch { /* sin datos: se ignora */ }
   if (roads < 80 && !far) {
     console.warn('\n⚠ Tu data/ tiene las calles de EJEMPLO (solo ' + roads + ' calles en una grilla inventada), no las reales de Sarmiento.');
-    console.warn('  Corré:  npm run mapa -- --center=-34.1728,-59.7886   (baja las calles reales y suma los edificios)');
-    console.warn('  Ojo: los lugares de ejemplo (pines) se borran porque no están en el lugar real.\n');
+    console.log('… bajando las calles reales de OpenStreetMap (hace falta internet)');
+    try {
+      node('tools/calles.mjs'); // también actualiza lugares y recorridos
+    } catch {
+      console.warn('⚠ No se pudieron bajar las calles ahora. Probá más tarde con:  npm run calles   y después:  npm run lugares');
+    }
   }
 }
 
@@ -104,7 +119,15 @@ if (A === 1 && B >= 1 && metaNow.version !== ver) {
 // 5. Lugares y edificios especiales: si todavía no hay ninguno, avisa cómo cargarlos
 try {
   const pl = JSON.parse(await rd('data/places.json'));
-  if (!pl.length || pl.every((p) => p.demo)) console.log('\n⚠ data/places.json está vacío: por eso no aparecían los puntos de interés.\n  Corré:  npm run lugares   (baja los de OpenStreetMap y arma los edificios especiales)');
+  if (!pl.length || pl.every((p) => p.demo) || !pl.some((p) => p.icon)) {
+    console.log('\n… bajando lugares, edificios especiales y recorridos de OpenStreetMap (hace falta internet, tarda un minuto)');
+    try {
+      node('tools/lugares.mjs');
+    } catch {
+      console.log('⚠ No se pudo bajar ahora. Probá más tarde con:  npm run lugares');
+    }
+  }
+  if (false) console.log('\n⚠ data/places.json está vacío: por eso no aparecían los puntos de interés.\n  Corré:  npm run lugares   (baja los de OpenStreetMap y arma los edificios especiales)');
 } catch { /* sin data/: lo resuelve npm run mapa */ }
 
 console.log('\nListo. Revisá con: npm run check   y   npm run serve');

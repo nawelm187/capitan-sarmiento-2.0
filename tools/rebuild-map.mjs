@@ -18,7 +18,7 @@ const extra = process.argv.slice(2);
 
 console.log('1/4  Bajando calles reales de OpenStreetMap…');
 try {
-  run('tools/fetch-osm.mjs', ...extra);
+  run('tools/calles.mjs', '--sin-lugares', ...extra); // calles reales (no necesita npm install)
 } catch {
   console.error('\nNo se pudo bajar el mapa (probablemente un problema de internet o de Overpass). Esperá un minuto y volvé a correr: npm run mapa');
   process.exit(1);

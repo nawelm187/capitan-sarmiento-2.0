@@ -142,6 +142,17 @@ const NAME_RULES = [
   [/panader/i, 'panaderia'],
   [/veterinaria/i, 'veterinaria'],
   [/gomer[ií]a|lubricentro|mec[aá]nic/i, 'taller'],
+  [/\bhotel/i, 'hotel'],
+  [/hostal|hoster[ií]a|posada|caba[ñn]as|alojamiento|residencial|\bapart|\bhostel\b|\bdepartamentos?\b|complejo tur/i, 'hospedaje'],
+  [/camping/i, 'camping'],
+  [/parroquia|capilla|iglesia|catedral/i, 'iglesia'],
+  [/jard[ií]n (de )?infantes/i, 'jardin'],
+  [/escuela|colegio|instituto|centro de educaci[oó]n|universidad/i, 'escuela'],
+  [/^club\b|\bclub (atl|social|de |deportivo)/i, 'club'],
+  [/^banco\b/i, 'banco'],
+  [/supermercado|autoservicio|mayorista/i, 'supermercado'],
+  [/carnicer/i, 'carniceria'],
+  [/hospital|sala de primeros auxilios|centro de salud/i, 'hospital'],
 ];
 
 /** Tipo de lugar según las etiquetas de OpenStreetMap. null = no interesa. */

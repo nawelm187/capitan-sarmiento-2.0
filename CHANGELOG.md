@@ -1,5 +1,38 @@
 # Historial de cambios
 
+## 1.4.7 · 2026-10-27
+
+- **Los zips de actualización ya no incluyen la carpeta `data/`**, para no pisar tus lugares, calles y casas reales con los de ejemplo.
+- `npm run mapa` usa ahora las calles de `calles.mjs` (no necesita `npm install`) y, si los datos eran de ejemplo, descarta las casas y lugares inventados antes de sumar los reales.
+- `apply-update` pone en `data/meta.json` la versión y fecha del proyecto.
+
+## 1.4.6 · 2026-10-27
+
+- `npm run calles` al final actualiza lugares y recorridos.
+- La página, al cargar, detecta si las calles reales están corridas respecto de las casas, prueba corrimientos de hasta 32 m y corre las calles al lugar donde menos casas quedan sobre el asfalto (los pines no se mueven). Lo informa en la consola (F12): «Calles alineadas con las casas».
+- Las casas cuyo centro o esquinas caen sobre la calzada ya no se dibujan.
+- `npm run check` ya no marca error en los edificios especiales (escuela, policía, bomberos…), y `lugares` descarta lugares fuera del mapa.
+
+## 1.4.4 · 2026-10-26
+
+- **Calles reales:** nuevo `npm run calles` (no necesita `npm install`): baja las calles, vías, agua y verdes reales de OpenStreetMap y reemplaza las de ejemplo sin tocar los edificios; avisa qué porcentaje de casas cae encima de una calle y con `--alinear` las corre si están desplazadas. `apply-update` lo corre solo si detecta calles de ejemplo, y la página avisa en pantalla si siguen siendo de ejemplo.
+
+## 1.4.3 · 2026-10-26
+
+- Los pines se vuelven más livianos: de lejos solo se muestran los lugares importantes (hospital, escuelas, iglesia, hoteles, plazas…), a media distancia solo el punto y de cerca el nombre. Ya no se recalcula cada pin en cada cuadro.
+- `npm run guias` ahora exige `--consentimiento` y guarda `consent: true` (antes `npm run check` fallaba con guías cargados por comando).
+- `apply-update` baja los lugares solo si todavía no están (primera vez que actualizás desde una versión vieja).
+- README con los comandos nuevos (`lugares`, `recorridos`, `guias`).
+
+## 1.4.2 · 2026-10-26
+
+- Los recorridos a pie y en auto ahora siguen las calles reales: se busca el camino más corto sobre la red de calles (autos solo por calles para autos; a pie también por peatonales y veredas) en vez de cruzar manzanas, casas y plazas en línea recta.
+
+## 1.4.1 · 2026-10-26
+
+- Hoteles, hosterías, cabañas, camping, parroquias, clubes, escuelas y otros: además de las etiquetas de OpenStreetMap, ahora se reconocen por el nombre ("Hotel …", "Hostería …", "Club …") aunque estén mal etiquetados.
+- `npm run lugares` avisa si una categoría (Dormir, Comer, Compras, Salud) quedó vacía y cómo cargar esos lugares a mano.
+
 ## 1.4.0 · 2026-10-26
 
 - Muchos más lugares: `npm run lugares` ahora baja todos los comercios, servicios y atractivos con nombre de OpenStreetMap (ferreterías, supermercados, ropa, farmacias, bancos, talleres, peluquerías, clubes, etc.). Nuevas categorías: Compras y Salud.

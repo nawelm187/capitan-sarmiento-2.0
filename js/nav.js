@@ -3,12 +3,22 @@ import * as THREE from 'three';
 import { v3 } from './scene-utils.js';
 import { toLocal } from './geo.js';
 import { manhattan, joinPaths } from './route.js';
+import { makeRouter } from './routing.js';
+import { CAR_HW } from './roads.js';
 import { emit } from './bus.js';
 import { COLORS, REDUCED_MOTION } from './config.js';
 
 const ease = (t) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
 
-export function initNav(scene, camera, controls, places, tours) {
+export function initNav(scene, camera, controls, places, tours, world = null) {
+  // Los recorridos siguen las calles: autos por calles para autos; a pie también por veredas y peatonales.
+  const WALK_HW = new Set([...CAR_HW, 'footway', 'path', 'pedestrian', 'track', 'steps', 'cycleway']);
+  const routers = {};
+  const routerFor = (mode) => {
+    if (!world?.roads?.length) return null;
+    const k = mode === 'car' ? 'car' : 'walk';
+    return (routers[k] ||= makeRouter(world.roads, k === 'car' ? CAR_HW : WALK_HW));
+  };
   const byId = new Map(places.map((p) => [p.id, p]));
   let anim = null;
   let tour = null;
@@ -37,7 +47,8 @@ export function initNav(scene, camera, controls, places, tours) {
     } else {
       const stops = t.stops.map((s) => byId.get(s.placeId)).filter(Boolean).map((p) => toLocal(p.lng, p.lat));
       if (stops.length < 2) return;
-      pts = joinPaths(stops.slice(1).map((s, i) => manhattan(stops[i], s)));
+      const router = routerFor(t.mode);
+      pts = joinPaths(stops.slice(1).map((s, i) => (router && router.route(stops[i], s)) || manhattan(stops[i], s)));
     }
     if (pts.length < 2) return;
     const curve = new THREE.CurvePath();

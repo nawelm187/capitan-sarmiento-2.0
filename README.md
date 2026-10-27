@@ -202,11 +202,25 @@ Todo está en `data/`; no hace falta tocar código. Después de editar: `npm run
 
 `mode`: `walk` (pestaña "A pie") o `car` ("En auto"). Cada `placeId` tiene que existir en `places.json`. La ruta amarilla une las paradas en orden siguiendo la grilla; si querés un trayecto exacto, agregá `"path": [[lng, lat], [lng, lat], …]`.
 
+### Comandos para los lugares (nuevos)
+
+```bash
+npm run calles                       # baja las calles reales (reemplaza las de ejemplo, no toca edificios)
+npm run lugares                      # baja comercios y servicios de OpenStreetMap, los pega a su edificio real y arma los recorridos
+npm run lugares -- --reset           # vuelve a empezar la lista de lugares
+npm run lugares -- --agregar=hotel   # suma un tipo concreto (hotel, escuela, farmacia, ferreteria…)
+npm run recorridos                   # regenera los recorridos automáticos (por las calles)
+```
+
+Los nombres y textos que edites a mano en `places.json` se conservan al volver a correr `lugares`.
+
 ### `guides.json` — guías de turismo
 
 ```json
 [{ "name": "Nombre", "contact": "+5492326000000", "languages": ["español", "inglés"], "notes": "", "consent": true }]
 ```
+
+Para agregarlo desde la terminal: `npm run guias -- --nombre="María Gómez" --contacto="+5491123456789" --idiomas=es,en --consentimiento` (sin `--consentimiento` no lo agrega: ese aviso confirma que el guía te autorizó por escrito).
 
 `contact` puede ser un teléfono (abre WhatsApp), un mail o un link. **`"consent": true` solo si el guía te dio su autorización por escrito para publicar sus datos**: el repositorio es público y cualquiera los puede ver. `npm run check` falla si falta. Si tenés dudas sobre datos personales, consultá la Ley 25.326 de Protección de Datos Personales.
 

@@ -236,6 +236,16 @@ async function main() {
     .filter((it) => it.w && it.d && it.w <= 70 && it.d <= 50 && it.replaceBuilding !== false)
     .map((it) => ({ ...toLocal(it.lng, it.lat), w: it.w, d: it.d, rot: ((it.rotY || 0) * Math.PI) / 180 }));
   const world = await buildWorld(scene, gj, meta, { lowEnd: LOW_END, skipRects, onProgress: (f) => setProgress(48 + 14 * f) });
+  if (world.roads.length < 80 && world.buildings.children.length) {
+    // Calles de ejemplo con casas reales: no coinciden. Se avisa en pantalla y en la consola.
+    console.warn('Las calles son de EJEMPLO (' + world.roads.length + '). Corré: npm run calles   y después: npm run lugares');
+    const b = document.createElement('div');
+    b.setAttribute('role', 'alert');
+    b.style.cssText = 'position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:50;max-width:92vw;background:#7a2a1a;color:#fff;padding:10px 14px;border-radius:10px;font:600 14px system-ui,sans-serif;box-shadow:0 4px 16px #0006;text-align:center';
+    b.textContent = 'Las calles son de ejemplo y no coinciden con las casas. En la terminal corré: npm run calles   y después: npm run lugares';
+    b.addEventListener('click', () => b.remove());
+    document.body.appendChild(b);
+  }
   await stage(62);
   await buildWide(scene, world, meta, { lowEnd: LOW_END });
   await stage(76);
@@ -247,7 +257,7 @@ async function main() {
   on('sky:cycle', () => atm.cycleTime());
 
   const labels = initLabels(scene, places);
-  const nav = initNav(scene, camera, controls, places, tours);
+  const nav = initNav(scene, camera, controls, places, tours, world);
   const ui = initUI({ meta, places, tours, guides, nav, labels, controls, hasGL: true });
   atm.onInfo((i) => emit('weather:update', i));
   setProgress(95);

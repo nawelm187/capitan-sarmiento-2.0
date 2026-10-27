@@ -127,6 +127,7 @@ const query = `[out:json][timeout:180];
   nwr["tourism"]["name"](${bbox});
   nwr["leisure"]["name"](${bbox});
   nwr["historic"](${bbox});
+  nwr["name"~"(hotel|hostal|hoster[ií]a|posada|caba[ñn]as|alojamiento|residencial|apart|camping|parroquia|capilla|club |escuela|colegio|jard[ií]n|instituto|ferreter|farmac|supermerc|panader|carnicer|veterinar|gomer|taller|banco|cooperativa|hospital|salita|centro de salud)",i]["highway"!~"."]["boundary"!~"."]["waterway"!~"."](${bbox});
   nwr["amenity"~"^(place_of_worship|school|kindergarten|hospital|clinic|police|fire_station|townhall|library|community_centre)$"](${bbox});
   nwr["building"~"^(church|chapel|cathedral|train_station|civic|government|hospital|school|silo)$"](${bbox});
   nwr["railway"="station"](${bbox});
@@ -250,6 +251,13 @@ for (const e of data.elements) {
   seen.add(id);
   const type = classify(t);
   if (!type) continue; // cosas que no son lugares para visitar (bancos de plaza, estacionamientos…)
+  {
+    const c0 = e.type === 'node' ? { lon: e.lon, lat: e.lat } : e.center;
+    if (c0) {
+      const l0 = toLocal(c0.lon, c0.lat);
+      if (Math.abs(l0.x) > half || Math.abs(l0.z) > half) continue; // fuera del mapa (relaciones enormes: partidos, rutas…)
+    }
+  }
   const kind = LANDMARK_OF[type] || null;
   const buildable = kind && !['plaza', 'tanque', 'silo', 'monumento'].includes(kind);
   let fp = null;
@@ -394,6 +402,10 @@ const byKind = {};
 for (const l of lmOut) byKind[l.kind] = (byKind[l.kind] || 0) + 1;
 console.log(`\n${placesOut.length} lugares en data/places.json  ${JSON.stringify(byCat)}`);
 console.log(`${lmOut.length} edificios especiales en data/landmarks.json  ${JSON.stringify(byKind)}`);
+const sugerido = { comer: 'restaurante', dormir: 'hotel', compras: 'ferreteria', salud: 'farmacia' };
+for (const [c, label] of [['comer', 'Comer'], ['dormir', 'Dormir'], ['compras', 'Compras'], ['salud', 'Salud']]) {
+  if (!byCat[c]) console.log(`⚠ ${label}: OpenStreetMap no tiene ninguno cargado en el pueblo. Agregalos a mano, por ejemplo:\n    npm run lugares -- --agregar --nombre="Nombre del lugar" --tipo=${sugerido[c]} --lat=-34.17 --lng=-59.78`);
+}
 if (placesOut.length < 8) {
   console.log('\nOpenStreetMap tiene pocos lugares cargados en Capitán Sarmiento. Podés sumar los que falten a mano:');
   console.log('  npm run lugares -- --agregar --nombre="Iglesia San José" --tipo=iglesia --lat=-34.17 --lng=-59.78');

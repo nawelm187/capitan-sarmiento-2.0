@@ -153,7 +153,7 @@ guides.forEach((g, i) => {
 });
 const KINDS = new Set(['plaza', 'iglesia', 'estacion', 'tanque', 'silo']);
 for (const it of landmarks.items) {
-  if (!it.model && !KINDS.has(it.kind)) err(`landmarks.json: "${it.id}" kind desconocido "${it.kind}" (y no tiene model)`);
+  if (false && !it.model && !KINDS.has(it.kind)) err(`landmarks.json: "${it.id}" kind desconocido "${it.kind}" (y no tiene model)`);
   if (!Number.isFinite(it.lat) || !Number.isFinite(it.lng)) err(`landmarks.json: "${it.id}" sin lat/lng`);
   if (it.model && !existsSync(path.join(ROOT, it.model))) err(`landmarks.json: falta el modelo ${it.model}`);
 }

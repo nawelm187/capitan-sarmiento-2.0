@@ -1,11 +1,12 @@
 // Agrega un guía de turismo a data/guides.json (pestaña "Guías").
 //
-//   npm run guias -- --nombre="María Gómez" --contacto="+5491123456789" --idiomas=es,en --notas="Recorridos a pie por el centro"
+//   npm run guias -- --nombre="María Gómez" --contacto="+5491123456789" --idiomas=es,en --notas="Recorridos a pie por el centro" --consentimiento
 //   npm run guias -- --lista                (muestra los que hay)
 //   npm run guias -- --quitar="María Gómez"
 //
 // "contacto" puede ser un teléfono (abre WhatsApp), un mail o una página web.
-// Cargá solo guías que dieron su consentimiento para figurar.
+// --consentimiento es obligatorio: confirma que el guía te autorizó POR ESCRITO a publicar sus datos de contacto
+// (el sitio es público; Ley 25.326 de Protección de Datos Personales).
 
 import { readFile, writeFile } from 'node:fs/promises';
 
@@ -32,8 +33,13 @@ if (args.quitar) {
     console.error('Uso: npm run guias -- --nombre="María Gómez" --contacto="+5491123456789" --idiomas=es,en --notas="Recorridos a pie"');
     process.exit(1);
   }
+  if (!args.consentimiento) {
+    console.error('Falta --consentimiento: agregalo SOLO si el guía te autorizó por escrito a publicar su nombre y contacto.');
+    process.exit(1);
+  }
   guides = guides.filter((g) => g.name !== args.nombre);
   guides.push({
+    consent: true,
     name: String(args.nombre),
     contact: String(args.contacto),
     languages: String(args.idiomas || 'es').split(',').map((x) => x.trim()).filter(Boolean),

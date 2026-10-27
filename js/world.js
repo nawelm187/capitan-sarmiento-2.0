@@ -5,7 +5,7 @@ import { toLocal } from './geo.js';
 import { hash2 } from './util.js';
 import { HEIGHT_FACTOR } from './config.js';
 import { ChunkedBuildings } from './buildings.js';
-import { roadWidth, makeGrid, findMedians } from './roads.js';
+import { roadWidth, makeGrid, onPavement, findMedians } from './roads.js';
 import { buildRoadMeshes } from './road-mesh.js';
 
 const WALLS = [0xe9dcc4, 0xdccaa6, 0xd3dae0, 0xe6c8bc, 0xcdd6bd, 0xe2d2b0].map((c) => new THREE.Color(c));
@@ -142,6 +142,68 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
     }
   }
 
+  // Las calles (OpenStreetMap) y las casas (otra fuente) a veces vienen corridas unos metros entre sí.
+  // Se busca el corrimiento que menos casas deja sobre el asfalto y se corren las CALLES (así los pines siguen pegados a sus casas).
+  const ringOf = (f) => {
+    const g = f.geometry;
+    const ring = g.type === 'Polygon' ? g.coordinates[0] : g.type === 'MultiPolygon' ? g.coordinates[0]?.[0] : null;
+    return ring && ring.length >= 3 ? ring.map(([lng, lat]) => toLocal(lng, lat)) : null;
+  };
+  let alignShift = { x: 0, z: 0 };
+  if (roads.length >= 80 && buildingFeatures.length > 200) {
+    const g0 = makeGrid(roads);
+    const step = Math.max(1, Math.floor(buildingFeatures.length / 500));
+    const cs = []; // casas de muestra: esquinas y centro
+    for (let i = 0; i < buildingFeatures.length; i += step) {
+      const r = ringOf(buildingFeatures[i]);
+      if (!r) continue;
+      cs.push({ c: [r.reduce((a, p) => a + p.x, 0) / r.length, r.reduce((a, p) => a + p.z, 0) / r.length], v: r.map((p) => [p.x, p.z]) });
+    }
+    // Un corrimiento (dx,dz) de las calles; se mide qué parte de las casas quedarían sobre el asfalto.
+    const score = (dx, dz) => {
+      let n = 0;
+      for (const h of cs) {
+        if (onPavement(g0, roads, h.c[0] - dx, h.c[1] - dz, 0.3) || h.v.some(([x, z]) => onPavement(g0, roads, x - dx, z - dz, -1.2))) n++;
+      }
+      return n / cs.length;
+    };
+    const base = score(0, 0);
+    let best = { dx: 0, dz: 0, s: base };
+    if (base > 0.04) {
+      for (let dx = -32; dx <= 32; dx += 4) for (let dz = -32; dz <= 32; dz += 4) {
+        const s = score(dx, dz);
+        if (s < best.s - 0.002 || (Math.abs(s - best.s) <= 0.002 && Math.hypot(dx, dz) < Math.hypot(best.dx, best.dz))) best = { dx, dz, s };
+      }
+      const c = { ...best };
+      for (let dx = c.dx - 3; dx <= c.dx + 3; dx++) for (let dz = c.dz - 3; dz <= c.dz + 3; dz++) {
+        const s = score(dx, dz);
+        if (s < best.s - 0.002 || (Math.abs(s - best.s) <= 0.002 && Math.hypot(dx, dz) < Math.hypot(best.dx, best.dz))) best = { dx, dz, s };
+      }
+      if (best.s < base * 0.75 && (best.dx || best.dz)) {
+        alignShift = { x: best.dx, z: best.dz }; // las calles se corren a donde "miran" las casas
+        for (const r of [...roads, ...rails, ...waterLines]) for (const p of r.pts) { p.x += best.dx; p.z += best.dz; }
+        console.info(`Calles alineadas con las casas: ${best.dx} m este, ${best.dz} m sur (casas sobre calles: ${(base * 100).toFixed(0)} % → ${(best.s * 100).toFixed(0)} %)`);
+      }
+    }
+  }
+
+  // Una casa nunca está en medio de la calzada: si el contorno cae sobre una calle se saca.
+  const roadGrid = makeGrid(roads);
+  if (roads.length >= 80) {
+    let dropped = 0;
+    for (let i = buildingFeatures.length - 1; i >= 0; i--) {
+      const r = ringOf(buildingFeatures[i]);
+      if (!r) continue;
+      const cx = r.reduce((a, p) => a + p.x, 0) / r.length;
+      const cz = r.reduce((a, p) => a + p.z, 0) / r.length;
+      if (onPavement(roadGrid, roads, cx, cz, 0.3) || r.some((p) => onPavement(roadGrid, roads, p.x, p.z, -1.2))) {
+        buildingFeatures.splice(i, 1);
+        dropped++;
+      }
+    }
+    if (dropped) console.info('Casas sacadas de la calzada:', dropped);
+  }
+
   // ---- Edificios ----
   // Se agrupan en celdas de 400 m (un mesh por celda): la cámara y las sombras descartan lo que no se ve.
   // Se arman en tandas chicas para que la pantalla de carga siga animada.
@@ -208,7 +270,6 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
   onProgress(1);
 
   // ---- Calles: cruces y avenidas con cantero ----
-  const roadGrid = makeGrid(roads);
   const medians = findMedians(roads, roadGrid);
 
   // ---- Suelo ----
@@ -269,7 +330,7 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
   ground.name = 'ground';
   scene.add(ground);
 
-  const world = { EXT, half, roads, rails, greens, waters, ground, buildings, buildingCenters, medians, roadGrid };
+  const world = { EXT, half, roads, rails, greens, waters, ground, buildings, buildingCenters, medians, roadGrid, alignShift };
   try {
     const rm = buildRoadMeshes(scene, world, { lowEnd });
     world.medianTrees = rm.treeSpots;

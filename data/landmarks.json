@@ -98,7 +98,7 @@
       "lng": -59.799654,
       "rotY": 31.4,
       "mode": "resaltar",
-      "roofH": 6
+      "roofH": 10
     },
     {
       "id": "osm-n5049882620",
@@ -108,7 +108,7 @@
       "lng": -59.780195,
       "rotY": 69.3,
       "mode": "resaltar",
-      "roofH": 6
+      "roofH": 10
     },
     {
       "id": "osm-n5757101829",
@@ -188,7 +188,7 @@
       "lng": -59.798737,
       "rotY": -55.8,
       "mode": "resaltar",
-      "roofH": 6
+      "roofH": 8
     },
     {
       "id": "osm-n14030290444",
@@ -232,7 +232,7 @@
       "lng": -59.793236,
       "rotY": 69.2,
       "mode": "resaltar",
-      "roofH": 6
+      "roofH": 8
     }
   ]
 }
