@@ -3,6 +3,7 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { buildPath, sample } from './route.js';
+import { makeRouter } from './routing.js';
 import { CAR_HW, roadWidth } from './roads.js';
 import { mulberry32 } from './util.js';
 import { REDUCED_MOTION } from './config.js';
@@ -10,6 +11,11 @@ import { REDUCED_MOTION } from './config.js';
 export function initLife(scene, world, { lowEnd = false } = {}) {
   const rand = mulberry32(31);
   const parts = [];
+  let setPeds = null; // ajusta cuántos peatones se ven
+  let pedMax = 0;
+  let load = 0; // 0 normal · 1 liviano · 2 mínimo (lo sube main.js si la maqueta va lenta)
+  let capFrac = 1; // fracción de vehículos permitidos
+  let hideAll = null;
 
   // ---- Peatones ----
   const lines = world.roads.filter((r) => r.pts.length > 1 && ['residential', 'primary', 'secondary', 'tertiary', 'pedestrian', 'living_street', 'footway'].includes(r.hw));
@@ -27,8 +33,12 @@ export function initLife(scene, world, { lowEnd = false } = {}) {
     });
     scene.add(mesh);
     const m = new THREE.Matrix4();
+    let active = count;
+    setPeds = (n) => { active = n; mesh.count = n; mesh.instanceMatrix.needsUpdate = true; };
+    pedMax = count;
     const place = () => {
       agents.forEach((a, i) => {
+        if (i >= active) return;
         const s = sample(a.path, a.d);
         m.makeTranslation(s.x - s.tz * a.off, 1.45, s.z + s.tx * a.off);
         mesh.setMatrixAt(i, m);
@@ -37,7 +47,8 @@ export function initLife(scene, world, { lowEnd = false } = {}) {
     };
     place();
     parts.push((dt) => {
-      for (const a of agents) {
+      for (let i = 0; i < active; i++) {
+        const a = agents[i];
         a.d += a.v * a.dir * dt;
         if (a.d > a.path.len) {
           a.d = a.path.len;
@@ -52,31 +63,12 @@ export function initLife(scene, world, { lowEnd = false } = {}) {
   }
 
 
-  // ---- Tránsito: autos, camiones, motos y bicis ----
-  const roadsForCars = world.roads.filter((r) => CAR_HW.has(r.hw) && r.hw !== 'service' && r.pts.length > 1);
-  const paths = roadsForCars.map((r) => ({ r, path: buildPath(r.pts) })).filter((x) => x.path.len > 40);
-  if (paths.length) {
-    // Índice de vértices para pasar de una calle a otra al llegar al final.
-    const vkey = (p) => `${Math.round(p.x)},${Math.round(p.z)}`;
-    const vindex = new Map();
-    paths.forEach((pp, pi) => {
-      pp.path.pts.forEach((p, i) => {
-        const k = vkey(p);
-        if (!vindex.has(k)) vindex.set(k, []);
-        vindex.get(k).push({ pi, i });
-      });
-    });
-    const weights = paths.map((x) => Math.min(x.path.len, 400) * (['primary', 'secondary', 'trunk', 'tertiary'].includes(x.r.hw) ? 2.2 : 1));
-    const wsum = weights.reduce((a, b) => a + b, 0);
-    const pickRoad = () => {
-      let t = rand() * wsum;
-      for (let i = 0; i < weights.length; i++) {
-        t -= weights[i];
-        if (t <= 0) return i;
-      }
-      return weights.length - 1;
-    };
-
+  // ---- Tránsito: aparecen de a poco, hacen un recorrido por las calles y desaparecen ----
+  // Cada vehículo sale de un punto de una calle, busca el camino más corto por las calles hasta otro punto
+  // (el mismo buscador que usan los recorridos, así nunca atraviesa casas) y se esfuma al llegar.
+  const TRAFFIC_HW = new Set([...CAR_HW].filter((h) => h !== 'service'));
+  const trafficRoads = world.roads.filter((r) => TRAFFIC_HW.has(r.hw) && r.pts.length > 1);
+  if (trafficRoads.length > 20) {
     // Modelos chicos con color por vértice (la carrocería se tiñe con el color de cada instancia).
     const part = (g, x, y, z, rgb) => {
       g.translate(x, y, z);
@@ -96,8 +88,7 @@ export function initLife(scene, world, { lowEnd = false } = {}) {
     const sc = (g) => g.scale(SC, SC, SC);
     const models = {
       auto: {
-        n: lowEnd ? 26 : 64,
-        v: [7, 12],
+        max: lowEnd ? 7 : 16, weight: 5, v: [7, 12], lane: 0.25,
         geo: sc(mergeGeometries([
           part(B(4.2, 0.8, 1.8), 0, 0.7, 0, BODY),
           part(B(2.2, 0.7, 1.6), -0.2, 1.4, 0, GLASS),
@@ -108,9 +99,20 @@ export function initLife(scene, world, { lowEnd = false } = {}) {
         colors: [0xd8d8d4, 0x8e949a, 0x1f2a3a, 0xb23a3a, 0x3d6aa8, 0xe0b53a, 0x2f2f33, 0x5a8a62],
         shadow: true,
       },
+      colectivo: {
+        max: lowEnd ? 2 : 4, weight: 1.3, v: [6, 9], lane: 0.25,
+        geo: sc(mergeGeometries([
+          part(B(10, 2.7, 2.5), 0, 1.9, 0, BODY),
+          part(B(9.6, 0.8, 2.56), 0, 2.4, 0, GLASS),
+          part(B(10.05, 0.35, 2.52), 0, 1.0, 0, [0.95, 0.95, 0.95]),
+          part(W(0.5, 2.6), 3.2, 0.5, 0, DARK),
+          part(W(0.5, 2.6), -3.0, 0.5, 0, DARK),
+        ])),
+        colors: [0xc0392b, 0x2a6fb0, 0xe0a020, 0x2f8f5b],
+        shadow: true,
+      },
       camion: {
-        n: lowEnd ? 4 : 9,
-        v: [5, 8],
+        max: lowEnd ? 2 : 4, weight: 1, v: [5, 8], lane: 0.25,
         geo: sc(mergeGeometries([
           part(B(6.4, 2.6, 2.4), -1.2, 2.0, 0, BODY),
           part(B(2.0, 2.1, 2.3), 3.0, 1.5, 0, [0.85, 0.85, 0.85]),
@@ -124,8 +126,7 @@ export function initLife(scene, world, { lowEnd = false } = {}) {
         shadow: true,
       },
       moto: {
-        n: lowEnd ? 10 : 26,
-        v: [6, 10],
+        max: lowEnd ? 4 : 8, weight: 2.2, v: [6, 10], lane: 0.2,
         geo: sc(mergeGeometries([
           part(B(1.8, 0.35, 0.4), 0, 0.75, 0, BODY),
           part(B(0.5, 0.9, 0.45), -0.1, 1.35, 0, [0.15, 0.15, 0.17]),
@@ -137,8 +138,7 @@ export function initLife(scene, world, { lowEnd = false } = {}) {
         shadow: false,
       },
       bici: {
-        n: lowEnd ? 8 : 24,
-        v: [2.6, 4.2],
+        max: lowEnd ? 3 : 7, weight: 1.6, v: [2.6, 4.2], lane: 0.42,
         geo: sc(mergeGeometries([
           part(B(1.5, 0.12, 0.12), 0, 0.85, 0, BODY),
           part(B(0.4, 1.0, 0.3), -0.1, 1.5, 0, [0.9, 0.55, 0.3]),
@@ -150,72 +150,151 @@ export function initLife(scene, world, { lowEnd = false } = {}) {
       },
     };
 
-    const m = new THREE.Matrix4();
-    const turn = (v) => {
-      // Al llegar al final, sigue por otra calle que se junte ahí; si no hay, da la vuelta.
-      const pp = paths[v.pi];
-      const endPt = v.dir > 0 ? pp.path.pts[pp.path.pts.length - 1] : pp.path.pts[0];
-      const opts = (vindex.get(vkey(endPt)) || []).filter((o) => o.pi !== v.pi);
-      if (!opts.length) {
-        v.dir = -v.dir;
-        return;
-      }
-      const o = opts[Math.floor(rand() * opts.length)];
-      const np = paths[o.pi].path;
-      v.pi = o.pi;
-      v.d = np.cum[o.i];
-      if (v.d <= 0.5) v.dir = 1;
-      else if (v.d >= np.len - 0.5) v.dir = -1;
-      else v.dir = rand() < 0.5 ? 1 : -1;
-    };
-
-    for (const [kind, spec] of Object.entries(models)) {
-      const n = spec.n;
-      const mesh = new THREE.InstancedMesh(spec.geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.55, metalness: 0.25 }), n);
+    // Puntos de partida y llegada: vértices de calles (las grandes pesan más).
+    const verts = [];
+    for (const r of trafficRoads) {
+      const w = ['primary', 'secondary', 'trunk', 'tertiary'].includes(r.hw) ? 2 : 1;
+      for (let i = 0; i < r.pts.length; i += 2) for (let k = 0; k < w; k++) verts.push(r.pts[i]);
+    }
+    const hide = new THREE.Matrix4().makeScale(0, 0, 0);
+    const kinds = Object.entries(models).map(([kind, spec]) => {
+      const mesh = new THREE.InstancedMesh(spec.geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.55, metalness: 0.25 }), spec.max);
       mesh.frustumCulled = false;
       mesh.castShadow = spec.shadow && !lowEnd;
       mesh.name = `transito:${kind}`;
       const col = new THREE.Color();
-      const vs = Array.from({ length: n }, (_, i) => {
-        const pi = pickRoad();
+      const slots = Array.from({ length: spec.max }, (_, i) => {
         col.setHex(spec.colors[i % spec.colors.length]);
         mesh.setColorAt(i, col);
-        return { pi, d: rand() * paths[pi].path.len, dir: rand() < 0.5 ? 1 : -1, v: spec.v[0] + rand() * (spec.v[1] - spec.v[0]) };
+        mesh.setMatrixAt(i, hide);
+        return null;
       });
       scene.add(mesh);
-      const place = () => {
-        vs.forEach((v, i) => {
-          const pp = paths[v.pi];
-          const s = sample(pp.path, v.d);
-          const tx = s.tx * v.dir;
-          const tz = s.tz * v.dir;
-          const w = roadWidth(pp.r);
-          const lane = kind === 'bici' ? w / 2 - 1.1 : kind === 'camion' ? w / 4 : w / 4 + (i % 2 ? 0.3 : -0.2);
-          // mano derecha (Argentina)
-          const x = s.x - tz * lane;
-          const z = s.z + tx * lane;
-          m.makeRotationY(Math.atan2(-tz, tx));
-          m.setPosition(x, 0.12, z);
-          mesh.setMatrixAt(i, m);
-        });
-        mesh.instanceMatrix.needsUpdate = true;
-      };
-      place();
-      parts.push((dt) => {
-        for (const v of vs) {
-          const pp = paths[v.pi].path;
-          v.d += v.v * v.dir * dt;
-          if (v.d >= pp.len) {
-            v.d = pp.len;
-            turn(v);
-          } else if (v.d <= 0) {
-            v.d = 0;
-            turn(v);
+      return { kind, spec, mesh, slots, dirty: true, serial: 0 };
+    });
+    const totalW = kinds.reduce((a, k) => a + k.spec.weight, 0);
+
+    let router = null; // se arma recién después de cargar, para no frenar el arranque
+    let clock = 0;
+    let nextSpawn = 2.5;
+    let seedLeft = lowEnd ? 5 : 12; // se siembran de a uno por cuadro: calcular varios caminos juntos trabaría el arranque
+    hideAll = () => {
+      for (const k of kinds) {
+        k.slots.fill(null);
+        k.hidden = [];
+        for (let i = 0; i < k.slots.length; i++) k.mesh.setMatrixAt(i, hide);
+        k.mesh.instanceMatrix.needsUpdate = true;
+      }
+    };
+    const m = new THREE.Matrix4();
+    const q = new THREE.Quaternion();
+    const up = new THREE.Vector3(0, 1, 0);
+    const pos = new THREE.Vector3();
+    const scl = new THREE.Vector3();
+
+    const pickStart = (focus) => {
+      for (let t = 0; t < 40; t++) {
+        const p = verts[Math.floor(rand() * verts.length)];
+        if (!focus || Math.hypot(p.x - focus.x, p.z - focus.z) < 650) return p;
+      }
+      return verts[Math.floor(rand() * verts.length)];
+    };
+    const pickEnd = (a) => {
+      for (let t = 0; t < 40; t++) {
+        const p = verts[Math.floor(rand() * verts.length)];
+        const d = Math.hypot(p.x - a.x, p.z - a.z);
+        if (d > 250 && d < 1100) return p;
+      }
+      return null;
+    };
+    const spawn = (focus, scatter) => {
+      if (!router) return;
+      // Qué tipo: al azar, pero solo si todavía hay lugar de ese tipo.
+      let t = rand() * totalW;
+      let k = kinds[0];
+      for (const c of kinds) {
+        t -= c.spec.weight;
+        if (t <= 0) { k = c; break; }
+      }
+      const cap = Math.ceil(k.spec.max * capFrac);
+      const free = k.slots.indexOf(null);
+      if (free < 0 || free >= cap || k.slots.filter(Boolean).length >= cap) return;
+      const a = pickStart(focus);
+      const b = pickEnd(a);
+      if (!b) return;
+      const pts = router.route(a, b);
+      if (!pts || pts.length < 2) return;
+      const path = buildPath(pts);
+      if (path.len < 150) return;
+      const sp = k.spec;
+      k.slots[free] = { path, d: scatter ? rand() * path.len * 0.8 : 0, v: sp.v[0] + rand() * (sp.v[1] - sp.v[0]), side: free % 2 ? 0.25 : -0.15 };
+      k.dirty = true;
+    };
+
+    const place = (k) => {
+      let any = false;
+      k.slots.forEach((v, i) => {
+        if (!v) {
+          if (k.hidden?.[i] !== true) {
+            (k.hidden ||= [])[i] = true;
+            k.mesh.setMatrixAt(i, hide);
+            any = true;
+          }
+          return;
+        }
+        if (k.hidden) k.hidden[i] = false;
+        const s = sample(v.path, v.d);
+        const a = sample(v.path, Math.max(0, v.d - 4));
+        const c = sample(v.path, Math.min(v.path.len, v.d + 4));
+        let tx = c.x - a.x;
+        let tz = c.z - a.z;
+        const l = Math.hypot(tx, tz) || 1;
+        tx /= l;
+        tz /= l;
+        const off = k.kind === 'bici' ? 3.6 : k.kind === 'camion' || k.kind === 'colectivo' ? 2.4 : 2.2 + v.side;
+        // mano derecha (Argentina)
+        pos.set(s.x - tz * off, 0.12, s.z + tx * off);
+        q.setFromAxisAngle(up, Math.atan2(-tz, tx));
+        // aparece y desaparece achicándose, no de golpe
+        const fade = Math.min(1, v.d / 10, (v.path.len - v.d) / 10);
+        const f = Math.max(0.001, fade);
+        scl.set(f, f, f);
+        m.compose(pos, q, scl);
+        k.mesh.setMatrixAt(i, m);
+        any = true;
+      });
+      if (any || k.dirty) k.mesh.instanceMatrix.needsUpdate = true;
+      k.dirty = false;
+    };
+
+    parts.push((dt, focus, far) => {
+      clock += dt;
+      if (!router) {
+        if (clock < 3) return; // primero que cargue y se vea el pueblo
+        router = makeRouter(world.roads, TRAFFIC_HW);
+      }
+      if (capFrac > 0 && !far) {
+        if (seedLeft > 0) {
+          seedLeft--;
+          spawn(focus, true);
+        } else {
+          nextSpawn -= dt;
+          if (nextSpawn <= 0) {
+            spawn(focus, false);
+            nextSpawn = (0.8 + rand() * 2.2) / Math.max(0.3, capFrac);
           }
         }
-        place();
-      });
-    }
+      }
+      for (const k of kinds) {
+        for (let i = 0; i < k.slots.length; i++) {
+          const v = k.slots[i];
+          if (!v) continue;
+          v.d += v.v * dt;
+          if (v.d >= v.path.len) k.slots[i] = null; // terminó su recorrido: desaparece
+        }
+        place(k);
+      }
+    });
   }
 
   // ---- Pájaros ----
@@ -255,10 +334,27 @@ export function initLife(scene, world, { lowEnd = false } = {}) {
     });
   }
 
+  let acc = 0;
   return {
-    update(dt) {
+    /** focus: punto {x,z} que mira la cámara (los vehículos nuevos aparecen cerca); dist: distancia de la cámara. */
+    update(dt, focus, dist = 0) {
       if (REDUCED_MOTION) return;
-      for (const f of parts) f(dt);
+      // En equipos lentos la vida se actualiza menos veces por segundo (se mueve igual, pero cuesta menos).
+      acc += dt;
+      const every = load >= 2 ? 1 / 10 : load === 1 ? 1 / 20 : lowEnd ? 1 / 30 : 0;
+      if (acc < every) return;
+      const step = Math.min(acc, 0.25);
+      acc = 0;
+      const far = dist > 1500; // mirando todo el pueblo de lejos no se ven: no se suman vehículos nuevos
+      for (const f of parts) f(step, focus, far);
+    },
+    /** Nivel de carga: 0 normal, 1 liviano (la mitad de vehículos y peatones), 2 mínimo (sin vehículos). */
+    setLoad(l) {
+      if (l === load) return;
+      load = l;
+      capFrac = l >= 2 ? 0 : l === 1 ? 0.5 : 1;
+      if (setPeds) setPeds(Math.ceil(pedMax * (l >= 2 ? 0.25 : l === 1 ? 0.5 : 1)));
+      if (l >= 2 && hideAll) hideAll();
     },
   };
 }

@@ -1,5 +1,28 @@
 # Historial de cambios
 
+## 1.5.1 · 2026-10-30
+
+- **Lugares extra:** nuevo `fuentes/lugares-extra.txt` (una línea por lugar: `Nombre | tipo | link de Google Maps`) y `npm run extras`. Entiende links largos, links cortos (maps.app.goo.gl, necesita internet) y coordenadas «lat, lng». Se corre solo al final de `npm run lugares`. Ya trae 14 lugares de Sarmiento para completar con su link.
+
+## 1.5.0 · 2026-10-29
+
+- **Edificios más detallados (siempre lowpoly):**
+  - Las casas chicas y rectangulares tienen techo a dos aguas con frontones; los edificios grandes, techo plano con parapeto, y algunos con tanque de agua.
+  - Paleta más variada de paredes y techos (teja, chapa, losa), con pequeñas diferencias de brillo entre casas vecinas.
+  - Ventanas, puertas, zócalo, cornisa y postigos: se dibujan solo cuando la cámara está cerca (distancia 420 m; 230 m en gama baja, con menos detalle) para no cargar la página.
+  - Los edificios resaltados (escuela, hospital, iglesia…) mantienen su color y techo plano.
+- Si la página va lenta, el detalle cercano se reduce solo.
+
+## 1.4.9 · 2026-10-28
+
+- **Más liviana en equipos de gama baja:** el tránsito y los peatones se actualizan menos veces por segundo (30 en gama baja, y menos si la maqueta va lenta); en gama baja arrancan con la mitad de vehículos y peatones, y si aun así va lenta se baja a lo mínimo (sin vehículos y con pocos peatones). Si mirás todo el pueblo de lejos no aparecen vehículos nuevos.
+- Los vehículos iniciales se calculan de a uno por cuadro (antes todos juntos) para que el arranque no se trabe.
+- La alineación de calles y casas se calcula una sola vez y se guarda en el navegador (la primera visita tarda un poco más; en gama baja usa menos muestras y deja respirar a la pantalla de carga).
+
+## 1.4.8 · 2026-10-27
+
+- **Tránsito vivo:** los vehículos (autos, motos, bicis, camiones y ahora también colectivos) aparecen de a poco cerca de donde mirás, hacen un recorrido por las calles reales (con el mismo buscador de caminos de los recorridos, así no atraviesan casas ni plazas) y desaparecen al llegar a destino. Hay un máximo de cada tipo en pantalla, así la página no se sobrecarga.
+
 ## 1.4.7 · 2026-10-27
 
 - **Los zips de actualización ya no incluyen la carpeta `data/`**, para no pisar tus lugares, calles y casas reales con los de ejemplo.

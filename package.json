@@ -1,6 +1,6 @@
 {
   "name": "guia-sarmiento",
-  "version": "1.4.7",
+  "version": "1.5.1",
   "private": true,
   "type": "module",
   "description": "Guía 3D interactiva de Capitán Sarmiento (sitio estático, Three.js).",
@@ -17,7 +17,8 @@
     "lugares": "node tools/lugares.mjs",
     "recorridos": "node tools/recorridos.mjs",
     "guias": "node tools/guias.mjs",
-    "calles": "node tools/calles.mjs"
+    "calles": "node tools/calles.mjs",
+    "extras": "node tools/extras.mjs"
   },
   "devDependencies": {
     "osmtogeojson": "3.0.0-beta.5"

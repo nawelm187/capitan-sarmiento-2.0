@@ -1,7 +1,7 @@
 // Service worker: la guía carga más rápido en las visitas siguientes y queda disponible sin conexión.
 // `VERSION` lo actualiza `npm run bump` (tools/bump-version.mjs); no lo cambies a mano.
 // IMPORTANTE: cada vez que cambies archivos de data/ o del código, corré `npm run bump -- patch`.
-const VERSION = '1.4.7';
+const VERSION = '1.5.1';
 const CORE = `sarmiento-core-${VERSION}`; // código y estáticos de esta versión
 const DATA = `sarmiento-data-${VERSION}`; // data/*.json de esta versión (la URL lleva ?v=VERSION)
 const RUNTIME = 'sarmiento-runtime-v1'; // three.js y tipografías (CDN)

@@ -1,0 +1,25 @@
+# Lugares que OpenStreetMap no tiene. Una línea por lugar:
+#   Nombre | tipo | link de Google Maps (o "lat, lng")
+# Abrí el lugar en Google Maps → Compartir → Copiar vínculo, y pegalo al final de la línea.
+# Después corré:  npm run extras   (o npm run lugares, que también lo hace)
+# Tipos: restaurante, parrilla, pizzeria, cafe, bar, heladeria, panaderia, hotel, hospedaje, camping, museo, atractivo, club, mirador, ferreteria, farmacia…
+
+Museo y Archivo Histórico Municipal | museo | https://maps.app.goo.gl/dMFbErGEKf2R84gE6
+Parque Natural Capitán Sarmiento | atractivo | https://maps.app.goo.gl/1uVZwVD7tpXaNm8s7
+Las Magnolias | atractivo | https://maps.app.goo.gl/Mh9Lq48p9rDfffMQ8
+Las Casitas de Blanca Nieves | atractivo |
+Bodegón Sarmiento | restaurante |
+La Estación (cervecería) | bar | https://maps.app.goo.gl/ureQ9NE9aH13NitL7
+La Cuadra | pizzeria | https://maps.app.goo.gl/g4XUacLnoopeonhu5
+La Mancha Cocina de Fuegos | parrilla | https://maps.app.goo.gl/mQsK7rVZ7zTsFgry9
+Amanda | cafe | https://maps.app.goo.gl/gXemLWX2SsbvWdCX6
+Daimo | cafe | https://maps.app.goo.gl/qXm9NYqmYynDRH9N8
+Heladería SAS | heladeria | https://maps.app.goo.gl/giC17eRWPoDXMbfb6
+Heladería Calabrono | heladeria | https://maps.app.goo.gl/Vj1epzeMnj9PYFSC6
+Heladería Calabrono | heladeria | https://maps.app.goo.gl/nfX5KVLVgTdCvAZ18
+Club Atlético Sarmiento | club | https://maps.app.goo.gl/SGzEJZxTtq5s6qaC9
+Club Defensores La Loma | club | https://maps.app.goo.gl/xhAifD8xw1hjyJmR6
+La Mancha Verde Hotel | hotel | https://maps.app.goo.gl/3VeKRST91h77Ah7bA
+Posada Chambery | hospedaje | https://maps.app.goo.gl/GKcrZqPNW68RfYcN7
+Despensa Aldana | supermercado | https://maps.app.goo.gl/A4CNNnWcSFffgLwu5
+Cementerio | cementerio | https://maps.app.goo.gl/bwEZkwX9eAGSmeBd7

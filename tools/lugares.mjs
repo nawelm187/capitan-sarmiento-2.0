@@ -411,6 +411,13 @@ if (placesOut.length < 8) {
   console.log('  npm run lugares -- --agregar --nombre="Iglesia San José" --tipo=iglesia --lat=-34.17 --lng=-59.78');
   console.log('  (tipos: ' + Object.keys(TYPES).join(', ') + ')');
 }
+// Lugares que cargaste en fuentes/lugares-extra.txt
+try {
+  const { execFileSync } = await import('node:child_process');
+  execFileSync(process.execPath, [(await import('node:url')).fileURLToPath(new URL('./extras.mjs', import.meta.url))], { stdio: 'inherit' });
+} catch {
+  console.warn('No se pudieron sumar los lugares extra (npm run extras).');
+}
 // Recorridos a pie y en auto armados con estos lugares
 try {
   const { execFileSync } = await import('node:child_process');

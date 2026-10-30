@@ -8,8 +8,9 @@ import { ChunkedBuildings } from './buildings.js';
 import { roadWidth, makeGrid, onPavement, findMedians } from './roads.js';
 import { buildRoadMeshes } from './road-mesh.js';
 
-const WALLS = [0xe9dcc4, 0xdccaa6, 0xd3dae0, 0xe6c8bc, 0xcdd6bd, 0xe2d2b0].map((c) => new THREE.Color(c));
-const ROOFS = [0xb5523b, 0x9c4a3a, 0x8a8f94, 0xa65f45, 0x6f7479].map((c) => new THREE.Color(c));
+// Colores de pueblo bonaerense: revoques claros, ocres, rosados y celestes; techos de teja, chapa y losa.
+const WALLS = [0xe9dcc4, 0xdccaa6, 0xd3dae0, 0xe6c8bc, 0xcdd6bd, 0xe2d2b0, 0xf2eee4, 0xd9b99b, 0xc9d6df, 0xe8c9c2, 0xd8d2c0, 0xbfc7b0, 0xf0e2b8, 0xcfb7a0].map((c) => new THREE.Color(c));
+const ROOFS = [0xb5523b, 0x9c4a3a, 0x8a8f94, 0xa65f45, 0x6f7479, 0xc0603f, 0x7a4a3c, 0x5f7a6a, 0x9a9a96].map((c) => new THREE.Color(c));
 
 // Edificios especiales: se resaltan los edificios REALES (misma forma que en el pueblo) con techo y paredes de color propio.
 const SPECIAL = {
@@ -151,39 +152,59 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
   };
   let alignShift = { x: 0, z: 0 };
   if (roads.length >= 80 && buildingFeatures.length > 200) {
-    const g0 = makeGrid(roads);
-    const step = Math.max(1, Math.floor(buildingFeatures.length / 500));
-    const cs = []; // casas de muestra: esquinas y centro
-    for (let i = 0; i < buildingFeatures.length; i += step) {
-      const r = ringOf(buildingFeatures[i]);
-      if (!r) continue;
-      cs.push({ c: [r.reduce((a, p) => a + p.x, 0) / r.length, r.reduce((a, p) => a + p.z, 0) / r.length], v: r.map((p) => [p.x, p.z]) });
-    }
-    // Un corrimiento (dx,dz) de las calles; se mide qué parte de las casas quedarían sobre el asfalto.
-    const score = (dx, dz) => {
-      let n = 0;
-      for (const h of cs) {
-        if (onPavement(g0, roads, h.c[0] - dx, h.c[1] - dz, 0.3) || h.v.some(([x, z]) => onPavement(g0, roads, x - dx, z - dz, -1.2))) n++;
+    // El resultado depende solo de los datos: se guarda para no recalcularlo en cada visita (ahorra segundos en celulares lentos).
+    const cacheKey = `guia-align:${meta.dataRev || ''}:${roads.length}:${buildingFeatures.length}`;
+    let cached = null;
+    try { cached = JSON.parse(localStorage.getItem(cacheKey) || 'null'); } catch { /* sin almacenamiento */ }
+    if (cached && Number.isFinite(cached.dx) && Number.isFinite(cached.dz)) {
+      if (cached.dx || cached.dz) {
+        alignShift = { x: cached.dx, z: cached.dz };
+        console.info(`Calles alineadas con las casas (guardado): ${cached.dx} m este, ${cached.dz} m sur`);
+        for (const r of [...roads, ...rails, ...waterLines]) for (const p of r.pts) { p.x += cached.dx; p.z += cached.dz; }
       }
-      return n / cs.length;
-    };
-    const base = score(0, 0);
-    let best = { dx: 0, dz: 0, s: base };
-    if (base > 0.04) {
-      for (let dx = -32; dx <= 32; dx += 4) for (let dz = -32; dz <= 32; dz += 4) {
-        const s = score(dx, dz);
-        if (s < best.s - 0.002 || (Math.abs(s - best.s) <= 0.002 && Math.hypot(dx, dz) < Math.hypot(best.dx, best.dz))) best = { dx, dz, s };
+    } else {
+      const g0 = makeGrid(roads);
+      const step = Math.max(1, Math.floor(buildingFeatures.length / (lowEnd ? 260 : 500)));
+      const cs = []; // casas de muestra: esquinas y centro
+      for (let i = 0; i < buildingFeatures.length; i += step) {
+        const r = ringOf(buildingFeatures[i]);
+        if (!r) continue;
+        cs.push({ c: [r.reduce((a, p) => a + p.x, 0) / r.length, r.reduce((a, p) => a + p.z, 0) / r.length], v: r.map((p) => [p.x, p.z]) });
       }
-      const c = { ...best };
-      for (let dx = c.dx - 3; dx <= c.dx + 3; dx++) for (let dz = c.dz - 3; dz <= c.dz + 3; dz++) {
-        const s = score(dx, dz);
-        if (s < best.s - 0.002 || (Math.abs(s - best.s) <= 0.002 && Math.hypot(dx, dz) < Math.hypot(best.dx, best.dz))) best = { dx, dz, s };
+      // Un corrimiento (dx,dz) de las calles; se mide qué parte de las casas quedarían sobre el asfalto.
+      const score = (dx, dz) => {
+        let n = 0;
+        for (const h of cs) {
+          if (onPavement(g0, roads, h.c[0] - dx, h.c[1] - dz, 0.3) || h.v.some(([x, z]) => onPavement(g0, roads, x - dx, z - dz, -1.2))) n++;
+        }
+        return n / cs.length;
+      };
+      const better = (s0, dx, dz, b) => s0 < b.s - 0.002 || (Math.abs(s0 - b.s) <= 0.002 && Math.hypot(dx, dz) < Math.hypot(b.dx, b.dz));
+      const base = score(0, 0);
+      let best = { dx: 0, dz: 0, s: base };
+      if (base > 0.04) {
+        const T = lowEnd ? 6 : 4;
+        for (let dx = -32; dx <= 32; dx += T) {
+          for (let dz = -32; dz <= 32; dz += T) {
+            const s0 = score(dx, dz);
+            if (better(s0, dx, dz, best)) best = { dx, dz, s: s0 };
+          }
+          await nextFrame(); // que la pantalla de carga siga animada
+        }
+        const c = { ...best };
+        for (let dx = c.dx - T + 1; dx <= c.dx + T - 1; dx++) {
+          for (let dz = c.dz - T + 1; dz <= c.dz + T - 1; dz++) {
+            const s0 = score(dx, dz);
+            if (better(s0, dx, dz, best)) best = { dx, dz, s: s0 };
+          }
+        }
+        if (best.s < base * 0.75 && (best.dx || best.dz)) {
+          alignShift = { x: best.dx, z: best.dz }; // las calles se corren a donde "miran" las casas
+          for (const r of [...roads, ...rails, ...waterLines]) for (const p of r.pts) { p.x += best.dx; p.z += best.dz; }
+          console.info(`Calles alineadas con las casas: ${best.dx} m este, ${best.dz} m sur (casas sobre calles: ${(base * 100).toFixed(0)} % → ${(best.s * 100).toFixed(0)} %)`);
+        }
       }
-      if (best.s < base * 0.75 && (best.dx || best.dz)) {
-        alignShift = { x: best.dx, z: best.dz }; // las calles se corren a donde "miran" las casas
-        for (const r of [...roads, ...rails, ...waterLines]) for (const p of r.pts) { p.x += best.dx; p.z += best.dz; }
-        console.info(`Calles alineadas con las casas: ${best.dx} m este, ${best.dz} m sur (casas sobre calles: ${(base * 100).toFixed(0)} % → ${(best.s * 100).toFixed(0)} %)`);
-      }
+      try { localStorage.setItem(cacheKey, JSON.stringify({ dx: alignShift.x, dz: alignShift.z })); } catch { /* sin almacenamiento */ }
     }
   }
 
@@ -211,10 +232,13 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
   const buildings = new THREE.Group();
   buildings.name = 'buildings';
   let chunksOk = false;
+  const detailMeshes = [];
+  const detailMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.75, metalness: 0, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 });
+  const detailState = { enabled: true, range: lowEnd ? 230 : 420 };
   let buildingCenters = new Float32Array(0);
   if (buildingFeatures.length) {
     try {
-      const chunked = new ChunkedBuildings({ half, factor: HEIGHT_FACTOR, triangulate: (c, h) => THREE.ShapeUtils.triangulateShape(c, h) });
+      const chunked = new ChunkedBuildings({ half, factor: HEIGHT_FACTOR, detail: lowEnd ? 1 : 2, triangulate: (c, h) => THREE.ShapeUtils.triangulateShape(c, h) });
       let t0 = performance.now();
       for (let i = 0; i < buildingFeatures.length; i++) {
         const f = buildingFeatures[i];
@@ -223,7 +247,7 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
         for (const rings of polys) {
           try {
             const sp = SPECIAL_COLORS[f.properties.special];
-            chunked.add(rings.map(ringToLocal), Number(f.properties.h), sp ? sp[0] : WALLS, sp ? sp[1] : ROOFS, hash2);
+            chunked.add(rings.map(ringToLocal), Number(f.properties.h), sp ? sp[0] : WALLS, sp ? sp[1] : ROOFS, hash2, { special: Boolean(sp) });
           } catch {
             /* un edificio con geometría rara no debe frenar el resto */
           }
@@ -246,6 +270,28 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
         mesh.receiveShadow = true;
         mesh.matrixAutoUpdate = false; // estático
         buildings.add(mesh);
+        if (c.detail) {
+          // Ventanas, puertas y molduras: otra malla por celda que solo se muestra cuando la cámara está cerca.
+          const dg = new THREE.BufferGeometry();
+          dg.setAttribute('position', new THREE.BufferAttribute(c.detail.position, 3));
+          dg.setAttribute('normal', new THREE.BufferAttribute(c.detail.normal, 3));
+          dg.setAttribute('color', new THREE.BufferAttribute(c.detail.color, 3));
+          // Esfera que envuelve la celda (calculada a mano para no depender de nada más).
+          const pa = c.detail.position;
+          let mnx = 1e9, mny = 1e9, mnz = 1e9, mxx = -1e9, mxy = -1e9, mxz = -1e9;
+          for (let i = 0; i < pa.length; i += 3) {
+            if (pa[i] < mnx) mnx = pa[i]; if (pa[i] > mxx) mxx = pa[i];
+            if (pa[i + 1] < mny) mny = pa[i + 1]; if (pa[i + 1] > mxy) mxy = pa[i + 1];
+            if (pa[i + 2] < mnz) mnz = pa[i + 2]; if (pa[i + 2] > mxz) mxz = pa[i + 2];
+          }
+          dg.computeBoundingSphere();
+          const dm = new THREE.Mesh(dg, detailMat);
+          dm.userData.bs = { x: (mnx + mxx) / 2, y: (mny + mxy) / 2, z: (mnz + mxz) / 2, r: Math.hypot(mxx - mnx, mxy - mny, mxz - mnz) / 2 };
+          dm.matrixAutoUpdate = false;
+          dm.visible = false;
+          buildings.add(dm);
+          detailMeshes.push(dm);
+        }
       }
       chunksOk = buildings.children.length > 0;
       buildingCenters = Float32Array.from(chunked.centers);
@@ -330,7 +376,14 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
   ground.name = 'ground';
   scene.add(ground);
 
-  const world = { EXT, half, roads, rails, greens, waters, ground, buildings, buildingCenters, medians, roadGrid, alignShift };
+  // Muestra el detalle (ventanas, puertas) solo en las celdas cercanas a la cámara.
+  const updateDetail = (camPos) => {
+    for (const m of detailMeshes) {
+      const bs = m.userData.bs;
+      m.visible = detailState.enabled && Math.hypot(camPos.x - bs.x, camPos.y - bs.y, camPos.z - bs.z) - bs.r < detailState.range;
+    }
+  };
+  const world = { updateDetail, detailState, EXT, half, roads, rails, greens, waters, ground, buildings, buildingCenters, medians, roadGrid, alignShift };
   try {
     const rm = buildRoadMeshes(scene, world, { lowEnd });
     world.medianTrees = rm.treeSpots;

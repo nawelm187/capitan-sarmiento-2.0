@@ -295,9 +295,9 @@ async function main() {
   const steps = [
     () => { hTilt.enabled = false; vTilt.enabled = false; },
     () => setPixelRatio(Math.min(pixelRatio, 1)),
-    () => { if (bloom) bloom.enabled = false; atm.lite = true; },
+    () => { if (bloom) bloom.enabled = false; atm.lite = true; life.setLoad(1); },
     () => { sun.userData.noShadow = true; sun.castShadow = false; document.documentElement.classList.add('lowfx'); },
-    () => setPixelRatio(0.75),
+    () => { setPixelRatio(0.75); life.setLoad(2); world.detailState.range = 150; },
     () => setPixelRatio(0.6),
   ];
   function setPixelRatio(v) {
@@ -324,6 +324,7 @@ async function main() {
   }
 
   // ?calidad=baja arranca directo en el modo más liviano; ?calidad=alta no baja nunca la calidad.
+  if (LOW_END) life.setLoad(1); // equipos de gama baja: arrancan con la mitad de tránsito y peatones
   if (QUALITY === 'baja') {
     steps.forEach((f) => f());
     perf.level = steps.length;
@@ -338,10 +339,12 @@ async function main() {
   const prev = new THREE.Vector3();
   const lim = world.half * 0.95;
   let firstFrame = true;
+  let frameN = 0;
   renderer.setAnimationLoop(() => {
     const dt = Math.min(0.1, clock.getDelta());
     nav.update(dt);
-    life.update(dt);
+    life.update(dt, controls.target, camera.position.distanceTo(controls.target));
+    if ((frameN++ & 7) === 0) world.updateDetail?.(camera.position);
     mascotas.update(dt);
     controls.update();
 

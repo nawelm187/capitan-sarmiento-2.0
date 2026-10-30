@@ -209,6 +209,7 @@ npm run calles                       # baja las calles reales (reemplaza las de 
 npm run lugares                      # baja comercios y servicios de OpenStreetMap, los pega a su edificio real y arma los recorridos
 npm run lugares -- --reset           # vuelve a empezar la lista de lugares
 npm run lugares -- --agregar=hotel   # suma un tipo concreto (hotel, escuela, farmacia, ferreteria…)
+npm run extras                       # suma los lugares de fuentes/lugares-extra.txt (nombre | tipo | link de Google Maps)
 npm run recorridos                   # regenera los recorridos automáticos (por las calles)
 ```
 

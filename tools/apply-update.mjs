@@ -20,7 +20,7 @@ const node = (...a) => execFileSync(process.execPath, a, { cwd: rootPath, stdio:
 
 // 1. package.json
 const pkg = JSON.parse(await rd('package.json'));
-pkg.scripts = { ...pkg.scripts, serve: 'node tools/serve.mjs', fill: 'node tools/fill-buildings.mjs', mapa: 'node tools/rebuild-map.mjs', buildings: 'node tools/import-buildings.mjs', calles: 'node tools/calles.mjs', lugares: 'node tools/lugares.mjs', recorridos: 'node tools/recorridos.mjs', guias: 'node tools/guias.mjs' };
+pkg.scripts = { ...pkg.scripts, serve: 'node tools/serve.mjs', fill: 'node tools/fill-buildings.mjs', mapa: 'node tools/rebuild-map.mjs', buildings: 'node tools/import-buildings.mjs', calles: 'node tools/calles.mjs', lugares: 'node tools/lugares.mjs', extras: 'node tools/extras.mjs', recorridos: 'node tools/recorridos.mjs', guias: 'node tools/guias.mjs' };
 await wr('package.json', JSON.stringify(pkg, null, 2) + '\n');
 console.log('✔ package.json: scripts serve (Node), fill y buildings');
 
