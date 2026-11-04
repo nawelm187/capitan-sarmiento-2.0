@@ -1,26 +1,6 @@
 {
   "items": [
     {
-      "id": "osm-n3457369632",
-      "name": "Iglesia San carlos Borromeo",
-      "kind": "iglesia",
-      "lat": -34.176104,
-      "lng": -59.792977,
-      "rotY": -19.3,
-      "w": 45,
-      "d": 13
-    },
-    {
-      "id": "osm-n4213289215",
-      "name": "Parroquia Nuestra Señora de Pilar",
-      "kind": "iglesia",
-      "lat": -34.171764,
-      "lng": -59.792596,
-      "rotY": 71.7,
-      "w": 34,
-      "d": 22
-    },
-    {
       "id": "osm-n2520503489",
       "name": "Estación Policía Comunal Capitán Sarmiento",
       "kind": "policia",
@@ -28,7 +8,23 @@
       "lng": -59.794565,
       "rotY": -18.5,
       "mode": "resaltar",
-      "roofH": 5
+      "roofH": 5,
+      "ew": 9,
+      "ed": 6,
+      "fr": 2
+    },
+    {
+      "id": "osm-n2520504611",
+      "name": "Banco Nación",
+      "kind": "banconacion",
+      "lat": -34.176583,
+      "lng": -59.793345,
+      "rotY": -19.1,
+      "mode": "resaltar",
+      "roofH": 9,
+      "ew": 25,
+      "ed": 20,
+      "fr": 3
     },
     {
       "id": "osm-n3452443048",
@@ -38,7 +34,23 @@
       "lng": -59.7908,
       "rotY": 71.4,
       "mode": "resaltar",
-      "roofH": 8
+      "roofH": 8,
+      "ew": 19,
+      "ed": 14,
+      "fr": 3
+    },
+    {
+      "id": "osm-n3457369632",
+      "name": "Iglesia San carlos Borromeo",
+      "kind": "iglesia",
+      "lat": -34.176104,
+      "lng": -59.792977,
+      "rotY": -19.3,
+      "mode": "resaltar",
+      "roofH": 10,
+      "ew": 45,
+      "ed": 13,
+      "fr": 3
     },
     {
       "id": "osm-n3836695357",
@@ -48,7 +60,10 @@
       "lng": -59.790033,
       "rotY": 71,
       "mode": "resaltar",
-      "roofH": 6
+      "roofH": 6,
+      "ew": 18,
+      "ed": 9,
+      "fr": 3
     },
     {
       "id": "osm-n4213265403",
@@ -58,7 +73,10 @@
       "lng": -59.785721,
       "rotY": 70.9,
       "mode": "resaltar",
-      "roofH": 8
+      "roofH": 8,
+      "ew": 15,
+      "ed": 15,
+      "fr": 0
     },
     {
       "id": "osm-n4213265404",
@@ -68,7 +86,10 @@
       "lng": -59.791477,
       "rotY": -19.3,
       "mode": "resaltar",
-      "roofH": 10
+      "roofH": 10,
+      "ew": 27,
+      "ed": 11,
+      "fr": 1
     },
     {
       "id": "osm-n4213266589",
@@ -78,7 +99,10 @@
       "lng": -59.7971,
       "rotY": 72.1,
       "mode": "resaltar",
-      "roofH": 7
+      "roofH": 7,
+      "ew": 9,
+      "ed": 6,
+      "fr": 2
     },
     {
       "id": "osm-n4213267896",
@@ -88,7 +112,23 @@
       "lng": -59.795466,
       "rotY": -18.5,
       "mode": "resaltar",
-      "roofH": 9
+      "roofH": 9,
+      "ew": 20,
+      "ed": 19,
+      "fr": 0
+    },
+    {
+      "id": "osm-n4213289215",
+      "name": "Parroquia Nuestra Señora de Pilar",
+      "kind": "iglesia",
+      "lat": -34.171764,
+      "lng": -59.792596,
+      "rotY": 71.7,
+      "mode": "resaltar",
+      "roofH": 8,
+      "ew": 34,
+      "ed": 22,
+      "fr": 3
     },
     {
       "id": "osm-n4213290589",
@@ -98,7 +138,10 @@
       "lng": -59.799654,
       "rotY": 31.4,
       "mode": "resaltar",
-      "roofH": 10
+      "roofH": 10,
+      "ew": 70,
+      "ed": 50,
+      "fr": 3
     },
     {
       "id": "osm-n5049882620",
@@ -108,7 +151,10 @@
       "lng": -59.780195,
       "rotY": 69.3,
       "mode": "resaltar",
-      "roofH": 10
+      "roofH": 10,
+      "ew": 27,
+      "ed": 17,
+      "fr": 3
     },
     {
       "id": "osm-n5757101829",
@@ -118,7 +164,10 @@
       "lng": -59.785841,
       "rotY": 71.3,
       "mode": "resaltar",
-      "roofH": 11
+      "roofH": 11,
+      "ew": 30,
+      "ed": 10,
+      "fr": 3
     },
     {
       "id": "osm-n5757465695",
@@ -128,7 +177,10 @@
       "lng": -59.790327,
       "rotY": 71.2,
       "mode": "resaltar",
-      "roofH": 13
+      "roofH": 13,
+      "ew": 27,
+      "ed": 24,
+      "fr": 3
     },
     {
       "id": "osm-n5757465696",
@@ -138,7 +190,10 @@
       "lng": -59.79687,
       "rotY": 71.7,
       "mode": "resaltar",
-      "roofH": 8
+      "roofH": 8,
+      "ew": 21,
+      "ed": 13,
+      "fr": 2
     },
     {
       "id": "osm-n5757465697",
@@ -148,7 +203,10 @@
       "lng": -59.785851,
       "rotY": 71.1,
       "mode": "resaltar",
-      "roofH": 7
+      "roofH": 7,
+      "ew": 13,
+      "ed": 10,
+      "fr": 3
     },
     {
       "id": "osm-n5757465698",
@@ -158,7 +216,10 @@
       "lng": -59.795315,
       "rotY": 71.6,
       "mode": "resaltar",
-      "roofH": 7
+      "roofH": 7,
+      "ew": 16,
+      "ed": 7,
+      "fr": 0
     },
     {
       "id": "osm-n5757465699",
@@ -168,7 +229,10 @@
       "lng": -59.793056,
       "rotY": -19.5,
       "mode": "resaltar",
-      "roofH": 8
+      "roofH": 8,
+      "ew": 23,
+      "ed": 7,
+      "fr": 3
     },
     {
       "id": "osm-n8909947001",
@@ -178,7 +242,10 @@
       "lng": -59.793148,
       "rotY": -16.6,
       "mode": "resaltar",
-      "roofH": 6
+      "roofH": 6,
+      "ew": 16,
+      "ed": 14,
+      "fr": 3
     },
     {
       "id": "osm-n14030279984",
@@ -188,7 +255,10 @@
       "lng": -59.798737,
       "rotY": -55.8,
       "mode": "resaltar",
-      "roofH": 8
+      "roofH": 8,
+      "ew": 34,
+      "ed": 21,
+      "fr": 1
     },
     {
       "id": "osm-n14030290444",
@@ -198,7 +268,10 @@
       "lng": -59.792545,
       "rotY": -58.4,
       "mode": "resaltar",
-      "roofH": 6
+      "roofH": 6,
+      "ew": 17,
+      "ed": 10,
+      "fr": 2
     },
     {
       "id": "osm-w238110368",
@@ -232,7 +305,10 @@
       "lng": -59.793236,
       "rotY": 69.2,
       "mode": "resaltar",
-      "roofH": 8
+      "roofH": 8,
+      "ew": 18,
+      "ed": 15,
+      "fr": 3
     }
   ]
 }

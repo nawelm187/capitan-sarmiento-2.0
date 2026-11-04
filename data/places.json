@@ -36,15 +36,16 @@
     "description": "Banco. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 8
   },
   {
     "id": "osm-n2520504611",
     "name": "Banco Nación",
     "category": "servicios",
-    "icon": "banco",
-    "lat": -34.176636,
-    "lng": -59.793402,
+    "icon": "banconacion",
+    "lat": -34.176583,
+    "lng": -59.793345,
     "address": "Avenida Presidente Perón",
     "hours": "",
     "phone": "",
@@ -55,7 +56,8 @@
     "description": "Banco. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 9
   },
   {
     "id": "osm-n2520506062",
@@ -74,15 +76,16 @@
     "description": "Banco. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 8
   },
   {
     "id": "osm-n2520507593",
     "name": "Macro",
     "category": "servicios",
     "icon": "banco",
-    "lat": -34.176292,
-    "lng": -59.7933,
+    "lat": -34.176279,
+    "lng": -59.793053,
     "address": "Avenida Bartolomé Mitre",
     "hours": "",
     "phone": "",
@@ -93,7 +96,8 @@
     "description": "Banco. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 8
   },
   {
     "id": "osm-n2520606078",
@@ -112,7 +116,8 @@
     "description": "Pizzería. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 8
   },
   {
     "id": "osm-n3420165272",
@@ -131,7 +136,8 @@
     "description": "Estación de servicio. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 8
   },
   {
     "id": "osm-n3452443048",
@@ -158,8 +164,8 @@
     "name": "Club Ayacuá",
     "category": "ver",
     "icon": "club",
-    "lat": -34.178056,
-    "lng": -59.789298,
+    "lat": -34.178125,
+    "lng": -59.78918,
     "address": "",
     "hours": "",
     "phone": "",
@@ -170,15 +176,16 @@
     "description": "Club. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 8
   },
   {
     "id": "osm-n3457368093",
     "name": "Club Sarmiento Piletas",
     "category": "ver",
     "icon": "club",
-    "lat": -34.176893,
-    "lng": -59.78934,
+    "lat": -34.17692,
+    "lng": -59.789431,
     "address": "",
     "hours": "",
     "phone": "",
@@ -189,7 +196,8 @@
     "description": "Club. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 6
   },
   {
     "id": "osm-n3457369632",
@@ -208,7 +216,8 @@
     "description": "Iglesia. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 10
   },
   {
     "id": "osm-n3457372846",
@@ -227,7 +236,8 @@
     "description": "Cine. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 7
   },
   {
     "id": "osm-n3825846971",
@@ -274,8 +284,8 @@
     "name": "Remis Primero",
     "category": "servicios",
     "icon": "taxi",
-    "lat": -34.15967,
-    "lng": -59.788002,
+    "lat": -34.15951,
+    "lng": -59.788087,
     "address": "",
     "hours": "",
     "phone": "",
@@ -286,7 +296,8 @@
     "description": "Taxi / remís. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 10
   },
   {
     "id": "osm-n4213265403",
@@ -385,15 +396,16 @@
     "description": "Iglesia. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 8
   },
   {
     "id": "osm-n4213290589",
     "name": "Hospital Municipal \"San Carlos\"",
     "category": "salud",
     "icon": "hospital",
-    "lat": -34.179468,
-    "lng": -59.799654,
+    "lat": -34.179451,
+    "lng": -59.799708,
     "address": "Avenida San Martín 450",
     "hours": "",
     "phone": "",
@@ -464,7 +476,8 @@
     "description": "Correo. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 8
   },
   {
     "id": "osm-n5757465695",
@@ -571,8 +584,8 @@
     "name": "Ruiz",
     "category": "salud",
     "icon": "farmacia",
-    "lat": -34.173225,
-    "lng": -59.78818,
+    "lat": -34.173196,
+    "lng": -59.788247,
     "address": "Avenida Leandro N. Alem 504",
     "hours": "",
     "phone": "",
@@ -583,15 +596,16 @@
     "description": "Farmacia. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 6
   },
   {
     "id": "osm-n5973696878",
     "name": "Kovasevich",
     "category": "salud",
     "icon": "farmacia",
-    "lat": -34.170265,
-    "lng": -59.795365,
+    "lat": -34.17028,
+    "lng": -59.795435,
     "address": "",
     "hours": "",
     "phone": "",
@@ -602,15 +616,16 @@
     "description": "Farmacia. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 7
   },
   {
     "id": "osm-n5973696880",
     "name": "Ibis",
     "category": "compras",
     "icon": "supermercado",
-    "lat": -34.164876,
-    "lng": -59.787536,
+    "lat": -34.164838,
+    "lng": -59.78762,
     "address": "",
     "hours": "",
     "phone": "",
@@ -621,15 +636,16 @@
     "description": "Supermercado. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 7
   },
   {
     "id": "osm-n5973696881",
     "name": "Grido",
     "category": "comer",
     "icon": "heladeria",
-    "lat": -34.175238,
-    "lng": -59.788818,
+    "lat": -34.175199,
+    "lng": -59.788667,
     "address": "",
     "hours": "",
     "phone": "",
@@ -640,15 +656,16 @@
     "description": "Heladería. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 8
   },
   {
     "id": "osm-n5973696882",
     "name": "Bava",
     "category": "salud",
     "icon": "farmacia",
-    "lat": -34.171241,
-    "lng": -59.787383,
+    "lat": -34.171161,
+    "lng": -59.787439,
     "address": "",
     "hours": "",
     "phone": "",
@@ -659,15 +676,16 @@
     "description": "Farmacia. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 10
   },
   {
     "id": "osm-n5973696883",
     "name": "Folguera",
     "category": "salud",
     "icon": "farmacia",
-    "lat": -34.176589,
-    "lng": -59.795338,
+    "lat": -34.176481,
+    "lng": -59.795306,
     "address": "",
     "hours": "",
     "phone": "",
@@ -678,7 +696,8 @@
     "description": "Farmacia. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 5
   },
   {
     "id": "osm-n5973698085",
@@ -697,7 +716,8 @@
     "description": "Supermercado. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 9
   },
   {
     "id": "osm-n5973698086",
@@ -716,7 +736,8 @@
     "description": "Restaurante. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 5
   },
   {
     "id": "osm-n8303057838",
@@ -735,15 +756,16 @@
     "description": "Gimnasio. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 6
   },
   {
     "id": "osm-n8909891877",
     "name": "Farmacia Del Pueblo",
     "category": "salud",
     "icon": "farmacia",
-    "lat": -34.174134,
-    "lng": -59.793603,
+    "lat": -34.174168,
+    "lng": -59.793564,
     "address": "",
     "hours": "",
     "phone": "",
@@ -754,7 +776,8 @@
     "description": "Farmacia. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 9
   },
   {
     "id": "osm-n8909947001",
@@ -813,7 +836,8 @@
     "description": "Clínica / consultorio. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 10
   },
   {
     "id": "osm-n14030290444",
@@ -852,15 +876,16 @@
     "description": "Supermercado. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 11
   },
   {
     "id": "osm-w238110368",
     "name": "Plaza San Martín",
     "category": "ver",
     "icon": "plaza",
-    "lat": -34.171238,
-    "lng": -59.793616,
+    "lat": -34.171205,
+    "lng": -59.793626,
     "address": "",
     "hours": "",
     "phone": "",
@@ -871,15 +896,16 @@
     "description": "Plaza. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 6
   },
   {
     "id": "osm-w238116755",
     "name": "Plaza San Carlos",
     "category": "ver",
     "icon": "plaza",
-    "lat": -34.177797,
-    "lng": -59.797877,
+    "lat": -34.178078,
+    "lng": -59.797774,
     "address": "",
     "hours": "",
     "phone": "",
@@ -890,7 +916,8 @@
     "description": "Plaza. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 10
   },
   {
     "id": "osm-w335993992",
@@ -928,15 +955,16 @@
     "description": "Terminal de ómnibus. Ficha creada a partir de OpenStreetMap: falta sumar la historia y los detalles.",
     "localTip": "",
     "source": "OpenStreetMap (revisar y completar)",
-    "updated": "2026-10-27"
+    "updated": "2026-10-27",
+    "roofH": 10
   },
   {
     "id": "extra-museo-y-archivo-historico-municipal",
     "name": "Museo y Archivo Histórico Municipal",
     "category": "ver",
     "icon": "museo",
-    "lat": -34.175804,
-    "lng": -59.793263,
+    "lat": -34.175553,
+    "lng": -59.793214,
     "address": "",
     "hours": "",
     "phone": "",
@@ -947,7 +975,8 @@
     "description": "Museo. Falta sumar la descripción.",
     "localTip": "",
     "source": "Cargado a mano",
-    "updated": "2026-10-30"
+    "updated": "2026-10-30",
+    "roofH": 8
   },
   {
     "id": "extra-parque-natural-capitan-sarmiento",
@@ -985,7 +1014,8 @@
     "description": "Atractivo. Falta sumar la descripción.",
     "localTip": "",
     "source": "Cargado a mano",
-    "updated": "2026-10-30"
+    "updated": "2026-10-30",
+    "roofH": 9
   },
   {
     "id": "extra-la-estacion-cerveceria",
@@ -1004,7 +1034,8 @@
     "description": "Bar. Falta sumar la descripción.",
     "localTip": "",
     "source": "Cargado a mano",
-    "updated": "2026-10-30"
+    "updated": "2026-10-30",
+    "roofH": 6
   },
   {
     "id": "extra-la-cuadra",
@@ -1023,15 +1054,16 @@
     "description": "Pizzería. Falta sumar la descripción.",
     "localTip": "",
     "source": "Cargado a mano",
-    "updated": "2026-10-30"
+    "updated": "2026-10-30",
+    "roofH": 9
   },
   {
     "id": "extra-la-mancha-cocina-de-fuegos",
     "name": "La Mancha Cocina de Fuegos",
     "category": "comer",
     "icon": "parrilla",
-    "lat": -34.16827,
-    "lng": -59.781989,
+    "lat": -34.168371,
+    "lng": -59.781882,
     "address": "",
     "hours": "",
     "phone": "",
@@ -1042,15 +1074,16 @@
     "description": "Parrilla. Falta sumar la descripción.",
     "localTip": "",
     "source": "Cargado a mano",
-    "updated": "2026-10-30"
+    "updated": "2026-10-30",
+    "roofH": 8
   },
   {
     "id": "extra-amanda",
     "name": "Amanda",
     "category": "comer",
     "icon": "cafe",
-    "lat": -34.176448,
-    "lng": -59.795813,
+    "lat": -34.176586,
+    "lng": -59.795692,
     "address": "",
     "hours": "",
     "phone": "",
@@ -1061,7 +1094,8 @@
     "description": "Café. Falta sumar la descripción.",
     "localTip": "",
     "source": "Cargado a mano",
-    "updated": "2026-10-30"
+    "updated": "2026-10-30",
+    "roofH": 9
   },
   {
     "id": "extra-daimo",
@@ -1080,15 +1114,16 @@
     "description": "Café. Falta sumar la descripción.",
     "localTip": "",
     "source": "Cargado a mano",
-    "updated": "2026-10-30"
+    "updated": "2026-10-30",
+    "roofH": 6
   },
   {
     "id": "extra-heladeria-sas",
     "name": "Heladería SAS",
     "category": "comer",
     "icon": "heladeria",
-    "lat": -34.172957,
-    "lng": -59.788203,
+    "lat": -34.173054,
+    "lng": -59.788197,
     "address": "",
     "hours": "",
     "phone": "",
@@ -1099,15 +1134,16 @@
     "description": "Heladería. Falta sumar la descripción.",
     "localTip": "",
     "source": "Cargado a mano",
-    "updated": "2026-10-30"
+    "updated": "2026-10-30",
+    "roofH": 5
   },
   {
     "id": "extra-heladeria-calabrono",
     "name": "Heladería Calabrono",
     "category": "comer",
     "icon": "heladeria",
-    "lat": -34.176173,
-    "lng": -59.793405,
+    "lat": -34.176279,
+    "lng": -59.793053,
     "address": "",
     "hours": "",
     "phone": "",
@@ -1118,7 +1154,8 @@
     "description": "Heladería. Falta sumar la descripción.",
     "localTip": "",
     "source": "Cargado a mano",
-    "updated": "2026-10-30"
+    "updated": "2026-10-30",
+    "roofH": 8
   },
   {
     "id": "extra-club-atletico-sarmiento",
@@ -1137,15 +1174,16 @@
     "description": "Club. Falta sumar la descripción.",
     "localTip": "",
     "source": "Cargado a mano",
-    "updated": "2026-10-30"
+    "updated": "2026-10-30",
+    "roofH": 8
   },
   {
     "id": "extra-club-defensores-la-loma",
     "name": "Club Defensores La Loma",
     "category": "ver",
     "icon": "club",
-    "lat": -34.167519,
-    "lng": -59.797497,
+    "lat": -34.167583,
+    "lng": -59.79752,
     "address": "",
     "hours": "",
     "phone": "",
@@ -1156,15 +1194,16 @@
     "description": "Club. Falta sumar la descripción.",
     "localTip": "",
     "source": "Cargado a mano",
-    "updated": "2026-10-30"
+    "updated": "2026-10-30",
+    "roofH": 9
   },
   {
     "id": "extra-la-mancha-verde-hotel",
     "name": "La Mancha Verde Hotel",
     "category": "dormir",
     "icon": "hotel",
-    "lat": -34.165901,
-    "lng": -59.790764,
+    "lat": -34.165982,
+    "lng": -59.790659,
     "address": "",
     "hours": "",
     "phone": "",
@@ -1175,15 +1214,16 @@
     "description": "Hotel. Falta sumar la descripción.",
     "localTip": "",
     "source": "Cargado a mano",
-    "updated": "2026-10-30"
+    "updated": "2026-10-30",
+    "roofH": 5
   },
   {
     "id": "extra-posada-chambery",
     "name": "Posada Chambery",
     "category": "dormir",
     "icon": "hospedaje",
-    "lat": -34.165901,
-    "lng": -59.790764,
+    "lat": -34.165982,
+    "lng": -59.790659,
     "address": "",
     "hours": "",
     "phone": "",
@@ -1194,7 +1234,8 @@
     "description": "Hospedaje. Falta sumar la descripción.",
     "localTip": "",
     "source": "Cargado a mano",
-    "updated": "2026-10-30"
+    "updated": "2026-10-30",
+    "roofH": 5
   },
   {
     "id": "extra-despensa-aldana",

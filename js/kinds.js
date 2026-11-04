@@ -68,6 +68,7 @@ export const TYPES = {
   policia: { label: 'Policía', cat: 'servicios', mi: 'local_police' },
   bomberos: { label: 'Bomberos', cat: 'servicios', mi: 'fire_truck' },
   banco: { label: 'Banco', cat: 'servicios', mi: 'payments' },
+  banconacion: { label: 'Banco Nación', cat: 'servicios', mi: 'payments' },
   cajero: { label: 'Cajero automático', cat: 'servicios', mi: 'atm' },
   correo: { label: 'Correo', cat: 'servicios', mi: 'local_post_office' },
   combustible: { label: 'Estación de servicio', cat: 'servicios', mi: 'local_gas_station' },
@@ -90,7 +91,7 @@ export const TYPES = {
 export const LANDMARK_OF = {
   iglesia: 'iglesia', municipalidad: 'municipalidad', cultura: 'cultura', museo: 'museo', biblioteca: 'biblioteca',
   escuela: 'escuela', jardin: 'escuela', hospital: 'hospital', bomberos: 'bomberos', policia: 'policia',
-  estacion: 'estacion', monumento: 'monumento', plaza: 'plaza', tanque: 'tanque', silo: 'silo',
+  estacion: 'estacion', banconacion: 'banconacion', monumento: 'monumento', plaza: 'plaza', tanque: 'tanque', silo: 'silo',
 };
 
 const SHOP = {
@@ -129,6 +130,7 @@ const OFFICE = {
 };
 
 const NAME_RULES = [
+  [/banco (de la )?naci[oó]n/i, 'banconacion'],
   [/municipalidad|palacio municipal|honorable concejo/i, 'municipalidad'],
   [/museo/i, 'museo'],
   [/biblioteca/i, 'biblioteca'],

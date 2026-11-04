@@ -14,6 +14,8 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { setCenter, toLngLat, toLocal } from '../js/geo.js';
 import { TYPES, LANDMARK_OF, classify } from '../js/kinds.js';
+import { ROAD_W } from '../js/roads.js';
+import { snapPlaces } from './snap-lib.mjs';
 
 const dataDir = new URL('../data/', import.meta.url);
 const args = Object.fromEntries(process.argv.slice(2).map((a) => {
@@ -139,6 +141,51 @@ const data = await overpass(query);
 
 /** Rectángulo orientado que envuelve la geometría: centro, largo, ancho y rotación (para rotation.y). */
 /** Rectángulo orientado que envuelve unos puntos locales: centro, largo, ancho y rotación (para rotation.y). */
+// Lado del edificio que da a la calle más cercana (0: +z, 1: +x, 2: -z, 3: -x del eje del edificio).
+let carRoadsCache = null;
+const carRoadsOf = () => (carRoadsCache ||= (gj?.features || []).filter((f) => f.properties?.kind === 'road' && /^(primary|secondary|tertiary|unclassified|residential|living_street|trunk)$/.test(f.properties.hw || '') && f.geometry.type === 'LineString')
+  .map((f) => ({ hw: f.properties.hw, pl: f.geometry.coordinates.map(([lng, lat]) => toLocal(lng, lat)) })));
+function frontOf(rect, only) {
+  const c0 = toLocal(rect.lng, rect.lat);
+  const th = (rect.rotY * Math.PI) / 180;
+  const ex = [Math.cos(th), -Math.sin(th)];
+  const ez = [Math.sin(th), Math.cos(th)];
+  const sides = [[ez, rect.d / 2], [ex, rect.w / 2], [[-ez[0], -ez[1]], rect.d / 2], [[-ex[0], -ex[1]], rect.w / 2]];
+  let best = 0;
+  let bd = Infinity;
+  sides.forEach(([v, h], q) => {
+    if (only && !only.includes(q)) return;
+    const px = c0.x + v[0] * (h + 1);
+    const pz = c0.z + v[1] * (h + 1);
+    let d = Infinity;
+    for (const { pl } of carRoadsOf()) {
+      for (let i = 1; i < pl.length; i++) {
+        const a = pl[i - 1];
+        const b = pl[i];
+        const dx = b.x - a.x, dz = b.z - a.z;
+        const t = Math.min(1, Math.max(0, ((px - a.x) * dx + (pz - a.z) * dz) / (dx * dx + dz * dz || 1)));
+        d = Math.min(d, Math.hypot(px - a.x - dx * t, pz - a.z - dz * t));
+      }
+    }
+    if (d < bd) { bd = d; best = q; }
+  });
+  return best;
+}
+function nearestRoadDir(x, z) {
+  let best = null;
+  let bd = Infinity;
+  for (const { pl, hw } of carRoadsOf()) {
+    for (let i = 1; i < pl.length; i++) {
+      const a = pl[i - 1];
+      const b = pl[i];
+      const dx = b.x - a.x, dz = b.z - a.z;
+      const t = Math.min(1, Math.max(0, ((x - a.x) * dx + (z - a.z) * dz) / (dx * dx + dz * dz || 1)));
+      const d = Math.hypot(x - a.x - dx * t, z - a.z - dz * t);
+      if (d < bd) { bd = d; best = { dx, dz, hw, dist: d, px: a.x + dx * t, pz: a.z + dz * t }; }
+    }
+  }
+  return best;
+}
 function rectOf(pts) {
   if (pts.length < 3) return null;
   // eje = dirección del lado más largo
@@ -204,6 +251,7 @@ const polyArea = (pts) => {
 };
 const buildings = [];
 const gj = await readJSON('sarmiento-osm.geojson', null);
+if (gj) gj.features = gj.features.filter((f) => !f.properties?.gen); // los edificios que arma este script se rehacen en cada corrida
 {
   for (const f of gj?.features || []) {
     if (f.properties?.kind !== 'building') continue;
@@ -238,6 +286,59 @@ const nearestBuilding = (x, z, maxD = 40) => {
   }
   return best;
 };
+// ---- Relleno de huecos: un comercio con ficha en un lugar donde el mapa no tiene ningún edificio ----
+const generated = [];
+const distToBuilding = (x, z) => {
+  let best = Infinity;
+  for (const b of buildings) {
+    if (Math.abs(b.cx - x) > 60 || Math.abs(b.cz - z) > 60) continue;
+    if (pointIn(x, z, b.pts)) return 0;
+    for (let i = 0; i < b.pts.length; i++) {
+      const a = b.pts[i];
+      const c = b.pts[(i + 1) % b.pts.length];
+      const dx = c.x - a.x, dz = c.z - a.z;
+      const t = Math.min(1, Math.max(0, ((x - a.x) * dx + (z - a.z) * dz) / (dx * dx + dz * dz || 1)));
+      best = Math.min(best, Math.hypot(x - a.x - dx * t, z - a.z - dz * t));
+    }
+  }
+  return best;
+};
+function fillGap(lat, lng, big) {
+  const here = toLocal(lng, lat);
+  if (distToBuilding(here.x, here.z) < 7) return false; // ya hay un edificio ahí
+  if (generated.some((g) => Math.hypot(g.x - here.x, g.z - here.z) < 9)) return false;
+  const rd = nearestRoadDir(here.x, here.z);
+  let ang = 0;
+  let cx = here.x;
+  let cz = here.z;
+  const w = big ? 15 : 11;
+  const d = big ? 11 : 9;
+  if (rd) {
+    ang = Math.atan2(rd.dz, rd.dx);
+    // se aleja de la calle hasta que el edificio quede detrás de la vereda
+    const need = (ROAD_W[rd.hw] || 10) / 2 + 4.6 + 1 + d / 2;
+    if (rd.dist < need) {
+      const nx = (here.x - rd.px) / (rd.dist || 1);
+      const nz = (here.z - rd.pz) / (rd.dist || 1);
+      const k = rd.dist < 0.01 ? 1 : 1;
+      cx = rd.px + nx * need * k;
+      cz = rd.pz + nz * need * k;
+      if (rd.dist < 0.01) { // el punto está justo sobre el eje: se elige un lado fijo
+        cx = rd.px - Math.sin(ang) * need;
+        cz = rd.pz + Math.cos(ang) * need;
+      }
+    }
+  }
+  const c = Math.cos(ang);
+  const sn = Math.sin(ang);
+  const ring = [[-w / 2, -d / 2], [w / 2, -d / 2], [w / 2, d / 2], [-w / 2, d / 2], [-w / 2, -d / 2]].map(([u, v]) => {
+    const ll = toLngLat(cx + u * c - v * sn, cz + u * sn + v * c);
+    return [r6(ll.lng), r6(ll.lat)];
+  });
+  gj.features.push({ type: 'Feature', properties: { kind: 'building', h: big ? 4.6 : 3.6, hw: null, name: null, gen: true }, geometry: { type: 'Polygon', coordinates: [ring] } });
+  generated.push({ x: here.x, z: here.z });
+  return true;
+}
 const MAX_W = 70;
 const MAX_D = 50;
 
@@ -296,9 +397,8 @@ for (const e of data.elements) {
     if (group.length) {
       const main = group.reduce((a, b) => (b.area > a.area ? b : a));
       const rect = rectOf(main.pts);
-      // Iglesia compacta (un solo edificio chico): se reemplaza por el modelo en cruz. Todo lo demás: se resaltan los edificios reales.
-      if (kind === 'iglesia' && group.length === 1 && rect.w <= 45 && rect.d <= 35 && rect.w >= 8) fp = rect;
-      else mark = { group, main, rect };
+      // Siempre se conserva el edificio real y se le arma encima el modelo (nunca se borran casas del mapa).
+      mark = { group, main, rect };
     }
   } else if (kind && e.type !== 'node') {
     fp = footprint(e);
@@ -313,16 +413,41 @@ for (const e of data.elements) {
   if (lat == null || lng == null) continue;
   const name = t.name || (kind ? TYPES[type].label : null);
   if (!name) continue; // un comercio sin nombre no sirve como ficha
+  // Edificios importantes que no están en la capa de edificios (ej. el museo): se arma el edificio completo en ese lugar.
+  const SOLID = { museo: [16, 11, 10], banconacion: [26, 18, 12], iglesia: [34, 16, 12], municipalidad: [40, 20, 12], hospital: [40, 22, 10], estacion: [40, 12, 8], cultura: [30, 16, 9], biblioteca: [24, 14, 8] };
+  let solid = null;
+  if (buildable && !mark && SOLID[kind]) {
+    const [dw, dd, hh] = SOLID[kind];
+    const here = toLocal(lng, lat);
+    const rd = nearestRoadDir(here.x, here.z);
+    // eje largo paralelo a la calle (iglesia: perpendicular, así el frente corto da a la calle)
+    let rotY = fp?.rotY ?? 0;
+    if (rd && !fp) rotY = ((((-Math.atan2(rd.dz, rd.dx) + (kind === 'iglesia' ? Math.PI / 2 : 0)) * 180) / Math.PI) % 180 + 180) % 180;
+    if (rotY > 90) rotY -= 180;
+    const w = fp ? Math.min(Math.max(fp.w, dw * 0.6), 70) : dw;
+    const d = fp ? Math.min(Math.max(fp.d, dd * 0.6), 50) : dd;
+    solid = { lat, lng, w, d, rotY: Math.round(rotY * 10) / 10, h: hh };
+  }
   let roofH = 0;
   if (mark) {
     for (const b of mark.group) b.f.properties.special = kind;
     roofH = Math.round((Number(mark.main.f.properties.h) || 4) * 1.6);
   }
-  if (kind && (mark || fp || !buildable)) {
-    const item = { _b: mark?.main || null, named: Boolean(t.name), id, name, kind, lat: r6(lat), lng: r6(lng), rotY: fp?.rotY ?? mark?.rect.rotY ?? 0 };
-    if (mark) {
+  if (kind && (mark || fp || solid || !buildable)) {
+    const item = { _b: mark?.main || null, named: Boolean(t.name), id, name, kind, lat: r6(lat), lng: r6(lng), rotY: solid?.rotY ?? fp?.rotY ?? mark?.rect.rotY ?? 0 };
+    if (solid) {
+      item.mode = 'resaltar';
+      item.solid = true;
+      item.roofH = solid.h;
+      item.ew = Math.round(solid.w * 10) / 10;
+      item.ed = Math.round(solid.d * 10) / 10;
+      item.fr = frontOf({ lat: solid.lat, lng: solid.lng, w: solid.w, d: solid.d, rotY: solid.rotY }, kind === 'iglesia' ? [1, 3] : [0, 2]);
+    } else if (mark) {
       item.mode = 'resaltar';
       item.roofH = roofH;
+      item.ew = Math.round(Math.min(mark.rect.w, 70) * 10) / 10; // tamaño del edificio real: el modelo se arma a su medida
+      item.ed = Math.round(Math.min(mark.rect.d, 50) * 10) / 10;
+      item.fr = frontOf(mark.rect, kind === 'iglesia' ? [1, 3] : null); // frente hacia la calle
     } else if (fp && fp.w >= 8 && fp.d >= 6 && buildable) {
       item.w = Math.min(fp.w, MAX_W);
       item.d = Math.min(fp.d, MAX_D);
@@ -330,6 +455,7 @@ for (const e of data.elements) {
     if (kind === 'plaza' && fp) item.size = [Math.min(fp.w, 140), Math.min(fp.d, 140)];
     landmarks.push(item);
   }
+  if (!kind && t.name && ['comer', 'compras', 'servicios', 'salud', 'dormir'].includes(TYPES[type].cat) && e.type === 'node') fillGap(lat, lng, TYPES[type].cat === 'dormir' || type === 'supermercado');
   if (!t.name) continue; // sin nombre no hay ficha (el edificio igual queda resaltado)
   const street = [t['addr:street'], t['addr:housenumber']].filter(Boolean).join(' ');
   places.push(placeObj({
@@ -377,6 +503,8 @@ for (const o of oldPlaces) {
   if (!o.address && n.address) o.address = n.address;
 }
 const placesOut = mergeBy(oldPlaces, placesNew);
+const nSnap = snapPlaces(placesOut, gj);
+if (nSnap) console.log(`${nSnap} pines estaban corridos del edificio y se acomodaron adentro de su edificio.`);
 // Sin duplicados: dos edificios del mismo tipo a menos de 30 m son el mismo (gana el que tiene huella real).
 const lmNew = [];
 for (const l of landmarks.filter((x) => !handNames.has(nameKey(x.name))).sort((a, b) => (b.named ? 1 : 0) - (a.named ? 1 : 0) || (b.w ? 1 : 0) - (a.w ? 1 : 0))) {
@@ -387,7 +515,8 @@ for (const l of landmarks.filter((x) => !handNames.has(nameKey(x.name))).sort((a
 for (const l of lmNew) { delete l._b; delete l.named; }
 const lmOut = mergeBy(oldLm, lmNew);
 
-if (gj && buildings.length) await writeFile(new URL('sarmiento-osm.geojson', dataDir), JSON.stringify(gj));
+if (generated.length) console.log(`${generated.length} comercios estaban en un lugar sin edificio en el mapa: se les armó un edificio sencillo.`);
+if (gj && (buildings.length || generated.length)) await writeFile(new URL('sarmiento-osm.geojson', dataDir), JSON.stringify(gj));
 await writeJSON('places.json', placesOut);
 const lmFile = await readJSON('landmarks.json', { items: [] });
 lmFile.items = lmOut;

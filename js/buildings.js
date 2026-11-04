@@ -124,7 +124,7 @@ export class ChunkedBuildings {
     cz /= outer.length;
 
     // Un triángulo con la normal calculada; `up` = tiene que mirar hacia arriba, si no, hacia afuera del edificio.
-    const tri = (a, b, c, color, up) => {
+    const tri = (a, b, c, color, up, tgt = ch) => {
       let ux = b.x - a.x, uy = b.y - a.y, uz = b.z - a.z;
       let vx = c.x - a.x, vy = c.y - a.y, vz = c.z - a.z;
       let nx = uy * vz - uz * vy;
@@ -139,12 +139,48 @@ export class ChunkedBuildings {
         nx = -nx; ny = -ny; nz = -nz;
       }
       for (const p of [a, b, c]) {
-        pos.push(p.x, p.y, p.z);
-        nor.push(nx, ny, nz);
-        col.push(color.r, color.g, color.b);
+        tgt.pos.push(p.x, p.y, p.z);
+        tgt.nor.push(nx, ny, nz);
+        tgt.col.push(color.r, color.g, color.b);
       }
     };
     const P = (x, y, z) => ({ x, y, z });
+    // Caja alineada con el eje de la casa (para chimeneas, tanques): centro, medidas y color.
+    const box = (bx, bz, y0, y1, hx, hz, color, top, tgt = ch) => {
+      const c4 = [P(bx - hx, y0, bz - hz), P(bx + hx, y0, bz - hz), P(bx + hx, y0, bz + hz), P(bx - hx, y0, bz + hz)];
+      const t4 = c4.map((q) => P(q.x, y1, q.z));
+      for (let i = 0; i < 4; i++) {
+        const j = (i + 1) % 4;
+        const nx2 = (i === 0 ? 0 : i === 1 ? 1 : i === 2 ? 0 : -1);
+        const nz2 = (i === 0 ? -1 : i === 1 ? 0 : i === 2 ? 1 : 0);
+        const sh = 1 - 0.08 * (i % 2);
+        const cc = { r: color.r * sh, g: color.g * sh, b: color.b * sh };
+        // normal fija hacia afuera de la caja
+        for (const [a2, b2, c2] of [[c4[i], c4[j], t4[j]], [c4[i], t4[j], t4[i]]]) {
+          const ux = b2.x - a2.x, uy = b2.y - a2.y, uz = b2.z - a2.z;
+          const vx = c2.x - a2.x, vy = c2.y - a2.y, vz = c2.z - a2.z;
+          let ax = uy * vz - uz * vy, ay = uz * vx - ux * vz, az = ux * vy - uy * vx;
+          const l2 = Math.hypot(ax, ay, az) || 1;
+          ax /= l2; ay /= l2; az /= l2;
+          const ok = ax * nx2 + az * nz2 > 0;
+          const pts = ok ? [a2, b2, c2] : [a2, c2, b2];
+          const sg = ok ? 1 : -1;
+          for (const q of pts) {
+            tgt.pos.push(q.x, q.y, q.z);
+            tgt.nor.push(ax * sg, ay * sg, az * sg);
+            tgt.col.push(cc.r, cc.g, cc.b);
+          }
+        }
+      }
+      if (top) {
+        const tc = top;
+        for (const q of [t4[0], t4[2], t4[1], t4[0], t4[3], t4[2]]) {
+          tgt.pos.push(q.x, q.y, q.z);
+          tgt.nor.push(0, 1, 0);
+          tgt.col.push(tc.r, tc.g, tc.b);
+        }
+      }
+    };
 
     // ---- Forma del techo ----
     // Casas chicas y rectangulares: techo a dos aguas. Lo demás: techo plano con parapeto. Los especiales, siempre plano.
@@ -169,7 +205,13 @@ export class ChunkedBuildings {
       const rh = Math.min(3.2, Math.max(1.3, lo * 0.3));
       const m30 = P((p3.x + p0.x) / 2, h + rh, (p3.z + p0.z) / 2);
       const m12 = P((p1.x + p2.x) / 2, h + rh, (p1.z + p2.z) / 2);
-      const A = P(p0.x, h, p0.z), B = P(p1.x, h, p1.z), C = P(p2.x, h, p2.z), Dd = P(p3.x, h, p3.z);
+      // Aleros: el techo sobresale de las paredes (da sombra y se lee como techo de verdad).
+      const mx = (p0.x + p1.x + p2.x + p3.x) / 4;
+      const mz = (p0.z + p1.z + p2.z + p3.z) / 4;
+      const grow = (p, k) => { const l = Math.hypot(p.x - mx, p.z - mz) || 1; return { x: p.x + ((p.x - mx) / l) * k, z: p.z + ((p.z - mz) / l) * k }; };
+      const ov = this.detail >= 2 ? 0.55 : 0;
+      [p0, p1, p2, p3] = [grow(p0, ov), grow(p1, ov), grow(p2, ov), grow(p3, ov)];
+      const A = P(p0.x, h - ov * 0.35, p0.z), B = P(p1.x, h - ov * 0.35, p1.z), C = P(p2.x, h - ov * 0.35, p2.z), Dd = P(p3.x, h - ov * 0.35, p3.z);
       const side = { r: roof.r * 0.96, g: roof.g * 0.96, b: roof.b * 0.96 };
       tri(A, B, m12, roof, true);
       tri(A, m12, m30, roof, true);
@@ -177,6 +219,13 @@ export class ChunkedBuildings {
       tri(C, m30, m12, side, true);
       tri(B, C, m12, wall, false); // frontones
       tri(Dd, A, m30, wall, false);
+      // Chimenea en algunos techos
+      if (this.detail >= 2 && r4 > 0.55) {
+        const t = 0.35 + r3 * 0.3;
+        const kx = mx + (m30.x - mx) * 0.0 + (m12.x - m30.x) * (r3 - 0.5) * 0.5;
+        const kz = mz + (m12.z - m30.z) * (r3 - 0.5) * 0.5;
+        box(kx, kz, h + rh * 0.5, h + rh + 1.1, t, t, { r: 0.62, g: 0.4, b: 0.34 }, { r: 0.25, g: 0.23, b: 0.23 });
+      }
     } else {
       const all = outer.concat(...holes);
       const faces = this.triangulate(
@@ -295,6 +344,11 @@ export class ChunkedBuildings {
       put(0, len, 0, 0.75, 0.04, dk);
       if (h >= 5.5) put(0, len, h - 0.4, h, 0.14, [Math.min(1, wall.r * 1.06), Math.min(1, wall.g * 1.06), Math.min(1, wall.b * 1.06)]);
     }
+    const frame = [Math.min(1, wall.r * 1.08 + 0.05), Math.min(1, wall.g * 1.08 + 0.05), Math.min(1, wall.b * 1.08 + 0.05)];
+    const doorCols = [[0.34, 0.22, 0.14], [0.2, 0.35, 0.28], [0.55, 0.2, 0.18], [0.22, 0.28, 0.45], [0.16, 0.16, 0.18]];
+    const doorC = doorCols[Math.floor(w.seedB * 17) % doorCols.length];
+    const awning = full && door && h < 7 && w.seedA > 0.4;
+    const awC = [[0.8, 0.25, 0.2], [0.2, 0.45, 0.55], [0.9, 0.75, 0.3], [0.25, 0.5, 0.3]][Math.floor(w.seedA * 13) % 4];
     const doorAt = door ? Math.floor(((w.seedA * 7.7) % 1) * Math.max(1, n)) : -1;
     for (let i = 0; i < n; i++) {
       const c = ((i + 0.5) * len) / n;
@@ -302,13 +356,36 @@ export class ChunkedBuildings {
         const y0 = f * fh;
         if (f === 0 && i === doorAt) {
           // puerta
-          put(c - 0.5, c + 0.5, 0, Math.min(2.2, fh * 0.8), 0.07, [0.34, 0.22, 0.14]);
+          put(c - 0.62, c + 0.62, 0, Math.min(2.35, fh * 0.82), 0.05, frame);
+          put(c - 0.5, c + 0.5, 0, Math.min(2.2, fh * 0.8), 0.08, doorC);
+          if (awning) {
+            // toldo sobre la puerta (una chapa inclinada hacia afuera)
+            const y1 = Math.min(2.6, fh * 0.9);
+            const q0 = [a.x + tx * (c - 1.3) + nx * 0.05, a.z + tz * (c - 1.3) + nz * 0.05];
+            const q1 = [a.x + tx * (c + 1.3) + nx * 0.05, a.z + tz * (c + 1.3) + nz * 0.05];
+            const q2 = [a.x + tx * (c + 1.3) + nx * 1.1, a.z + tz * (c + 1.3) + nz * 1.1];
+            const q3 = [a.x + tx * (c - 1.3) + nx * 1.1, a.z + tz * (c - 1.3) + nz * 1.1];
+            const V = (q, y) => ({ x: q[0], y, z: q[1] });
+            const ca = { r: awC[0], g: awC[1], b: awC[2] };
+            for (const [p1, p2, p3] of [[V(q0, y1), V(q1, y1), V(q2, y1 - 0.45)], [V(q0, y1), V(q2, y1 - 0.45), V(q3, y1 - 0.45)]]) {
+              const ux = p2.x - p1.x, uy = p2.y - p1.y, uz = p2.z - p1.z;
+              const vx = p3.x - p1.x, vy = p3.y - p1.y, vz = p3.z - p1.z;
+              let ax = uy * vz - uz * vy, ay = uz * vx - ux * vz, az = ux * vy - uy * vx;
+              const l = Math.hypot(ax, ay, az) || 1;
+              ax /= l; ay /= l; az /= l;
+              const sg = ay >= 0 ? 1 : -1;
+              const pts = sg > 0 ? [p1, p2, p3] : [p1, p3, p2];
+              for (const q of pts) { D.pos.push(q.x, q.y, q.z); D.nor.push(ax * sg, ay * sg, az * sg); D.col.push(ca.r, ca.g, ca.b); }
+            }
+          }
           continue;
         }
         if (n === 1 && f === 0 && door) continue;
         const wy0 = y0 + fh * 0.32;
         const wy1 = wy0 + Math.min(1.35, fh * 0.45);
-        put(c - 0.55, c + 0.55, wy0, wy1, 0.06, glass);
+        if (full) put(c - 0.68, c + 0.68, wy0 - 0.12, wy1 + 0.12, 0.05, frame); // marco claro
+        put(c - 0.55, c + 0.55, wy0, wy1, 0.08, glass);
+        if (full && f > 0 && w.seedA > 0.5) put(c - 0.9, c + 0.9, y0 - 0.06, y0 + 0.14, 0.45, [wall.r * 0.9, wall.g * 0.9, wall.b * 0.9]); // balcón
         if (withShutters) {
           put(c - 0.95, c - 0.58, wy0, wy1, 0.07, shutter);
           put(c + 0.58, c + 0.95, wy0, wy1, 0.07, shutter);

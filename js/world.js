@@ -20,9 +20,10 @@ const SPECIAL = {
   policia: [0xdde3ee, 0x2f55a8],
   municipalidad: [0xf3ead2, 0x2d80c4],
   cultura: [0xf0e0d8, 0x8d54b8],
-  museo: [0xf1e6c8, 0xc98712],
+  museo: [0xf3e6c6, 0xf0e2bd],
+  banconacion: [0xefe4c9, 0xe2d7bc],
   biblioteca: [0xe4eadb, 0x3f8f67],
-  iglesia: [0xefe6d0, 0xd9cfae],
+  iglesia: [0xa88f76, 0x8d8a82],
   estacion: [0xe7dac2, 0x8a6a4a],
   edificio: [0xeee3dc, 0xb07ad0],
 };
@@ -213,11 +214,13 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
   if (roads.length >= 80) {
     let dropped = 0;
     for (let i = buildingFeatures.length - 1; i >= 0; i--) {
+      if (buildingFeatures[i].properties?.special || buildingFeatures[i].properties?.name) continue; // los edificios importantes nunca se sacan
       const r = ringOf(buildingFeatures[i]);
       if (!r) continue;
       const cx = r.reduce((a, p) => a + p.x, 0) / r.length;
       const cz = r.reduce((a, p) => a + p.z, 0) / r.length;
-      if (onPavement(roadGrid, roads, cx, cz, 0.3) || r.some((p) => onPavement(roadGrid, roads, p.x, p.z, -1.2))) {
+      // Solo si el CENTRO de la casa está claramente en medio de la calzada (no si una esquina roza la calle).
+      if (onPavement(roadGrid, roads, cx, cz, -4.2)) {
         buildingFeatures.splice(i, 1);
         dropped++;
       }
@@ -225,6 +228,7 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
     if (dropped) console.info('Casas sacadas de la calzada:', dropped);
   }
 
+  console.info(`Edificios en los datos: ${buildingFeatures.length} (con modelo propio que reemplaza al real: ${skipRects.length})`);
   // ---- Edificios ----
   // Se agrupan en celdas de 400 m (un mesh por celda): la cámara y las sombras descartan lo que no se ve.
   // Se arman en tandas chicas para que la pantalla de carga siga animada.
@@ -234,12 +238,18 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
   let chunksOk = false;
   const detailMeshes = [];
   const detailMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.75, metalness: 0, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 });
-  const detailState = { enabled: true, range: lowEnd ? 230 : 420 };
+  const detailState = { enabled: true, range: lowEnd ? 300 : 620 };
   let buildingCenters = new Float32Array(0);
   if (buildingFeatures.length) {
     try {
-      const chunked = new ChunkedBuildings({ half, factor: HEIGHT_FACTOR, detail: lowEnd ? 1 : 2, triangulate: (c, h) => THREE.ShapeUtils.triangulateShape(c, h) });
+      const chunked = new ChunkedBuildings({ half, factor: HEIGHT_FACTOR, detail: lowEnd ? 1 : 2, triangulate: (c, h) => THREE.ShapeUtils.triangulateShape(
+          c.map((p) => new THREE.Vector2(p.x, p.y)), // three.js exige Vector2 (con .equals), no objetos simples
+          h.map((r) => r.map((p) => new THREE.Vector2(p.x, p.y))),
+        ) });
       let t0 = performance.now();
+      let failed = 0;
+      const failedFeats = [];
+      let firstErr = null;
       for (let i = 0; i < buildingFeatures.length; i++) {
         const f = buildingFeatures[i];
         const g = f.geometry;
@@ -248,14 +258,33 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
           try {
             const sp = SPECIAL_COLORS[f.properties.special];
             chunked.add(rings.map(ringToLocal), Number(f.properties.h), sp ? sp[0] : WALLS, sp ? sp[1] : ROOFS, hash2, { special: Boolean(sp) });
-          } catch {
-            /* un edificio con geometría rara no debe frenar el resto */
+          } catch (err) {
+            // un edificio con geometría rara no debe frenar el resto, pero se cuenta para poder avisarlo
+            failed++;
+            failedFeats.push(f);
+            if (!firstErr) firstErr = err;
           }
         }
         if (performance.now() - t0 > 18) {
           onProgress((i + 1) / buildingFeatures.length);
           await nextFrame();
           t0 = performance.now();
+        }
+      }
+      if (failed) console.warn(`Edificios que no se pudieron dibujar: ${failed} de ${buildingFeatures.length}`, firstErr);
+      if (failedFeats.length) {
+        // Red de seguridad: lo que el método rápido no pudo se dibuja con el método clásico (así nunca falta un edificio).
+        const geos = [];
+        for (const f of failedFeats) {
+          try { geos.push(...buildingGeometry(f, HEIGHT_FACTOR)); } catch { /* geometría imposible */ }
+        }
+        if (geos.length) {
+          const extra = new THREE.Mesh(mergeGeometries(geos, false), buildingMat);
+          extra.castShadow = true;
+          extra.receiveShadow = true;
+          buildings.add(extra);
+          for (const g of geos) g.dispose();
+          console.warn(`Rescatados con el método clásico: ${geos.length}`);
         }
       }
       for (const c of chunked.finish()) {

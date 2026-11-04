@@ -1,6 +1,6 @@
 {
   "name": "guia-sarmiento",
-  "version": "1.5.1",
+  "version": "1.5.8",
   "private": true,
   "type": "module",
   "description": "Guía 3D interactiva de Capitán Sarmiento (sitio estático, Three.js).",

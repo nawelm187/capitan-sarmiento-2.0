@@ -1,5 +1,53 @@
 # Historial de cambios
 
+## 1.5.8 · 2026-11-01
+- Los pines de los lugares que vienen de OpenStreetMap o de lugares-extra.txt ahora se acomodan adentro de su edificio (hasta 30 m de distancia) cuando corrés `npm run lugares` o `npm run extras`. Los que cargaste a mano no se tocan (y podés poner `"snapped": false` en cualquier lugar para que no se mueva).
+- El pin queda a la altura del techo del edificio.
+
+## 1.5.8 · 2026-11-01
+
+- (completá qué cambió)
+
+## 1.5.7 · 2026-11-01
+
+- **Arreglo importante:** faltaban miles de edificios (en tu pueblo, 7167 de 10989) porque el techo plano se triangulaba con un formato que three.js no acepta (`.equals is not a function`). Desde la 1.5.0 solo se dibujaban las casas con techo a dos aguas; los edificios con techo plano (incluidos el museo, el banco y el cuerpo de la iglesia) no. Ahora se triangulan bien.
+- Red de seguridad: si algún edificio no puede dibujarse con el método rápido, se dibuja con el método clásico, así no falta ninguno. La consola informa cuántos se rescataron.
+
+## 1.5.6 · 2026-11-01
+
+- **Los edificios importantes siempre aparecen:** si el museo, la iglesia, el banco, la municipalidad, el hospital, la estación, la casa de la cultura o la biblioteca no tienen edificio en el mapa, `npm run lugares` arma el edificio completo con el modelo (orientado hacia la calle). Si lo tienen, el modelo se arma sobre el edificio real, que nunca se borra (antes una iglesia chica reemplazaba y borraba casas del mapa).
+- **Comercios sin edificio:** los comercios y servicios con ficha en un lugar donde el mapa no tiene ningún edificio reciben uno sencillo, detrás de la vereda y paralelo a la calle (se rehacen en cada corrida; los de OpenStreetMap y los tuyos no se tocan).
+- La maqueta casi no saca casas por estar cerca de una calle (solo las que están justo sobre el eje).
+- La consola (F12) informa cuántos edificios hay en los datos y cuántos no se pudieron dibujar (con el motivo).
+
+## 1.5.5 · 2026-10-31
+
+- **Tres edificios rehechos a partir de fotos reales:**
+  - Iglesia San Carlos: torre campanario con base de ladrillo y esquinas blancas, campanario con persianas, reloj y aguja verde-gris con cruz; frente blanco con tres arcos con ribete verde; reja con pilares de ladrillo y capitel verde.
+  - Museo Histórico: casona de dos plantas crema con molduras ocre, frontón, balcón de hierro, portal con arco, ventanas con arco, letrero «MUSEO / HISTÓRICO», farolas de dos globos y palmeras.
+  - Banco de la Nación Argentina: edificio crema con zócalo, arcos con persianas, balcones de hierro, cornisa con modillones, balaustrada, portal con frontón, escalera, carteles azules y banderas.
+- **El frente mira a la calle:** `npm run lugares` calcula qué lado de cada edificio importante da a la calle más cercana (las iglesias, solo los lados cortos) y el modelo se orienta así.
+- El Banco Nación se reconoce por el nombre y se resalta como edificio especial.
+
+## 1.5.4 · 2026-10-30
+
+- **Arreglo:** volvían a faltar edificios (museo, Club Sarmiento, Banco Nación…) porque la maqueta sacaba toda casa cuya esquina rozaba una calle. Ahora solo se saca la casa cuyo centro está claramente en medio de la calzada, y los edificios importantes (resaltados o con nombre) nunca se sacan. La consola (F12) informa cuántas se sacaron.
+
+## 1.5.3 · 2026-10-30
+
+- **Edificios importantes con arquitectura propia**, armados sobre el edificio real y a su medida (hace falta correr `npm run lugares` para que se guarde el tamaño):
+  - Iglesia: torre campanario con reloj, arcos, cornisa, aguja con cruz, pináculos y frontón con cruz.
+  - Municipalidad: pórtico con columnas, frontón y escalinata, torre de reloj con aguja, balaustrada y mástiles con banderas.
+  - Estación / Casa de la Cultura: andén techado con postes, reloj, chimeneas y faroles.
+  - Museo: estilo colonial pampeano con parapeto, frontón, rejas de hierro y alero de pulpería.
+  - Hospital (cruz, marquesina de guardia, caja de escaleras), escuela, policía, bomberos y biblioteca con sus rasgos propios.
+- Basado en lo que dicen las fuentes (capilla del Pilar frente al Palacio Municipal, museo colonial pampeano, La Estación como Casa de la Cultura); los detalles de color y forma son aproximados hasta tener fotos.
+
+## 1.5.2 · 2026-10-30
+
+- **Edificios con más detalle:** techos a dos aguas con aleros que sobresalen, chimeneas, tanques de agua más grandes, marcos claros en las ventanas, puertas de varios colores con marco, toldos sobre algunas puertas y balcones en pisos altos.
+- El detalle se ve desde más lejos (620 m; 300 m en gama baja, que mantiene la versión liviana).
+
 ## 1.5.1 · 2026-10-30
 
 - **Lugares extra:** nuevo `fuentes/lugares-extra.txt` (una línea por lugar: `Nombre | tipo | link de Google Maps`) y `npm run extras`. Entiende links largos, links cortos (maps.app.goo.gl, necesita internet) y coordenadas «lat, lng». Se corre solo al final de `npm run lugares`. Ya trae 14 lugares de Sarmiento para completar con su link.

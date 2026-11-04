@@ -10,6 +10,8 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { TYPES } from '../js/kinds.js';
+import { setCenter } from '../js/geo.js';
+import { snapPlaces } from './snap-lib.mjs';
 
 const dataDir = new URL('../data/', import.meta.url);
 const file = new URL('../fuentes/lugares-extra.txt', import.meta.url);
@@ -74,6 +76,12 @@ for (const raw of (await readFile(file, 'utf8')).split(/\r?\n/)) {
   added++;
 }
 if (pending.length) console.log(`• Sin ubicación todavía (${pending.length}): pegá el link de Google Maps en fuentes/lugares-extra.txt para sumarlos.`);
+try {
+  setCenter(meta.center);
+  const gj = JSON.parse(await readFile(new URL('sarmiento-osm.geojson', dataDir), 'utf8'));
+  const n = snapPlaces(places, gj);
+  if (n) console.log(`${n} lugares se acomodaron adentro de su edificio.`);
+} catch { /* sin mapa: se deja la ubicación tal cual */ }
 await writeFile(new URL('places.json', dataDir), JSON.stringify(places, null, 2) + '\n');
 meta.dataRev = Date.now().toString(36);
 await writeFile(new URL('meta.json', dataDir), JSON.stringify(meta, null, 2) + '\n');
