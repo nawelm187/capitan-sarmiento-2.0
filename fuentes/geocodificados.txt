@@ -1,0 +1,7 @@
+# Ubicaciones encontradas por dirección con OpenStreetMap (npm run geocodificar). Borrá una línea si su pin queda mal.
+Policonsultorios | clinica | -34.178796, -59.79909 | San Martín 392 | GEOCODIFICADO por dirección (OpenStreetMap): verificar el pin
+Farmacia Ruiz | farmacia | -34.173225, -59.78818 | Av. Leandro N. Alem 504 | GEOCODIFICADO por dirección (OpenStreetMap): verificar el pin
+Centro de Educación Física Nº 120 Adalberto César Minervini | escuela | -34.172348, -59.797068 | Colón 375 | GEOCODIFICADO por dirección (OpenStreetMap): verificar el pin
+Centro de Formación Profesional Nº 401 | escuela | -34.174483, -59.7914 | Italia 324 | GEOCODIFICADO por dirección (OpenStreetMap): verificar el pin
+Escuela de Educación Secundaria Técnica Nº 1 Segundo Agustín Luna | escuela | -34.174483, -59.7914 | Italia 324 | GEOCODIFICADO por dirección (OpenStreetMap): verificar el pin
+Supermercados DIA | supermercado | -34.173232, -59.795861 | Av. Rivadavia 536 | GEOCODIFICADO por dirección (OpenStreetMap): verificar el pin

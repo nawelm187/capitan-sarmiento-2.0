@@ -1,0 +1,189 @@
+# Inventario ampliado de puntos de interés del Partido de Capitán Sarmiento (actualizado el 13/11/2026).
+# Formato:  Nombre | tipo | ubicación (link de Google Maps o "lat, lng"; vacío = todavía sin ubicar) | dirección | estado
+#
+#  - Las filas CON ubicación se dibujan en el mapa (si no están repetidas con algo que el mapa ya tiene).
+#  - Las filas SIN ubicación NO se dibujan: figuran como "sin dibujar" en el panel Capas hasta que cargues su ubicación.
+#    Para sumar una, copiá su línea a fuentes/lugares-extra.txt y pegale el link de Google Maps (esa lista manda sobre esta).
+#  - No se inventan coordenadas a partir de la altura de una calle. Las coordenadas de la primera parte salen de
+#    OpenStreetMap vía Mapcarta: conviene mirar el pin en el mapa antes de darlo por bueno.
+#  - Quedan afuera a propósito: Duggan (partido de San Antonio de Areco), barrios/parajes/arroyos (no son lugares) y
+#    dos escuelas de La Luisa / El Descanso de las que no se recuperó el nombre.
+#
+# ---------- CON COORDENADAS PUBLICADAS ----------
+Municipalidad de Capitán Sarmiento | municipalidad | -34.17200, -59.79314 | Centenario 499
+Estación Policía Comunal Capitán Sarmiento | policia | -34.17159, -59.79458 | Casco urbano
+Bomberos Voluntarios de Capitán Sarmiento | bomberos | -34.17223, -59.79548 | Mármol 536
+Parroquia Nuestra Señora de Pilar | iglesia | -34.17188, -59.79283 | Centro
+Hospital Municipal San Carlos | hospital | -34.17923, -59.79974 | Av. San Martín 450
+Sarmiento Salud | clinica | -34.17880, -59.79909 | Reverendo Pedro Lacabe 538 | revisar nombre exacto
+Plaza San Carlos | plaza | -34.17780, -59.79788 | Barrio San Carlos
+Club Social y Deportivo San Carlos | club | -34.18115, -59.79677 | Daimo Bojanich 402 | conciliar nombre y dirección
+Museo de la Recreación Histórica | museo | -34.17816, -59.79253 | Francia 137
+Cine Ítalo-Argentino | cine | -34.17670, -59.79275 | Centro
+Centro Cultural La Estación | cultura | -34.17564, -59.79347 | Antigua estación
+Iglesia San Carlos Borromeo | iglesia | -34.17607, -59.79309 | Zona San Carlos
+Gimnasio Crom | gimnasio | -34.17621, -59.79243 | Juan Manuel de Rosas 465
+Terminal de Ómnibus de Capitán Sarmiento | terminal | -34.15952, -59.78811 | Ruta 8 km 144,5
+Piletas Camping Capitán Sarmiento | atractivo | -34.14349, -59.84389 | Predio sobre RN 8 | parque acuático; no es el camping municipal
+Camping y Balneario Municipal Capitán Sarmiento | camping | -34.14447, -59.84403 | Predio recreativo sobre RN 8
+Club Sarmiento Piletas | club | -34.17689, -59.78934 | Instalación deportiva urbana
+Cooperativa Eléctrica Rural de La Luisa | cooperativa | -34.12630, -59.92457 | Cabo Fregotte 1247, La Luisa | cotejar dirección
+Club Atlético Unión Labradores | club | -34.13261, -59.93643 | Domingo Fidel Sarmiento s/n, La Luisa
+Estancia La Posta | estancia | -34.10322, -59.97392 | Zona rural próxima a La Luisa
+Farmacia Bava | farmacia | -34.17124, -59.78738 | Av. Leandro N. Alem 708 / 756 | revisar la altura exacta
+#
+# ---------- SALUD ----------
+CAPS San Cayetano | clinica | | La Pampa entre Newbery y Circunvalación
+CAPS La Cumparsita — Espinel Bavio | clinica | | Sarmiento y San Juan 1626
+CAPS La Loma | clinica | | La Plata y San Nicolás s/n
+CAPS La Luisa | clinica | | Cabo O. Fregotte s/n, La Luisa
+Centro Provincial de Atención — Capitán Sarmiento | clinica | | La Pampa 436, entre Cardenal Samoré y Circunvalación
+SAME — Capitán Sarmiento | clinica | | | sin dirección
+Servicio de Ambulancia para Traslado de Pacientes | clinica | | Colón 335
+Centro Integral de Rehabilitación Oral C.I.R.O. | dentista | | Av. Mitre 123
+Kine CS | clinica | | Avellaneda 6198 | VERIFICAR existencia (altura dudosa)
+Laboratorio IGLAB | clinica | | Padre Lacabe 524
+Laboratorio Ruiz | clinica | | Av. de Mayo 285
+Laboratorio de Análisis Clínicos García | clinica | | Av. Mitre 434
+Laboratorio de Análisis Clínicos Tambutti | clinica | | Mitre 532
+Policlínica S.T.I.A. Capitán Sarmiento | clinica | | Vicente López y Planes 895
+Policonsultorios | clinica | | San Martín 392
+Hogar Geriátrico Solar El Sauce | clinica | | Ruta Nacional 8 km 144,5
+Solar del Sauce | clinica | | Ruta Nacional 8 km 144,5 | VERIFICAR duplicado de Hogar Geriátrico Solar El Sauce
+Flga. Daniela Wüthrich | clinica | | España 831
+Estética y Masajes | peluqueria | | R. Favaloro 9
+Goin Emilio F. | veterinaria | | Av. Rivadavia 946
+Mayor Jorge M. | veterinaria | | Pte. Perón 224
+Clínica Equina SRL | veterinaria | | Av. L. N. Alem esquina 29 de Junio
+#
+# ---------- FARMACIAS ----------
+Farmacia Lagorio | farmacia | | Av. Roque Sáenz Peña 598
+Farmacia Ruiz | farmacia | | Av. Leandro N. Alem 504
+Farmacia Pérez | farmacia | | Av. Presidente J. D. Perón 705 | validar nombre y domicilio
+Farmacia del Pueblo | farmacia | | Av. Rivadavia 715
+Farmacia Folguera | farmacia | | Av. San Martín 104
+Farmacia del Rosario | farmacia | | Av. Leandro N. Alem 708 | VERIFICAR: mismo domicilio que Farmacia Bava
+Farmacia Kovasevich | farmacia | | Cerca de Plaza San Martín | VERIFICAR existencia y nombre
+#
+# ---------- EDUCACIÓN ----------
+C.E.A.T. Nº 1 María Azucena Lobo O'Connor | escuela | | La Pampa 436
+Centro de Adultos Nº 701 | escuela | | Sarmiento y G. Lucotti 1194
+Centro de Educación Física Nº 120 Adalberto César Minervini | escuela | | Colón 375
+Centro de Formación Profesional Nº 401 | escuela | | Italia 324
+Escuela de Educación Primaria Nº 5 Bernardino Rivadavia | escuela | | Centro, cerca de la comisaría
+Escuela de Educación Secundaria Nº 3 | escuela | | Casco urbano
+Escuela de Educación Secundaria Técnica Nº 1 Segundo Agustín Luna | escuela | | Italia 324 | validar
+Escuela Secundaria Nº 2 | escuela | | Zona del Museo de la Recreación Histórica
+Escuela Normal Superior Domingo Fidel Sarmiento | escuela | | Zona del Museo de la Recreación Histórica
+Jardín de Infantes Nº 901 Martín Miguel de Güemes | jardin | | Sector San Carlos
+Jardín de Infantes Nº 903 Martha Salotti | jardin | | Sector acceso / camping
+Jardín de Infantes Nº 906 | jardin | | Centro / zona del Museo
+Escuela Primaria Nº 9 Malvinas Argentinas | escuela | | Sector de la Terminal
+Escuela Nº 8 | escuela | | Zona rural de La Luisa / Arroyo de Luna
+#
+# ---------- GOBIERNO, SERVICIOS E INFRAESTRUCTURA ----------
+Cámara de Industria, Comercio, Bienes Raíces y Afines | estudio | | José Mármol 803
+Correo Argentino | correo | | Centro
+Banco de la Provincia de Buenos Aires | banco | | Centro
+Banco de la Nación Argentina | banconacion | | Centro
+BBVA | banco | | Centro
+Banco Macro | banco | | Centro
+Estación de servicio Shell — Meira Hnos. | combustible | | Av. Leandro N. Alem s/n
+Estación ferroviaria La Luisa | estacion | | La Luisa
+Radio FM Universo 97.3 MHz | servicio | | José Mármol 857
+Centro de Jubilados y Pensionados | servicio | | Av. Rivadavia 593
+Livecom SRL | servicio | | Av. Rivadavia 472
+Transporte de Carga Sarradell e Hijos | servicio | | Domingo F. Sarmiento 1400
+Transporte Bailo Hnos. | servicio | | Av. Roque Sáenz Peña 501
+Guarneri Héctor Julio Negocios Inmobiliarios | inmobiliaria | | Presidente Perón 479
+#
+# ---------- COMERCIO ----------
+Supermercados DIA | supermercado | | Av. Rivadavia 536
+Super Centro S.R.L. | supermercado | | Av. de Mayo 302
+Supermercado El Oriental | supermercado | | Av. de Mayo 953
+Mu-coop Supermercado | supermercado | | Bv. Mitre 500 | otra ficha: España 776; revisar sucursal
+Super Campeones | supermercado | | Av. Rivadavia 472
+Ibis Supermercado | supermercado | | Italia 1286
+La Colectividad | supermercado | | Av. Rivadavia 507
+Despensa Aldana | almacen | | | sin dirección
+Paisano | supermercado | | | sin dirección
+Maxikiosco Iván — Pago Fácil — Western Union | kiosco | | Mármol, altura sin publicar
+Despensa Camila | almacen | | | sin dirección
+G Congelados | almacen | | | sin dirección
+Mueblerías El Águila | muebleria | | Presidente Perón 427
+Casa Aldo Langioni | muebleria | | Av. Rivadavia 653
+M'Encanta | jugueteria | | Av. L. N. Alem 64
+Ocasiones | regaleria | | Av. Rivadavia 883
+Cristalería González | materiales | | Av. Rivadavia 186
+Casa Álvarez | ropa | | Pte. Perón 371
+Viñales Joyeros | joyeria | | Pte. Perón 381
+Horue Jorge A. | electro | | Av. Roque Sáenz Peña 6
+Araceli Neumáticos | taller | | Av. Rivadavia 901
+Autopartes Sarmiento S.A. | taller | | Ruta 8, altura sin publicar
+Autogas Pujol | taller | | Rosas 651
+Lavadero Capitán Sarmiento — Rafael Álvarez | lavadero | | Av. Sáenz Peña 1055
+Chaco Maderas | materiales | | A. Palacios 1203
+Compañía Argentina de Semillas S.A. | agro | | Av. Roque Sáenz Peña 1035
+Nores Lucrecia J. R. de | agro | | Av. Rivadavia 742
+Victorio Alma e Hijos | bebidas | | Ruta 8 km 144
+Granja Tres Arroyos S.A. — Planta Cahuane | servicio | | Ruta 8 s/n | confirmar acceso
+Avícola Capitán Sarmiento | agro | | Av. 29 de Junio s/n
+Quebracho Herrado S.A. | agro | | Av. Roque Sáenz Peña s/n / Ruta 8 | VERIFICAR ubicación (referencias discordantes)
+Cooperativa Agrícola Ganadera Sarmiento Ltda. | cooperativa | | Bv. Mitre 500 | verificar si comparte predio con Mu-coop
+Bava Juan C. | carniceria | | Av. L. N. Alem 896
+#
+# ---------- GASTRONOMÍA ----------
+Parrilla Brasas y Risas | parrilla | | | sin dirección
+Vinoteca Varietal | bar | | Av. de Mayo
+Fausto Bar | bar | | Av. Presidente Perón 447
+Split Pizza-Bar | pizzeria | | | sin dirección
+Grido | heladeria | | | sin dirección
+El Granero Café Bar | cafe | | | sin dirección
+La Posta de Capitán Sarmiento | parrilla | | | sin dirección
+Rufo Cocina y Tragos | restaurante | | Av. 29 de Junio 953
+La Esquina Resto Bar | restaurante | | Av. Presidente Perón y Moreno
+La Última Café Bar | cafe | | Daimo Bojanich 8
+Katmandu Bar | bar | | Av. Presidente Perón 415
+La Torre Pizza | pizzeria | | Av. Presidente Perón 411
+Pizzería Pizzamanía | pizzeria | | Av. Rivadavia 843
+El Arrabal Pizza | pizzeria | | Av. Rivadavia 561
+Pizzería La Vieja | pizzeria | | | sin dirección
+Las Margaritas Resto | restaurante | | Mitre 60
+Morfi | restaurante | | Av. Mitre 560
+La Estación Fast Food Bar | comida_rapida | | Zona de la estación
+Los Pinos | restaurante | | Sector Terminal
+Puesto 1 | restaurante | | Av. Roque Sáenz Peña y Bandera
+La Taipa Comidas | restaurante | | Av. Leandro N. Alem
+Nutrí San — Catering para Eventos | comida_rapida | | Alem 577
+Chocolatería Dulces Secretos | cafe | | Av. Bartolomé Mitre 672
+Bar La Luisa Restaurante y Parrilla | parrilla | | Ruta 8 s/n, La Luisa
+Parador La Fusta | parrilla | | La Luisa, sobre RN 8
+Chucho Pizzas | pizzeria | | | sin dirección
+Ruta 8 Brewery Campground Bar | bar | | | sin dirección
+Morana Café Bar | cafe | | | sin dirección
+Gamester | bar | | | sin dirección
+Papucho | parrilla | | | sin dirección
+Los Scabini | parrilla | | | sin dirección
+Bruna Cervecería | bar | | Cruce Mitre / Juan Manuel de Rosas
+Dinastía Bar | bar | | La Luisa | VERIFICAR existencia (referencia antigua)
+Texas BBQ | restaurante | | | VERIFICAR existencia (referencia antigua)
+Cervecería Duggan | bar | | Rivadavia 471 | VERIFICAR jurisdicción
+#
+# ---------- ALOJAMIENTO, TURISMO Y RURAL ----------
+Cabañas Camping Capitán Sarmiento | hospedaje | | Predio del camping | VERIFICAR duplicado del camping municipal
+Santa Margarita | atractivo | | | sin ubicación
+Haras El Paraíso | estancia | | La Luisa, frente a la estación; acceso RN 8 km 157,5
+Haras El Paraíso — Casco | estancia | | Zona La Luisa | VERIFICAR duplicado de Haras El Paraíso
+Aeródromo Capitán Sarmiento | aerodromo | | Zona rural
+Aeródromo Quebracho Herrado | aerodromo | | Zona rural | VERIFICAR existencia
+Cementerio Municipal | servicio | | | sin ubicación
+Monumento y Museo a la Bandera Bonaerense | monumento | | | sin ubicación
+Haras Quebracho Herrado | estancia | | | VERIFICAR ubicación (referencias discordantes)
+#
+# ---------- CLUBES, CULTURA Y ESPACIOS PÚBLICOS ----------
+Club Atlético Independiente | club | | Av. Mitre 560
+Club Los 14 | club | | Centenario
+Club Ayacuá | club | | Cerca del Museo de la Recreación Histórica
+Plaza San Martín | plaza | | Centro, junto a la Municipalidad y la Parroquia
+Prado Español | cultura | | | sin dirección
+Recreo Salón de Fiesta Infantil | servicio | | Pte. Perón 542

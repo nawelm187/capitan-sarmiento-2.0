@@ -1,6 +1,6 @@
 {
-  "version": "1.5.8",
-  "date": "2026-11-01",
+  "version": "1.6.2",
+  "date": "2026-11-14",
   "name": "Guía Sarmiento",
   "town": "Capitán Sarmiento",
   "kicker": "Provincia de Buenos Aires",
@@ -40,7 +40,7 @@
     "Hacer un paseo o visitar un lugar es una decisión tuya y la tomás bajo tu propia responsabilidad. Los trayectos son orientativos: el estado de las calles y las rutas, el clima, el tránsito y la seguridad pueden variar.",
     "Quien hace esta guía no se responsabiliza por accidentes, pérdidas, daños u otros inconvenientes que ocurran durante una visita, ni por lo que ofrezcan, cobren o hagan terceros."
   ],
-  "dataRev": "mw1kdd1w",
+  "dataRev": "mwh1dz7e",
   "buildingSources": [
     "Overture Maps Foundation (Google Open Buildings)"
   ],

@@ -137,7 +137,13 @@ const query = `[out:json][timeout:180];
   nwr["place"="square"](${bbox});
 );
 out tags geom center;`;
-const data = await overpass(query);
+const cacheFile = (await import('node:path')).join((await import('node:os')).tmpdir(), 'guia-overpass-cache.json');
+let data;
+if (args.reintento) {
+  try { data = JSON.parse(await readFile(cacheFile, 'utf8')); } catch { /* sin copia: se vuelve a bajar */ }
+}
+data ||= await overpass(query);
+try { await writeFile(cacheFile, JSON.stringify(data)); } catch { /* no es grave */ }
 
 /** Rectángulo orientado que envuelve la geometría: centro, largo, ancho y rotación (para rotation.y). */
 /** Rectángulo orientado que envuelve unos puntos locales: centro, largo, ancho y rotación (para rotation.y). */
@@ -540,10 +546,19 @@ if (placesOut.length < 8) {
   console.log('  npm run lugares -- --agregar --nombre="Iglesia San José" --tipo=iglesia --lat=-34.17 --lng=-59.78');
   console.log('  (tipos: ' + Object.keys(TYPES).join(', ') + ')');
 }
-// Lugares que cargaste en fuentes/lugares-extra.txt
+// Lugares que cargaste en fuentes/lugares-extra.txt y el inventario ampliado (fuentes/inventario-ampliado.txt)
 try {
   const { execFileSync } = await import('node:child_process');
-  execFileSync(process.execPath, [(await import('node:url')).fileURLToPath(new URL('./extras.mjs', import.meta.url))], { stdio: 'inherit' });
+  const { fileURLToPath } = await import('node:url');
+  const before = (await readJSON('places.json', [])).length;
+  execFileSync(process.execPath, [fileURLToPath(new URL('./extras.mjs', import.meta.url))], { stdio: 'inherit' });
+  const after = (await readJSON('places.json', [])).length;
+  // Si se sumaron lugares nuevos, se vuelve a correr una vez para que tengan su edificio (y su modelo, si son iglesia, museo, etc.).
+  if (after > before && !args.reintento) {
+    console.log('\nSe sumaron lugares nuevos: acomodándolos con sus edificios…');
+    execFileSync(process.execPath, [fileURLToPath(import.meta.url), '--reintento'], { stdio: 'inherit' });
+    process.exit(0);
+  }
 } catch {
   console.warn('No se pudieron sumar los lugares extra (npm run extras).');
 }

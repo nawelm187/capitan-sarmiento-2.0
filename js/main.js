@@ -110,7 +110,7 @@ function stubNav(tours, places) {
     goStep: go, next: () => go(step + 1), prev: () => go(step - 1),
   };
 }
-const stubLabels = { setFilter() {}, highlight() {}, update() {} };
+const stubLabels = { setLayers() {}, setExtra() {}, highlight() {}, update() {}, count: () => 0 };
 
 async function main() {
   const meta = await getJSON('data/meta.json');
@@ -121,7 +121,7 @@ async function main() {
   document.title = `${meta.name} · ${meta.town}`;
 
   await stage(8, 'Descargando datos…');
-  const [gj, places, tours, guides, landmarks, casonas, mascots] = await Promise.all([
+  const [gj, places, tours, guides, landmarks, casonas, mascots, pending] = await Promise.all([
     getJSON('data/sarmiento-osm.geojson', v),
     getJSON('data/places.json', v),
     getJSON('data/tours.json', v),
@@ -129,6 +129,7 @@ async function main() {
     optional(getJSON('data/landmarks.json', v), { items: [] }),
     optional(getJSON('data/casonas.json', v), { items: [] }),
     optional(getJSON('data/mascots.json', v), { items: [] }),
+    optional(getJSON('data/pendientes.json', v), []),
   ]);
 
   loadIconFont(places); // íconos de Google (tipografía chica); mientras tanto se ven los de respaldo
@@ -147,7 +148,7 @@ async function main() {
     warn.className = 'nogl';
     warn.textContent = 'Tu navegador no pudo iniciar la maqueta 3D. Podés usar la guía en modo lista.';
     document.body.append(warn);
-    initUI({ meta, places, tours, guides, nav: stubNav(tours, places), labels: stubLabels, controls: null, hasGL: false });
+    initUI({ meta, places, pending, tours, guides, nav: stubNav(tours, places), labels: stubLabels, controls: null, hasGL: false });
     hideSplash();
     return;
   }
@@ -258,7 +259,7 @@ async function main() {
 
   const labels = initLabels(scene, places);
   const nav = initNav(scene, camera, controls, places, tours, world);
-  const ui = initUI({ meta, places, tours, guides, nav, labels, controls, hasGL: true });
+  const ui = initUI({ meta, places, pending, tours, guides, nav, labels, controls, hasGL: true });
   atm.onInfo((i) => emit('weather:update', i));
   setProgress(95);
 

@@ -35,6 +35,8 @@ export const TYPES = {
   cine: { label: 'Cine', cat: 'ver', mi: 'movie' },
   tanque: { label: 'Tanque de agua', cat: 'ver', mi: 'water_drop' },
   silo: { label: 'Silos', cat: 'ver', mi: 'agriculture' },
+  estancia: { label: 'Estancia', cat: 'ver', mi: 'cottage' },
+  aerodromo: { label: 'Aeródromo', cat: 'servicios', mi: 'flight' },
   // Compras
   ferreteria: { label: 'Ferretería', cat: 'compras', mi: 'hardware' },
   supermercado: { label: 'Supermercado', cat: 'compras', mi: 'shopping_cart' },

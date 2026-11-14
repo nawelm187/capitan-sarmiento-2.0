@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Ubicar lugares pendientes</title>
+<style>
+  :root { --bg: #f6f3ec; --card: #fff; --ink: #1f2933; --muted: #66707a; --line: #ddd6c6; --navy: #1b3a5c; --ok: #1f7a4d; --warn: #8a6d1f; --bad: #b3261e; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #14181d; --card: #1d232a; --ink: #e8ecef; --muted: #98a2ab; --line: #2f3944; --navy: #8fb8e6; --ok: #5fcf97; --warn: #e0bd5c; --bad: #ff8a80; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.45 system-ui, sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 22px; margin: 8px 0; }
+  .how { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; margin: 10px 0 14px; font-size: 14px; }
+  .how ol { margin: 6px 0 0; padding-left: 20px; }
+  .bar { position: sticky; top: 0; z-index: 2; background: var(--bg); padding: 8px 0; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .bar input[type=search] { flex: 1; min-width: 180px; }
+  input, button { font: inherit; }
+  input[type=search], input[type=text] { padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); color: var(--ink); }
+  button { padding: 9px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
+  .btn { display: inline-block; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); text-decoration: none; }
+  button.main { background: var(--navy); color: #fff; border-color: var(--navy); }
+  @media (prefers-color-scheme: dark) { button.main { color: #0d1620; } }
+  button:disabled { opacity: .55; cursor: wait; }
+  h2 { font-size: 15px; margin: 18px 0 6px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .row { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin: 8px 0; display: grid; gap: 8px; }
+  .row.done { border-color: var(--ok); }
+  .name { font-weight: 600; }
+  .addr { color: var(--muted); font-size: 14px; }
+  .tag { font-size: 11px; background: rgba(138,109,31,.15); color: var(--warn); border-radius: 999px; padding: 1px 8px; margin-left: 6px; }
+  .acts { display: flex; gap: 6px; flex-wrap: wrap; }
+  .acts input { flex: 1; min-width: 200px; }
+  .msg { font-size: 13px; min-height: 1em; }
+  .msg.ok { color: var(--ok); } .msg.bad { color: var(--bad); }
+  .off { padding: 18px; border: 2px dashed var(--bad); border-radius: 12px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Ubicar lugares pendientes</h1>
+  <div id="off" class="off" hidden>Esta página solo funciona abierta desde <b>npm run serve</b> en tu PC: <b>http://localhost:8080/ubicar</b></div>
+  <div id="app" hidden>
+    <div class="how">
+      <b>Cómo se hace (unos 15 segundos por lugar):</b>
+      <ol>
+        <li>Tocá <b>Buscar en Google Maps</b>: se abre el lugar en otra pestaña.</li>
+        <li>Clic <b>derecho</b> sobre el punto del lugar en el mapa → la primera línea son las coordenadas: clic para copiarlas. (O en el celular: Compartir → Copiar vínculo.)</li>
+        <li>Pegalas acá y tocá <b>Guardar</b>. Si el lugar no existe más, tocá <b>No va</b>.</li>
+        <li>Cuando termines (o cuando quieras ver cómo queda), tocá <b>Armar el mapa</b> (tarda 1 o 2 minutos).</li>
+      </ol>
+    </div>
+    <div class="bar">
+      <input type="search" id="q" placeholder="Buscar por nombre o dirección…" aria-label="Buscar">
+      <label><input type="checkbox" id="onlyAddr"> solo con dirección</label>
+      <button class="main" id="build">Armar el mapa</button>
+    </div>
+    <p id="count" class="addr"></p>
+    <div id="list"></div>
+  </div>
+</main>
+<script type="module">
+import { LAYERS, layerOfType } from '/js/layers.js';
+import { TYPES } from '/js/kinds.js';
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+let pend = [];
+const done = new Set();
+async function post(url, data) {
+  const r = await fetch(url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(data) });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(j.error || 'Error ' + r.status);
+  return j;
+}
+async function load() {
+  try {
+    const r = await fetch('/api/pendientes');
+    if (!r.ok) throw new Error();
+    const j = await r.json();
+    pend = j.pendientes.filter((p) => !p.outside);
+    $('#app').hidden = false;
+    draw();
+  } catch { $('#off').hidden = false; }
+}
+function draw() {
+  const q = $('#q').value.trim().toLowerCase();
+  const onlyAddr = $('#onlyAddr').checked;
+  const list = pend.filter((p) => (!q || (p.name + ' ' + (p.address || '')).toLowerCase().includes(q)) && (!onlyAddr || p.address));
+  const order = LAYERS.map((l) => l.id);
+  const groups = new Map();
+  for (const p of list) {
+    const id = layerOfType(p.type);
+    if (!groups.has(id)) groups.set(id, []);
+    groups.get(id).push(p);
+  }
+  const left = pend.filter((p) => !done.has(p.id)).length;
+  $('#count').textContent = `${left} sin ubicar · ${done.size} resueltos en esta sesión`;
+  $('#list').innerHTML = [...groups.entries()].sort((a, b) => order.indexOf(a[0]) - order.indexOf(b[0])).map(([id, ps]) => `
+    <h2>${esc(LAYERS.find((l) => l.id === id)?.label || id)} (${ps.length})</h2>
+    ${ps.map((p) => {
+      const url = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(`${p.name} ${p.address || ''} Capitán Sarmiento, Buenos Aires`);
+      return `<div class="row ${done.has(p.id) ? 'done' : ''}" data-id="${esc(p.id)}">
+        <div><span class="name">${esc(p.name)}</span>${p.verify ? '<span class="tag">verificar si existe</span>' : ''}<br><span class="addr">${esc(TYPES[p.type]?.label || p.type)}${p.address ? ' · ' + esc(p.address) : ''}</span></div>
+        <div class="acts">
+          <a class="btn" href="${url}" target="_blank" rel="noopener">Buscar en Google Maps ↗</a>
+          <input type="text" placeholder="Pegá acá las coordenadas o el link" aria-label="Ubicación de ${esc(p.name)}">
+          <button type="button" class="main" data-save>Guardar</button>
+          <button type="button" data-skip title="No existe más o no va en la guía">No va</button>
+        </div>
+        <div class="msg ${done.has(p.id) ? 'ok' : ''}">${done.has(p.id) ? '✔ Guardado' : ''}</div>
+      </div>`;
+    }).join('')}`).join('') || '<p class="addr">No hay nada para mostrar con ese filtro.</p>';
+}
+$('#list').addEventListener('click', async (e) => {
+  const row = e.target.closest('.row');
+  if (!row) return;
+  const p = pend.find((x) => x.id === row.dataset.id);
+  const msg = row.querySelector('.msg');
+  const set = (t, c = '') => { msg.textContent = t; msg.className = 'msg ' + c; };
+  if (e.target.matches('[data-save]')) {
+    const spec = row.querySelector('input').value.trim();
+    if (!spec) return set('Pegá primero las coordenadas o el link.', 'bad');
+    e.target.disabled = true;
+    set('Guardando…');
+    try {
+      const j = await post('/api/ubicar', { name: p.name, type: p.type, spec, address: p.address });
+      done.add(p.id);
+      set(`✔ Guardado (${j.lat}, ${j.lng})`, 'ok');
+      row.classList.add('done');
+      $('#count').textContent = `${pend.filter((x) => !done.has(x.id)).length} sin ubicar · ${done.size} resueltos en esta sesión`;
+    } catch (err) { set(err.message, 'bad'); }
+    e.target.disabled = false;
+  } else if (e.target.matches('[data-skip]')) {
+    if (!confirm(`¿Sacar "${p.name}" de la lista? (no existe más o no va en la guía)`)) return;
+    try {
+      await post('/api/descartar', { name: p.name });
+      pend = pend.filter((x) => x.id !== p.id);
+      draw();
+    } catch (err) { set(err.message, 'bad'); }
+  }
+});
+$('#list').addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.matches('input')) e.target.closest('.row').querySelector('[data-save]').click(); });
+$('#q').addEventListener('input', draw);
+$('#onlyAddr').addEventListener('change', draw);
+$('#build').addEventListener('click', async (e) => {
+  e.target.disabled = true;
+  e.target.textContent = 'Armando… (1-2 min)';
+  try {
+    await post('/api/armar', {});
+    e.target.textContent = '✔ Listo: recargá el mapa (Ctrl+F5)';
+  } catch (err) {
+    e.target.textContent = 'Armar el mapa';
+    alert('No se pudo armar el mapa: ' + err.message);
+  }
+  e.target.disabled = false;
+});
+load();
+</script>
+</body>
+</html>

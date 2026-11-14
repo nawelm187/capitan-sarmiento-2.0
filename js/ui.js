@@ -1,7 +1,8 @@
 // Interfaz: panel con pestañas, fichas, recorridos, guías, modales y controles del mapa.
 import { on, emit } from './bus.js';
 import { esc, safeUrl } from './util.js';
-import { CATS, ICONS, catIcon, catInfo, placeIcon, placeLabel } from './icons.js';
+import { ICONS, catInfo, placeIcon, placeLabel } from './icons.js';
+import { LAYERS, defaultLayers, isEssential, isVisible, layerOf, layerOfType, loadLayers, saveLayers } from './layers.js';
 
 const TABS = [
   { id: 'lugares', label: 'Lugares' },
@@ -12,10 +13,11 @@ const TABS = [
 
 const MODE_LABEL = { walk: 'A pie', car: 'En auto' };
 
-export function initUI({ meta, places, tours, guides, nav, labels, controls, hasGL }) {
+export function initUI({ meta, places, pending = [], tours, guides, nav, labels, controls, hasGL }) {
   const root = document.getElementById('ui');
   const byId = new Map(places.map((p) => [p.id, p]));
-  const state = { tab: 'lugares', cat: null, placeId: null, tourId: null, step: 0 };
+  const state = { tab: 'lugares', layers: loadLayers(), layersOpen: false, placeId: null, tourId: null, step: 0 };
+  labels.setLayers(state.layers);
 
   // ---------- Esqueleto ----------
   root.innerHTML = `
@@ -67,14 +69,49 @@ export function initUI({ meta, places, tours, guides, nav, labels, controls, has
     </button></li>`;
   }
 
-  function renderPlaces() {
-    const list = places.filter((p) => !state.cat || p.category === state.cat);
-    return `${demoNote()}
-      <div class="chips" role="group" aria-label="Filtrar por tipo">
-        <button class="chip" type="button" data-cat="" aria-pressed="${!state.cat}">Todos</button>
-        ${CATS.map((c) => `<button class="chip" type="button" data-cat="${c.id}" aria-pressed="${state.cat === c.id}">${catIcon(c.id)}${c.label}</button>`).join('')}
+  // ---------- Capas (categorías activables) ----------
+  const layerCount = {};
+  const layerPending = {};
+  const essentialCount = places.filter(isEssential).length;
+  for (const l of LAYERS) layerCount[l.id] = 0;
+  for (const p of places) layerCount[layerOf(p)]++;
+  layerCount.esenciales = essentialCount;
+  for (const q of pending) {
+    const id = layerOfType(q.type);
+    layerPending[id] = (layerPending[id] || 0) + 1;
+  }
+  const setLayers = (set) => {
+    state.layers = set;
+    saveLayers(set);
+    labels.setLayers(set);
+  };
+
+  function renderLayers(shown) {
+    const on = state.layers;
+    const rows = LAYERS.map((l) => {
+      const n = layerCount[l.id] || 0;
+      const w = layerPending[l.id] || 0;
+      return `<li><label class="layer"><input type="checkbox" data-layer="${l.id}" ${on.has(l.id) ? 'checked' : ''}>
+        <span class="layer__name">${esc(l.label)}</span><span class="layer__n">${n}</span>${w ? `<span class="layer__w" title="Todavía sin ubicación exacta: no se dibujan en el mapa">+${w} sin ubicar</span>` : ''}</label></li>`;
+    }).join('');
+    const totalPending = pending.length;
+    return `<details class="layers" ${state.layersOpen ? 'open' : ''}>
+      <summary><span>Capas</span><b>${shown} en el mapa</b></summary>
+      <div class="layers__acts" role="group" aria-label="Atajos de capas">
+        <button class="chip" type="button" data-layers="esenciales">Solo esenciales</button>
+        <button class="chip" type="button" data-layers="all">Activar todas</button>
+        <button class="chip" type="button" data-layers="none">Desactivar todas</button>
       </div>
-      ${list.length ? `<ul class="list">${list.map(placeItem).join('')}</ul>` : '<p class="empty">No hay lugares en esta categoría todavía.</p>'}`;
+      <ul class="layers__list">${rows}</ul>
+      ${totalPending ? `<p class="layers__note">${totalPending} lugares figuran en el inventario pero todavía no tienen ubicación exacta confirmada: no se dibujan en el mapa hasta cargarla.</p>` : ''}
+    </details>`;
+  }
+
+  function renderPlaces() {
+    const list = places.filter((p) => isVisible(p, state.layers));
+    return `${demoNote()}
+      ${renderLayers(list.length)}
+      ${list.length ? `<ul class="list">${list.map(placeItem).join('')}</ul>` : '<p class="empty">No hay lugares en las capas activas. Abrí «Capas» y prendé alguna.</p>'}`;
   }
 
   function renderPlaceDetail(p) {
@@ -175,12 +212,13 @@ export function initUI({ meta, places, tours, guides, nav, labels, controls, has
   function setTab(id, { keepState = false } = {}) {
     if (!keepState) {
       if (state.tourId) nav.stopTour();
+      if (state.tourId) labels.setExtra([]);
       state.tourId = null;
       state.placeId = null;
       labels.highlight(null);
     }
     state.tab = id;
-    labels.setFilter(id === 'lugares' ? state.cat : null);
+    if (id !== 'lugares') labels.setExtra([]);
     render();
     body.scrollTop = 0;
   }
@@ -190,11 +228,11 @@ export function initUI({ meta, places, tours, guides, nav, labels, controls, has
     if (!p) return;
     if (state.tourId) {
       nav.stopTour();
+      labels.setExtra([]);
       state.tourId = null;
     }
     state.tab = 'lugares';
     state.placeId = id;
-    labels.setFilter(state.cat);
     labels.highlight(id);
     nav.focusPlace(id);
     showPanel(true);
@@ -224,10 +262,10 @@ export function initUI({ meta, places, tours, guides, nav, labels, controls, has
     const t = e.target;
     const place = t.closest('[data-place]');
     if (place) return selectPlace(place.dataset.place);
-    const cat = t.closest('[data-cat]');
-    if (cat) {
-      state.cat = cat.dataset.cat || null;
-      labels.setFilter(state.cat);
+    const shortcut = t.closest('[data-layers]')?.dataset.layers;
+    if (shortcut) {
+      setLayers(shortcut === 'all' ? new Set(LAYERS.map((l) => l.id)) : shortcut === 'none' ? new Set() : defaultLayers());
+      state.layersOpen = true;
       return render();
     }
     const tour = t.closest('[data-tour]');
@@ -248,16 +286,35 @@ export function initUI({ meta, places, tours, guides, nav, labels, controls, has
     } else if (action === 'tour-exit') {
       nav.stopTour();
       state.tourId = null;
+      labels.setExtra([]);
       labels.highlight(null);
       render();
     } else if (action === 'next') nav.next();
     else if (action === 'prev') nav.prev();
   });
 
+  body.addEventListener('change', (e) => {
+    const id = e.target?.dataset?.layer;
+    if (!id) return;
+    const next = new Set(state.layers);
+    if (e.target.checked) next.add(id);
+    else next.delete(id);
+    setLayers(next);
+    state.layersOpen = true;
+    const top = body.scrollTop;
+    render();
+    body.scrollTop = top;
+    body.querySelector(`[data-layer="${id}"]`)?.focus();
+  });
+  body.addEventListener('toggle', (e) => {
+    if (e.target.classList?.contains('layers')) state.layersOpen = e.target.open;
+  }, true);
+
   on('place:select', selectPlace);
   on('tour:step', ({ tour, step, place }) => {
     state.tourId = tour.id;
     state.step = step;
+    labels.setExtra(tour.stops.map((x) => x.placeId));
     labels.highlight(place?.id ?? null);
     if (state.tab !== (tour.mode === 'car' ? 'auto' : 'pie')) state.tab = tour.mode === 'car' ? 'auto' : 'pie';
     render();

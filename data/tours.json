@@ -3,7 +3,7 @@
     "id": "auto-centro",
     "title": "Paseo por el centro",
     "mode": "walk",
-    "durationMin": 70,
+    "durationMin": 65,
     "intro": "Un paseo a pie por los lugares más emblemáticos del centro del pueblo.",
     "stops": [
       {
@@ -22,28 +22,28 @@
         "tip": ""
       },
       {
+        "placeId": "extra-prado-espanol",
+        "note": "Cultura",
+        "tip": ""
+      },
+      {
         "placeId": "extra-museo-y-archivo-historico-municipal",
         "note": "Museo",
         "tip": ""
       },
       {
+        "placeId": "extra-centro-cultural-la-estacion",
+        "note": "Cultura · Antigua estación",
+        "tip": ""
+      },
+      {
         "placeId": "osm-n3457369632",
-        "note": "Iglesia",
+        "note": "Iglesia · Zona San Carlos",
         "tip": ""
       },
       {
         "placeId": "osm-n14030290444",
         "note": "Museo · Francia 137",
-        "tip": ""
-      },
-      {
-        "placeId": "extra-las-magnolias",
-        "note": "Atractivo",
-        "tip": ""
-      },
-      {
-        "placeId": "osm-w238116755",
-        "note": "Plaza",
         "tip": ""
       }
     ]
@@ -52,7 +52,7 @@
     "id": "auto-comer",
     "title": "Para comer y tomar algo",
     "mode": "walk",
-    "durationMin": 65,
+    "durationMin": 80,
     "intro": "De la panadería al café y la parrilla: lugares para comer y tomar algo, uno cerca del otro.",
     "stops": [
       {
@@ -61,8 +61,23 @@
         "tip": ""
       },
       {
+        "placeId": "extra-la-taipa-comidas",
+        "note": "Restaurante · Av. Leandro N. Alem",
+        "tip": ""
+      },
+      {
         "placeId": "osm-n5973696881",
         "note": "Heladería",
+        "tip": ""
+      },
+      {
+        "placeId": "extra-chucho-pizzas",
+        "note": "Pizzería",
+        "tip": ""
+      },
+      {
+        "placeId": "extra-la-ultima-cafe-bar",
+        "note": "Café · Daimo Bojanich 8",
         "tip": ""
       },
       {
@@ -71,28 +86,57 @@
         "tip": ""
       },
       {
-        "placeId": "extra-la-estacion-cerveceria",
-        "note": "Bar",
-        "tip": ""
-      },
-      {
-        "placeId": "osm-n2520606078",
-        "note": "Pizzería · Avenida Presidente Perón",
-        "tip": ""
-      },
-      {
-        "placeId": "extra-daimo",
+        "placeId": "extra-el-granero-cafe-bar",
         "note": "Café",
         "tip": ""
       },
       {
-        "placeId": "extra-la-cuadra",
-        "note": "Pizzería",
+        "placeId": "extra-morfi",
+        "note": "Restaurante · Av. Mitre 560",
+        "tip": ""
+      }
+    ]
+  },
+  {
+    "id": "auto-compras",
+    "title": "De compras por el centro",
+    "mode": "walk",
+    "durationMin": 80,
+    "intro": "Ferreterías, supermercados, ropa y más: un comercio de cada rubro, en orden para ir caminando.",
+    "stops": [
+      {
+        "placeId": "extra-ocasiones",
+        "note": "Regalería · Av. Rivadavia 883",
         "tip": ""
       },
       {
-        "placeId": "extra-amanda",
-        "note": "Café",
+        "placeId": "extra-maxikiosco-ivan-pago-facil-western-union",
+        "note": "Kiosco · Mármol, altura sin publicar",
+        "tip": ""
+      },
+      {
+        "placeId": "extra-casa-aldo-langioni",
+        "note": "Mueblería · Av. Rivadavia 653",
+        "tip": ""
+      },
+      {
+        "placeId": "extra-casa-alvarez",
+        "note": "Ropa y calzado · Pte. Perón 371",
+        "tip": ""
+      },
+      {
+        "placeId": "extra-g-congelados",
+        "note": "Almacén",
+        "tip": ""
+      },
+      {
+        "placeId": "extra-m-encanta",
+        "note": "Juguetería · Av. L. N. Alem 64",
+        "tip": ""
+      },
+      {
+        "placeId": "extra-mu-coop-supermercado",
+        "note": "Supermercado · Bv. Mitre 500",
         "tip": ""
       }
     ]
@@ -115,23 +159,18 @@
         "tip": ""
       },
       {
-        "placeId": "extra-club-defensores-la-loma",
-        "note": "Club",
+        "placeId": "extra-prado-espanol",
+        "note": "Cultura",
         "tip": ""
       },
       {
-        "placeId": "osm-n3457368093",
+        "placeId": "osm-n3457367623",
         "note": "Club",
         "tip": ""
       },
       {
         "placeId": "osm-n14030290444",
         "note": "Museo · Francia 137",
-        "tip": ""
-      },
-      {
-        "placeId": "osm-w335993992",
-        "note": "Club",
         "tip": ""
       },
       {
@@ -145,8 +184,13 @@
         "tip": ""
       },
       {
-        "placeId": "extra-museo-y-archivo-historico-municipal",
-        "note": "Museo",
+        "placeId": "extra-centro-cultural-la-estacion",
+        "note": "Cultura · Antigua estación",
+        "tip": ""
+      },
+      {
+        "placeId": "extra-monumento-y-museo-a-la-bandera-bonaerense",
+        "note": "Monumento",
         "tip": ""
       }
     ]
@@ -159,13 +203,13 @@
     "intro": "Hospital, farmacia, policía, bomberos, estación de servicio y más, por si los necesitás.",
     "stops": [
       {
-        "placeId": "osm-n5973696877",
-        "note": "Farmacia · Avenida Leandro N. Alem 504",
+        "placeId": "extra-farmacia-ruiz",
+        "note": "Farmacia · Av. Leandro N. Alem 504",
         "tip": ""
       },
       {
-        "placeId": "osm-n2520503490",
-        "note": "Banco · Avenida Bartolomé Mitre 301",
+        "placeId": "extra-banco-de-la-provincia-de-buenos-aires",
+        "note": "Banco · Centro",
         "tip": ""
       },
       {
@@ -195,12 +239,12 @@
       },
       {
         "placeId": "osm-w393286873",
-        "note": "Terminal de ómnibus",
+        "note": "Terminal de ómnibus · Ruta 8 km 144,5",
         "tip": ""
       },
       {
-        "placeId": "osm-n3420165272",
-        "note": "Estación de servicio",
+        "placeId": "extra-estacion-de-servicio-shell-meira-hnos",
+        "note": "Estación de servicio · Av. Leandro N. Alem s/n",
         "tip": ""
       }
     ]

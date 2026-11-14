@@ -5,14 +5,24 @@ import { v3 } from './scene-utils.js';
 import { placeIcon, placeLabel, catInfo } from './icons.js';
 import { emit } from './bus.js';
 import { esc } from './util.js';
+import { defaultLayers, isVisible } from './layers.js';
 
 export function initLabels(scene, places) {
   const group = new THREE.Group();
   group.name = 'labels';
   scene.add(group);
-  const items = new Map();
+  const items = new Map(); // solo los pines que están dibujados ahora (se crean y se sacan según las capas activas)
+  const byId = new Map(places.map((p) => [p.id, p]));
 
-  for (const p of places) {
+  // Con muchos lugares, de lejos se muestran solo los importantes (así se entiende el mapa y el navegador trabaja menos).
+  const IMPORTANT = new Set(['iglesia', 'municipalidad', 'museo', 'cultura', 'biblioteca', 'escuela', 'hospital', 'bomberos', 'policia', 'estacion', 'plaza', 'monumento', 'hotel', 'hospedaje', 'camping', 'club', 'turismo', 'mirador', 'atractivo', 'tanque', 'silo', 'terminal', 'farmacia', 'combustible', 'banco']);
+  const important = (p) => !p.icon || IMPORTANT.has(p.icon) || Boolean(p.roofH);
+  let layers = defaultLayers();
+  let extra = new Set(); // lugares que se muestran siempre (las paradas del recorrido abierto)
+  let activeId = null;
+  let level = 0; // 0 cerca (todo con nombre) · 1 media (solo punto) · 2 lejos (solo importantes)
+
+  function make(p) {
     const info = catInfo(p.category);
     const el = document.createElement('button');
     el.type = 'button';
@@ -32,37 +42,53 @@ export function initLabels(scene, places) {
     anchor.className = 'pin-anchor';
     anchor.append(el);
     const obj = new CSS2DObject(anchor);
-    const pos = v3(p.lng, p.lat, (p.roofH || 0) + 4); // la punta del pin queda sobre el techo (antes flotaba a 16 m y parecía corrido)
+    const pos = v3(p.lng, p.lat, (p.roofH || 0) + 4); // la punta del pin queda sobre el techo
     obj.position.copy(pos);
     group.add(obj);
-    items.set(p.id, { obj, el, place: p, pos });
+    return { obj, el, anchor, place: p, pos };
   }
 
-  // Con muchos lugares, de lejos se muestran solo los importantes (así se entiende el mapa y el navegador trabaja menos).
-  const IMPORTANT = new Set(['iglesia', 'municipalidad', 'museo', 'cultura', 'biblioteca', 'escuela', 'hospital', 'bomberos', 'policia', 'estacion', 'plaza', 'monumento', 'hotel', 'hospedaje', 'camping', 'club', 'turismo', 'mirador', 'atractivo', 'tanque', 'silo', 'terminal', 'farmacia', 'combustible', 'banco']);
-  const important = (p) => !p.icon || IMPORTANT.has(p.icon) || Boolean(p.roofH);
-  let filter = null;
-  let activeId = null;
-  let level = 0; // 0 cerca (todo con nombre) · 1 media (solo punto) · 2 lejos (solo importantes)
+  const wanted = (p) => p.id === activeId || extra.has(p.id) || isVisible(p, layers);
+
   const apply = () => {
+    // 1) crear los que faltan y sacar los que sobran (los pines de las capas apagadas no existen: ni objeto ni elemento)
+    for (const p of places) {
+      const want = wanted(p);
+      const it = items.get(p.id);
+      if (want && !it) items.set(p.id, make(p));
+      else if (!want && it) {
+        group.remove(it.obj);
+        it.anchor.remove();
+        items.delete(p.id);
+      }
+    }
+    // 2) detalle según la distancia de la cámara
     items.forEach(({ obj, el, place }, id) => {
       const on = id === activeId;
-      obj.visible = (!filter || place.category === filter) && (level < 2 || on || important(place) || Boolean(filter));
+      obj.visible = level < 2 || on || extra.has(id) || important(place) || items.size < 60;
       el.classList.toggle('is-far', level >= 1 && !on);
+      el.classList.toggle('is-on', on);
     });
   };
   apply();
 
   return {
-    setFilter(cat) {
-      filter = cat || null;
+    /** Capas activas (Set de ids de layers.js). */
+    setLayers(set) {
+      layers = new Set(set);
+      apply();
+    },
+    /** Lugares que se muestran aunque su capa esté apagada (paradas de un recorrido). */
+    setExtra(ids) {
+      extra = new Set(ids || []);
       apply();
     },
     highlight(id) {
-      activeId = id;
-      items.forEach(({ el }, k) => el.classList.toggle('is-on', k === id));
+      activeId = id && byId.has(id) ? id : null;
       apply();
     },
+    /** Cantidad de pines dibujados ahora. */
+    count: () => items.size,
     /** Según la distancia de la cámara: nombres (cerca), solo puntos (medio) o solo lugares importantes (lejos). */
     update(camera) {
       const d = camera.position.length();
