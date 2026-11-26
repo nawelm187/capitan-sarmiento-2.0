@@ -10,6 +10,7 @@ export const LAYERS = [
   { id: 'emergencias', label: 'Emergencias y seguridad' },
   { id: 'gobierno', label: 'Gobierno y servicios públicos' },
   { id: 'transporte', label: 'Transporte' },
+  { id: 'estacionamiento', label: 'Estacionamiento y baños públicos' },
   { id: 'educacion', label: 'Educación' },
   { id: 'comercios', label: 'Supermercados y comercios' },
   { id: 'construccion', label: 'Ferreterías, construcción y hogar' },
@@ -18,6 +19,7 @@ export const LAYERS = [
   { id: 'clubes', label: 'Clubes, deportes y gimnasios' },
   { id: 'cultura', label: 'Cultura, patrimonio y culto' },
   { id: 'turismo', label: 'Turismo, alojamiento y recreación' },
+  { id: 'pesca', label: 'Puentes, pesca y agua' },
   { id: 'rural', label: 'Rural, estancias y naturaleza' },
   { id: 'otros', label: 'Otros servicios y profesionales' },
 ];
@@ -26,6 +28,7 @@ const OF = {
   hospital: 'salud', clinica: 'salud', dentista: 'salud',
   policia: 'emergencias', bomberos: 'emergencias',
   municipalidad: 'gobierno', correo: 'gobierno', banco: 'gobierno', banconacion: 'gobierno', cajero: 'gobierno', cooperativa: 'gobierno',
+  estacionamiento: 'estacionamiento', bano: 'estacionamiento',
   terminal: 'transporte', estacion: 'transporte', taxi: 'transporte', combustible: 'transporte', aerodromo: 'transporte',
   escuela: 'educacion', jardin: 'educacion', biblioteca: 'educacion',
   supermercado: 'comercios', almacen: 'comercios', kiosco: 'comercios', ropa: 'comercios', libreria: 'comercios', jugueteria: 'comercios',
@@ -37,6 +40,7 @@ const OF = {
   club: 'clubes', gimnasio: 'clubes',
   iglesia: 'cultura', museo: 'cultura', cultura: 'cultura', cine: 'cultura', monumento: 'cultura', plaza: 'cultura',
   hotel: 'turismo', hospedaje: 'turismo', camping: 'turismo', atractivo: 'turismo', mirador: 'turismo', turismo: 'turismo',
+  puente: 'pesca', pesca: 'pesca',
   tanque: 'rural', silo: 'rural', agro: 'rural', estancia: 'rural',
   peluqueria: 'otros', inmobiliaria: 'otros', seguros: 'otros', estudio: 'otros', lavadero: 'otros', servicio: 'otros',
 };

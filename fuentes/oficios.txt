@@ -1,0 +1,4 @@
+# Oficios y servicios. Una línea por persona:
+#   Rubro | Nombre | Teléfono | Zona (opcional) | Nota (opcional)
+#   Plomero | Juan Pérez | 5493364123456 | Centro | Urgencias las 24 h
+# Pedile permiso a cada persona antes de publicar su teléfono.

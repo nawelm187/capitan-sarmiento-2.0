@@ -1,0 +1,3 @@
+# Opiniones aprobadas. Una línea por opinión:
+#   Nombre del lugar | estrellas (1 a 5) | comentario | nombre (opcional)
+#   Panadería La Esquina | 5 | Las facturas son lo mejor | Marta

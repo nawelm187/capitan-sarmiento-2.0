@@ -1,0 +1,4 @@
+# Estado de los caminos rurales. Una línea por camino:
+#   Camino | estado | fecha AAAA-MM-DD (opcional) | nota (opcional)
+#   Camino a Pearson | con barro | 2026-11-20 | Después de la lluvia
+# Estados: transitable, con barro, cortado. Actualizalo cada vez que cambie y corré: npm run rural

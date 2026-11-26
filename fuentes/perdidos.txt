@@ -1,0 +1,4 @@
+# Mascotas y objetos perdidos o encontrados. Una línea por aviso:
+#   estado | tipo | nombre | descripción | zona | fecha | contacto | recompensa | info | foto
+#   perdido | mascota | Toby | Perro marrón con collar rojo | Barrio Centro | 2026-11-20 | 5493364123456 | $50.000 | Es muy manso | toby.jpg
+# (recompensa, info y foto son opcionales; el aviso se borra solo a los 30 días)

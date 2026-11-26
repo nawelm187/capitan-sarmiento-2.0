@@ -15,7 +15,7 @@ function pointInPoly(x, z, pts) {
 }
 
 export async function buildWide(scene, world, meta, { lowEnd = false } = {}) {
-  const WIDE = meta.wideExtentMeters ?? 9000;
+  const WIDE = Math.max(meta.wideExtentMeters ?? 9000, (meta.osm?.halfSizeMeters ?? 2000) > 2400 ? (meta.osm.halfSizeMeters * 2 + 8000) : 0);
   let map = null;
 
   if (meta.satellite?.file) {
@@ -104,7 +104,7 @@ export async function buildWide(scene, world, meta, { lowEnd = false } = {}) {
   // 2b) cánteros de las avenidas
   for (const t of world.medianTrees || []) spots.push(t);
   // 3) montes y cortinas en el campo
-  const nField = lowEnd ? 120 : 320;
+  const nField = (world.half || 2000) > 2400 ? 0 : lowEnd ? 120 : 320; // en el mapa grande el campo es real
   for (let i = 0; i < nField; i++) {
     const ang = rand() * Math.PI * 2;
     const rad = world.half * 0.55 + rand() * (WIDE / 2 - world.half * 0.6);

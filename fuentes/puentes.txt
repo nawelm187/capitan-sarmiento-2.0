@@ -1,0 +1,19 @@
+# Puentes con nombre de OpenStreetMap (los genera `npm run puentes`; no hace falta editarlo).
+# Nombre | tipo | ubicación | dirección | estado
+Puente Alfredo J. Palacios | puente | -34.167774, -59.772974 |  | de OpenStreetMap
+Puente Avenida de Circunvalación | puente | -34.175811, -59.773312 |  | de OpenStreetMap
+Puente Camino Secundario 010-02 | puente | -34.077496, -59.896063 |  | de OpenStreetMap
+Puente Camino Secundario 121-04 | puente | -34.095186, -59.90722 |  | de OpenStreetMap
+Puente Camino Secundario 121-04 | puente | -34.077655, -59.895764 |  | de OpenStreetMap
+Puente Camino Secundario 121-04 | puente | -34.121392, -59.919136 |  | de OpenStreetMap
+Puente Colectora Norte | puente | -34.157213, -59.768916 |  | de OpenStreetMap
+Puente Ex-Ruta Nacional 8 | puente | -34.163759, -59.771498 |  | de OpenStreetMap
+Puente FC Mitre | puente | -34.148554, -59.88724 |  | de OpenStreetMap
+Puente FC Mitre | puente | -34.143045, -59.906361 |  | de OpenStreetMap
+Puente Mitre | puente | -34.180201, -59.776574 |  | de OpenStreetMap
+Puente Mitre | puente | -34.15766, -59.85556 |  | de OpenStreetMap
+Puente Mitre | puente | -34.161532, -59.841876 |  | de OpenStreetMap
+Puente Ruta Nacional 8 | puente | -34.142713, -59.842265 |  | de OpenStreetMap
+Puente Ruta Nacional 8 | puente | -34.126034, -59.901565 |  | de OpenStreetMap
+Puente Ruta Nacional 8 | puente | -34.158044, -59.769354 |  | de OpenStreetMap
+Puente Ruta Nacional 8 | puente | -34.155309, -59.776441 |  | de OpenStreetMap

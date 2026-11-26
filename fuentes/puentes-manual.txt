@@ -1,0 +1,3 @@
+# Tus puentes y lugares de pesca. Una línea por lugar:
+#   Nombre | puente | lat, lng
+#   Nombre | pesca | lat, lng

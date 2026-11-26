@@ -21,6 +21,7 @@ Club Social y Deportivo San Carlos | club | -34.18115, -59.79677 | Daimo Bojanic
 Museo de la Recreación Histórica | museo | -34.17816, -59.79253 | Francia 137
 Cine Ítalo-Argentino | cine | -34.17670, -59.79275 | Centro
 Centro Cultural La Estación | cultura | -34.17564, -59.79347 | Antigua estación
+Casa de la Cultura (ex Cine Español) | cultura | | | falta ubicar en el mapa
 Iglesia San Carlos Borromeo | iglesia | -34.17607, -59.79309 | Zona San Carlos
 Gimnasio Crom | gimnasio | -34.17621, -59.79243 | Juan Manuel de Rosas 465
 Terminal de Ómnibus de Capitán Sarmiento | terminal | -34.15952, -59.78811 | Ruta 8 km 144,5

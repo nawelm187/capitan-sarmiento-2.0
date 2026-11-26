@@ -1,26 +1,35 @@
 /* Guía Sarmiento — tema oscuro con acento ámbar. Mobile-first. */
 :root {
-  /* Paleta "papel y tinta": azul del escudo, papel crema, ladrillo de las casas, trigo y verde de la pampa. */
-  --navy: #17294a;
-  --navy-deep: #0f1d33;
-  --navy-soft: #243a63;
-  --paper: #f6efe1;
-  --paper-2: #fbf7ee;
-  --ink: #1b2a41;
-  --brick: #bf4a2a;
-  --brick-dark: #a23c20;
-  --wheat: #f0c14b;
-  --pampa: #4e7f3a;
-  --lagoon: #2d6a9f;
+  /* Paleta del caballo: los colores del logo de Capitán Sarmiento (facetas rojo, naranja, amarillo, verde, azul y violeta)
+     sobre neutros cálidos de tierra y papel, en vez del azul marino genérico. */
+  --c-rojo: #d4202c;
+  --c-naranja: #f08a1c;
+  --c-amarillo: #f5c400;
+  --c-verde: #36862a;
+  --c-azul: #1e5fa0;
+  --c-violeta: #9b2a86;
+  --c-gris: #787878;
+  --espectro: linear-gradient(90deg, var(--c-rojo) 0 17%, var(--c-naranja) 17% 34%, var(--c-amarillo) 34% 50%, var(--c-verde) 50% 67%, var(--c-azul) 67% 84%, var(--c-violeta) 84% 100%);
+  --navy: #2a2236;
+  --navy-deep: #1a1524;
+  --navy-soft: #3b3150;
+  --paper: #fbf5e8;
+  --paper-2: #fffaf0;
+  --ink: #2a2320;
+  --brick: #d4382c;
+  --brick-dark: #b02a20;
+  --wheat: #f5c400;
+  --pampa: #36862a;
+  --lagoon: #1e5fa0;
 
   --bg: var(--navy-deep);
   --panel: var(--paper);
   --panel-solid: var(--paper);
-  --line: rgba(27, 42, 65, 0.15);
-  --tint: rgba(27, 42, 65, 0.05);
-  --tint-2: rgba(27, 42, 65, 0.09);
+  --line: rgba(42, 35, 32, 0.16);
+  --tint: rgba(42, 35, 32, 0.05);
+  --tint-2: rgba(42, 35, 32, 0.09);
   --text: var(--ink);
-  --muted: #5b6778;
+  --muted: #6b6259;
   --accent: var(--brick);
   --accent-ink: #fff;
   --radius: 16px;
@@ -67,7 +76,7 @@ a { color: var(--brick); }
 /* Móvil: hoja inferior */
 .panel { left: 8px; right: 8px; bottom: calc(8px + var(--safe-b)); max-height: 58vh; border-radius: var(--radius); transition: transform .3s ease, opacity .3s ease; }
 .panel.is-collapsed { transform: translateY(calc(100% + 24px)); opacity: 0; pointer-events: none; }
-.panel__head { flex: 0 0 auto; padding: 14px 16px 12px; background: var(--navy); color: #f4efe3; border-bottom: 3px solid var(--wheat); }
+.panel__head { flex: 0 0 auto; padding: 14px 16px 12px; background: var(--navy); color: #f4efe3; border-bottom: 0; }
 .panel__over { margin: 0; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #aebcd3; }
 .panel__title { margin: 2px 0 4px; font-family: var(--font-title); font-weight: 500; font-size: 28px; line-height: 1.1; }
 .panel__tag { margin: 0; font-size: 13px; line-height: 1.45; color: #c9d3e3; display: none; }
@@ -210,3 +219,355 @@ html.has-mi .mi-fb { display: none; }
 .layer__n { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .layer__w { font-size: 11px; color: #8a6d1f; background: rgba(201, 135, 18, .14); border-radius: 999px; padding: 1px 7px; white-space: nowrap; }
 .layers__note { margin: 0; padding: 4px 12px 12px; font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+/* ---- Botones + y − de zoom ---- */
+.zoom-stack { position: fixed; z-index: 11; right: 12px; bottom: calc(calc(58vh + 16px) + var(--safe-b)); display: grid; gap: 8px; }
+.fab--zoom { font-size: 24px; line-height: 1; user-select: none; touch-action: manipulation; }
+@media (min-width: 820px) { .zoom-stack { bottom: calc(64px + var(--safe-b)); } }
+body.no-gl .zoom-stack { display: none; }
+
+/* ---- Barrios ---- */
+.fab[aria-pressed="true"] { background: var(--wheat, #f0c14b); color: #1b2a3f; }
+.barrio-label { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%); pointer-events: auto; cursor: pointer; display: inline-flex; flex-direction: column; align-items: center; gap: 0; padding: 4px 10px; border-radius: 999px; border: 2px solid var(--b, #4c8fd6); background: rgba(255, 255, 255, .88); color: #1b2a3f; font: 700 12px/1.2 system-ui, sans-serif; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; box-shadow: 0 2px 8px rgba(15, 29, 51, .35); }
+.barrio-label small { font-weight: 500; font-size: 9px; letter-spacing: .04em; opacity: .7; }
+@media (prefers-color-scheme: dark) { .barrio-label { background: rgba(20, 28, 40, .88); color: #eef1f6; } }
+
+/* Botón para cerrar la guía y ver el mapa (visible y claro para quien no sabe que hay que tocar "Mapa") */
+.panel__head { position: relative; }
+.panel__close { position: absolute; top: 10px; right: 10px; z-index: 2; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 14px; border: 0; border-radius: 999px; background: rgba(255, 255, 255, .16); color: inherit; font: 600 15px/1 var(--font-body, inherit); cursor: pointer; }
+.panel__close:hover, .panel__close:focus-visible { background: rgba(255, 255, 255, .3); outline: 2px solid currentColor; }
+.panel__over { padding-right: 120px; }
+
+/* Buscador y compartir */
+.search { margin: 0 0 10px; }
+.search input { width: 100%; box-sizing: border-box; min-height: 46px; padding: 10px 14px; border: 2px solid var(--line, #cfd6e2); border-radius: 12px; font: 500 16px/1.2 inherit; background: #fff; color: #1b2a41; }
+.search input:focus-visible { outline: 3px solid var(--wheat, #f0c14b); outline-offset: 1px; }
+.search__n { margin: 4px 2px 8px; font-size: 13px; color: var(--muted, #5b6b82); }
+.share-msg { margin: 8px 0 0; font-size: 14px; min-height: 1em; color: var(--muted, #5b6b82); }
+
+/* La X queda en la misma fila que "Capitán Sarmiento" (arriba a la derecha) */
+.panel__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.panel__top .panel__over { margin: 0; padding-right: 0; }
+.panel__top .panel__close { position: static; flex: 0 0 auto; }
+
+/* Farmacia de turno */
+.turno { margin: 0 0 12px; padding: 12px 14px; border-radius: 14px; background: #e8f5ee; border: 2px solid #2e8b57; color: #123524; }
+.turno__over { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: .02em; text-transform: uppercase; color: #1f6b43; }
+.turno__name { margin: 4px 0 2px; font: 700 18px/1.2 var(--font-title, inherit); }
+.turno__sub { margin: 0 0 8px; font-size: 14px; }
+
+/* ---- Accesibilidad (js/prefs.js) ---- */
+.pref-text-1 .panel { zoom: 1.15; }
+.pref-text-2 .panel { zoom: 1.3; }
+.acc__text { border: 0; padding: 0; margin: 0 0 12px; }
+.acc__text legend { font-weight: 700; margin-bottom: 6px; }
+.acc__chip { display: inline-block; margin: 0 6px 6px 0; }
+.acc__chip input { position: absolute; opacity: 0; }
+.acc__chip span { display: inline-block; padding: 10px 16px; border: 2px solid #8a97ad; border-radius: 999px; cursor: pointer; font-weight: 600; }
+.acc__chip input:checked + span { background: #1b2a41; color: #fff; border-color: #1b2a41; }
+.acc__chip input:focus-visible + span { outline: 3px solid #f0c14b; outline-offset: 2px; }
+.acc__row { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-top: 1px solid #d5dbe6; cursor: pointer; }
+.acc__row input { width: 24px; height: 24px; margin-top: 2px; flex: 0 0 auto; }
+.acc__row small { display: block; font-weight: 400; color: #4a5a72; margin-top: 2px; }
+.pref-contrast .panel { background: #fff; color: #000; border: 2px solid #000; }
+.pref-contrast .panel__head { background: #000; color: #fff; border-bottom-color: #ffd400; }
+.pref-contrast .item, .pref-contrast .card, .pref-contrast .search input, .pref-contrast .layers { border: 2px solid #000; background: #fff; color: #000; }
+.pref-contrast .item__sub, .pref-contrast .search__n, .pref-contrast small, .pref-contrast .link { color: #222; }
+.pref-contrast .btn, .pref-contrast .fab, .pref-contrast .tab { border: 2px solid #000; }
+.pref-contrast .btn--primary { background: #000; color: #fff; }
+.pref-contrast .tab[aria-selected="true"] { background: #000; color: #fff; }
+.pref-contrast a { color: #0033cc; text-decoration: underline; }
+.pref-contrast :focus-visible { outline: 4px solid #ffd400; outline-offset: 2px; box-shadow: 0 0 0 2px #000; }
+.pref-calm *, .pref-calm *::before, .pref-calm *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; } }
+
+/* Hoy: eventos y novedades · abierto ahora */
+.agenda { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 8px; }
+.agenda__item { padding: 10px 12px; border: 1px solid var(--line, #d5dbe6); border-radius: 12px; background: #fff; }
+.agenda__item b { display: block; }
+.agenda__item small { display: block; color: var(--muted, #5b6b82); margin-top: 2px; }
+.agenda__item p { margin: 6px 0 0; }
+.agenda__when { float: right; margin-left: 8px; padding: 2px 10px; border-radius: 999px; background: #1b2a41; color: #fff; font-size: 12px; font-weight: 700; }
+.agenda__h { margin: 14px 0 6px; font-size: 15px; }
+.open { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.open--yes { background: #d9f2e3; color: #115c33; }
+.open--no { background: #fde3e1; color: #8a1f17; }
+
+/* Brújula y «?» lado a lado */
+.fab-row { display: flex; justify-content: flex-end; gap: 8px; }
+
+.item__ico { font-size: 20px; flex: 0 0 auto; }
+.item__txt { display: grid; text-align: left; }
+.item__txt small { color: var(--muted, #5b6b82); }
+
+.near-row { margin: 0 0 8px; }
+
+.mi-own { display: inline-grid; place-items: center; }
+
+/* Nombres de calles y ríos sobre el mapa */
+.st-anchor { pointer-events: none; }
+.st-label { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; pointer-events: none; }
+.st-label span { display: inline-block; padding: 1px 7px; border-radius: 6px; background: rgba(12, 22, 40, .72); color: #e8eefc; font: 600 11px/1.3 system-ui, sans-serif; letter-spacing: .02em; border: 1px solid rgba(255, 255, 255, .15); }
+.st-label--water span { background: rgba(33, 90, 130, .8); color: #dff1ff; font-style: italic; }
+
+/* Avisos del camino y del tiempo */
+.avisos:empty { display: none; }
+.avisos { display: grid; gap: 6px; padding: 8px 12px 0; }
+.aviso { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border-radius: 12px; background: #fff4d6; color: #4a3500; border: 2px solid #e5b93c; font-size: 14px; }
+.aviso--alto { background: #ffe3df; color: #5a130b; border-color: #d9534a; }
+.aviso__ico { font-size: 20px; line-height: 1.2; }
+.aviso b { display: block; }
+.aviso span { display: block; }
+.aviso small { display: block; margin-top: 3px; font-size: 12px; opacity: .85; }
+.aviso a { color: inherit; text-decoration: underline; }
+.aviso__x { margin-left: auto; border: 0; background: transparent; color: inherit; font-size: 16px; min-width: 32px; min-height: 32px; cursor: pointer; border-radius: 8px; }
+.abiertos { display: flex; gap: 8px; align-items: center; cursor: pointer; font-size: 15px; }
+.abiertos input { width: 20px; height: 20px; }
+.abiertos__n { display: block; margin-top: 2px; color: var(--muted, #5b6b82); }
+
+.aviso--turno { background: #e8f5ee; color: #123524; border-color: #2e8b57; }
+
+/* ---- Mapa liviano 2D ---- */
+#map2d { position: fixed; inset: 0; display: block; touch-action: none; cursor: grab; background: #ece8dc; }
+#map2d:active { cursor: grabbing; }
+body.mode-2d #btn-weather, body.mode-2d #btn-sky { display: none; }
+.hint-2d { display: none; }
+body.mode-2d .hint-3d { display: none; }
+body.mode-2d .hint-2d { display: inline; }
+body.mode-2d #btn-north { display: none; }
+
+/* ---- Código QR, instalar, soy el dueño ---- */
+.qr-box { width: min(280px, 100%); margin: 8px auto 12px; padding: 8px; background: #fff; border-radius: 12px; }
+.qr-box svg { display: block; width: 100%; height: auto; }
+.qr-hint { font-size: 14px; }
+.install-steps { padding-left: 20px; line-height: 1.6; }
+.owner { display: grid; gap: 10px; }
+.owner__f { display: grid; gap: 3px; font-size: 14px; font-weight: 600; }
+.owner__f input { font: inherit; font-weight: 400; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: #fff; color: var(--text); }
+.owner__f small { font-weight: 400; color: var(--muted); }
+.open--soon { background: #fff0d1; color: #7a4a00; }
+.open__when { font-size: 12.5px; color: var(--muted); font-weight: 600; margin-left: 4px; }
+
+/* Foto del lugar y "¿Cuánto tardo?" */
+.card__photo { display: block; width: 100%; max-height: 220px; object-fit: cover; border-radius: 10px; margin: 0 0 10px; background: var(--line, #ddd); }
+.eta { margin: 10px 0 0; }
+.eta--msg { color: var(--muted); font-size: 14px; }
+.eta--ok { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 10px 0 0; padding: 10px 12px; border-radius: 10px; background: rgba(120, 160, 80, 0.12); font-size: 14px; }
+.eta--ok b { flex-basis: 100%; }
+.eta--ok small { flex-basis: 100%; color: var(--muted); }
+
+/* ---------- Modo oscuro (automático según el celular, o elegido en Accesibilidad → Colores) ---------- */
+html.theme-dark {
+  --paper: #26202f; --paper-2: #1f1a28; --panel: #26202f; --panel-solid: #26202f;
+  --line: rgba(255, 255, 255, 0.14); --tint: rgba(255, 255, 255, 0.06); --tint-2: rgba(255, 255, 255, 0.11);
+  --text: #f3eee6; --ink: #f3eee6; --muted: #b8aebb; --brick: #ee5a46; --brick-dark: #ff8a76;
+}
+@media (prefers-color-scheme: dark) {
+  html:not(.theme-light) {
+    --paper: #26202f; --paper-2: #1f1a28; --panel: #26202f; --panel-solid: #26202f;
+    --line: rgba(255, 255, 255, 0.14); --tint: rgba(255, 255, 255, 0.06); --tint-2: rgba(255, 255, 255, 0.11);
+    --text: #f3eee6; --ink: #f3eee6; --muted: #b8aebb; --brick: #ee5a46; --brick-dark: #ff8a76;
+  }
+}
+html.theme-dark .panel, html.theme-dark .modal__box { border-color: rgba(255, 255, 255, .12); }
+html.theme-dark .btn:not(.btn--primary) { background: var(--tint); color: var(--text); border-color: var(--line); }
+@media (prefers-color-scheme: dark) { html:not(.theme-light) .btn:not(.btn--primary) { background: var(--tint); color: var(--text); border-color: var(--line); } }
+
+/* ---------- Foto grande con etiqueta ---------- */
+.card__ph { position: relative; margin: 0 0 10px; }
+.card__ph .card__photo { margin: 0; max-height: 240px; }
+.card__badge { position: absolute; left: 10px; bottom: 10px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 700; color: #fff; box-shadow: 0 2px 8px rgba(0, 0, 0, .3); }
+.card__badge--yes { background: #2f8a4a; }
+.card__badge--no { background: #8a3a2f; }
+
+/* ---------- Perdidos y «Mi día» ---------- */
+.perdidos { list-style: none; margin: 8px 0; padding: 0; display: grid; gap: 10px; }
+.perdido { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--tint); border-left: 5px solid var(--brick); }
+.perdido--encontrado { border-left-color: var(--pampa); }
+.perdido__foto { display: block; width: 100%; max-height: 220px; object-fit: cover; }
+.perdido__txt { padding: 10px 12px; display: grid; gap: 4px; }
+.perdido__txt p { margin: 0; font-size: 14px; }
+.perdido__tag { font-size: 12px; font-weight: 700; letter-spacing: .03em; color: var(--muted); }
+.perdido__rec { font-size: 14px; background: rgba(240, 193, 75, .22); border-radius: 8px; padding: 6px 8px; }
+.perdido__info { color: var(--muted); }
+.perdido__btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.perdidos__nota { font-size: 12.5px; }
+.midia { margin: 0 0 10px; display: grid; gap: 4px; }
+.midia small { color: var(--muted); }
+
+/* ---------- Animaciones suaves (se apagan con «Sin movimiento») ---------- */
+@keyframes ui-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes ui-pop { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: none; } }
+.panel__body > * { animation: ui-rise .28s ease both; }
+.panel__body .list > li, .panel__body .perdidos > li { animation: ui-rise .3s ease both; }
+.panel__body .list > li:nth-child(2) { animation-delay: .03s; } .panel__body .list > li:nth-child(3) { animation-delay: .06s; }
+.panel__body .list > li:nth-child(4) { animation-delay: .09s; } .panel__body .list > li:nth-child(n+5) { animation-delay: .12s; }
+.modal__box { animation: ui-pop .2s ease both; }
+.item, .btn, .tab { transition: transform .12s ease, background-color .15s ease, color .15s ease; }
+.item:active, .btn:active { transform: scale(.98); }
+.pref-calm *, .pref-calm *::before, .pref-calm *::after { animation: none !important; transition: none !important; }
+@media (prefers-reduced-motion: reduce) { .panel__body > *, .panel__body .list > li, .modal__box { animation: none !important; } }
+
+/* ---------- Botones más fáciles de tocar en el celular ---------- */
+@media (pointer: coarse) {
+  .btn, .tab { min-height: 44px; }
+  .item { min-height: 56px; }
+  .acc__chip span { min-height: 44px; display: inline-flex; align-items: center; }
+}
+html.theme-dark .search input, html.theme-dark .owner__f input { background: #0f1b30; color: var(--text); border-color: var(--line); }
+html.theme-dark .alerta, html.theme-dark .aviso { filter: none; }
+@media (prefers-color-scheme: dark) { html:not(.theme-light) .search input, html:not(.theme-light) .owner__f input { background: #0f1b30; color: var(--text); border-color: var(--line); } }
+
+/* Con GSAP cargado, las animaciones las hace GSAP (las de CSS quedan solo de respaldo) */
+html.gsap-on .panel__body > *, html.gsap-on .panel__body .list > li, html.gsap-on .panel__body .perdidos > li, html.gsap-on .modal__box { animation: none !important; }
+.pano { width: 100%; height: min(58vh, 420px); border-radius: 12px; overflow: hidden; background: #0f1b30; display: grid; place-items: center; }
+
+/* ---------- 1.26: temporada, favoritos, opiniones, útiles, guía de bienvenida ---------- */
+.panel__temp { margin: 6px 0 0; font-size: 13.5px; font-weight: 600; color: var(--wheat, #f0c14b); }
+.fav { font-size: 13px; }
+.stars { color: #d49a0a; font-weight: 700; }
+html.theme-dark .stars { color: #f0c14b; }
+.opin { margin: 10px 0 0; padding: 8px 12px; border-radius: 10px; background: rgba(240, 193, 75, .14); font-size: 14px; }
+.opin__c { margin: 4px 0 0; font-style: italic; }
+.quick { display: flex; flex-wrap: wrap; gap: 8px; }
+.util { list-style: none; padding: 0; margin: 0 0 8px; display: grid; gap: 8px; }
+.util li { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; }
+.util small { grid-column: 1; color: var(--muted); }
+.util .btn { grid-column: 2; grid-row: 1 / span 2; }
+.modal__box .list { margin-bottom: 6px; }
+/* Transición suave entre pantallas (View Transitions) */
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .18s; }
+/* En el celular los botones de acción de la ficha quedan pegados abajo */
+@media (max-width: 640px) {
+  .card .actions { position: sticky; bottom: 0; z-index: 2; padding: 10px 0 4px; background: linear-gradient(to top, var(--paper) 70%, transparent); }
+}
+/* Guía de bienvenida (Driver.js) acorde a los colores de la guía */
+.driver-popover { font-family: inherit; border-radius: 14px; }
+.driver-popover-title { font-size: 17px; }
+.driver-popover-next-btn { background: var(--brick, #c8481f) !important; color: #fff !important; text-shadow: none !important; border: 0 !important; border-radius: 999px !important; padding: 8px 16px !important; }
+.driver-popover-prev-btn { border-radius: 999px !important; padding: 8px 14px !important; }
+
+/* Mapa liviano 2D en modo oscuro: se invierten los colores del dibujo (los pines conservan su tono) */
+html.theme-dark #map2d { filter: invert(.92) hue-rotate(180deg) brightness(.95) contrast(.92); }
+@media (prefers-color-scheme: dark) { html:not(.theme-light) #map2d { filter: invert(.92) hue-rotate(180deg) brightness(.95) contrast(.92); } }
+
+/* ---- 1.27 clima + voz ---- */
+.clima{margin:.6rem 0;padding:.8rem;border-radius:14px;background:linear-gradient(135deg,#e8f3ff,#f4faff);border:1px solid #cfe3f7;color:#16324a}
+.clima__top{display:flex;align-items:center;gap:.7rem}
+.clima__ico{font-size:2.4rem;line-height:1}
+.clima__temp{font-size:2rem;display:block;line-height:1}
+.clima__txt{font-size:.9rem}
+.clima__det,.clima__consejo{margin:.5rem 0;font-size:.9rem}
+.clima__consejo{font-weight:600}
+.clima__horas,.clima__dias{list-style:none;display:flex;gap:.3rem;overflow-x:auto;margin:.5rem 0;padding:0}
+.clima__horas li,.clima__dias li{flex:1 0 3.4rem;display:flex;flex-direction:column;align-items:center;gap:.1rem;padding:.35rem .2rem;border-radius:10px;background:rgba(255,255,255,.7);text-align:center}
+.clima__fuente{display:block;margin-top:.4rem;opacity:.8}
+.clima__chip{border:0;background:rgba(255,255,255,.18);color:inherit;border-radius:999px;padding:.25rem .7rem;font:inherit;font-size:.85rem;cursor:pointer;min-height:36px}
+.panel__clima{margin:.3rem 0 0}
+.search{position:relative}
+.mic{position:absolute;right:.4rem;top:50%;transform:translateY(-50%);width:40px;height:40px;border:0;border-radius:50%;background:transparent;font-size:1.2rem;cursor:pointer}
+.mic--on{background:#e53935;animation:micpulse 1s infinite}
+@keyframes micpulse{50%{box-shadow:0 0 0 8px rgba(229,57,53,.25)}}
+.voz-msg{min-height:0;margin:.2rem 0;font-size:.85rem;opacity:.85}
+@media (prefers-reduced-motion:reduce){.mic--on{animation:none}}
+html.theme-dark .clima{background:#16283a;border-color:#27425c;color:#e3eefa}
+html.theme-dark .clima__horas li,html.theme-dark .clima__dias li{background:rgba(255,255,255,.07)}
+
+/* ---- 1.27.1 alerta de clima + manos libres ---- */
+.alerta-clima{position:fixed;z-index:60;left:50%;top:calc(env(safe-area-inset-top,0px) + .6rem);transform:translateX(-50%);width:min(94vw,520px);display:flex;gap:.7rem;align-items:flex-start;padding:.8rem .9rem;border-radius:14px;box-shadow:0 8px 28px rgba(0,0,0,.35);background:#fff8d6;color:#3d3200;border:2px solid #f2c200;animation:alertain .35s ease-out}
+.alerta--naranja{background:#ffe6cf;color:#4a2300;border-color:#f08a1c}
+.alerta--roja{background:#ffd9d9;color:#5a0000;border-color:#e53935}
+.alerta-clima__ico{font-size:2rem;line-height:1}
+.alerta-clima__txt{display:flex;flex-direction:column;gap:.3rem;font-size:.95rem}
+.alerta-clima__txt small{opacity:.85}
+.alerta-clima__btns{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.2rem}
+.alerta-clima .btn{min-height:40px;color:inherit;background:rgba(255,255,255,.6)}
+.alerta-clima .btn--primary{background:#1a2740;color:#fff}
+@keyframes alertain{from{opacity:0;transform:translate(-50%,-14px)}}
+@media (prefers-reduced-motion:reduce){.alerta-clima{animation:none}}
+.manos{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin:.6rem 0;padding:.7rem;border-radius:12px;background:#e8f7ec;border:2px solid #2e9e57;color:#103a1f}
+.manos span{flex:1 1 12rem;font-size:.9rem}
+.manos__ayuda{display:block;margin-top:.3rem;opacity:.8}
+html.theme-dark .manos{background:#12301e;color:#d9f5e3}
+
+/* ---- 1.28 eventos, línea del tiempo, lluvia en recorrido, quiosco ---- */
+.agenda__cuenta{display:inline-block;margin-left:.4rem;padding:.1rem .5rem;border-radius:999px;font-size:.78rem;font-weight:700;background:var(--tint-2,rgba(0,0,0,.08))}
+.agenda__cuenta--pronto,.agenda__cuenta--hoy{background:#ffe9a8;color:#4a3800}
+.agenda__cuenta--curso{background:#cdeed8;color:#12391f}
+.agenda__cal{display:flex;flex-wrap:wrap;gap:.4rem;margin:.4rem 0 0}
+.tour-lluvia{margin:.5rem 0;padding:.5rem .7rem;border-radius:10px;background:#e4f0ff;color:#12324f;font-size:.9rem}
+.tour-lluvia .link{background:none;border:0;padding:0;font:inherit;text-decoration:underline;color:inherit;cursor:pointer}
+html.theme-dark .tour-lluvia{background:#16283a;color:#dbe9f7}
+.linea{list-style:none;margin:.5rem 0;padding:0 0 0 .2rem;border-left:3px solid var(--brick,#b4482b)}
+.linea li{display:flex;gap:.8rem;padding:0 0 1.1rem .8rem;position:relative}
+.linea li::before{content:'';position:absolute;left:-.62rem;top:.35rem;width:.75rem;height:.75rem;border-radius:50%;background:var(--brick,#b4482b)}
+.linea__anio{flex:0 0 3.2rem;font-size:1.05rem;color:var(--brick,#b4482b)}
+.linea h3{margin:0 0 .2rem;font-size:1rem}
+.linea img{display:block;max-width:100%;border-radius:10px;margin-top:.4rem}
+html.quiosco{font-size:130%}
+html.quiosco .btn{min-height:56px}
+html.quiosco #btn-help,html.quiosco #btn-install,html.quiosco [data-open="owner"],html.quiosco [data-open="install"]{display:none!important}
+html.quiosco *{cursor:default}
+
+/* ---- 1.29 oficios, gracias, modo fácil, impresión ---- */
+.plan__h{margin:.8rem 0 .2rem;font-size:1rem}
+.oficios{list-style:none;margin:0 0 .6rem;padding:0}
+.oficios li{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;justify-content:space-between;padding:.55rem 0;border-bottom:1px solid var(--line,rgba(0,0,0,.12))}
+.oficios small{display:block;opacity:.8}
+.oficios__btns{display:flex;gap:.4rem;flex-wrap:wrap}
+.gracias{display:flex;flex-direction:column;gap:.5rem;margin:.5rem 0}
+html.pref-facil .btn{min-height:56px;font-size:1.05rem}
+html.pref-facil .tab{min-height:52px;font-size:1.05rem}
+html.pref-facil .item{padding-top:.9rem;padding-bottom:.9rem}
+html.pref-facil [data-open="owner"],html.pref-facil [data-open="qr"],html.pref-facil [data-open="install"],html.pref-facil [data-open="historia"],html.pref-facil [data-open="intro"],html.pref-facil [data-action="owner"],html.pref-facil [data-action="qr"],html.pref-facil [data-action="reportar"],html.pref-facil [data-action="share-tour"],html.pref-facil #btn-north,html.pref-facil .layers{display:none!important}
+@media print{
+  #gl,#map2d,.fab,.tabs,.panel__close,.modal__close,.btn,.actions,.mic,.search,#alerta-clima,.manos,.layers,[data-close]{display:none!important}
+  html,body{background:#fff!important;color:#000!important;overflow:visible!important;height:auto!important}
+  .panel,#panel{position:static!important;width:auto!important;max-height:none!important;height:auto!important;box-shadow:none!important;transform:none!important;background:#fff!important;color:#000!important}
+  #body,.modal__box{overflow:visible!important;max-height:none!important;height:auto!important;position:static!important}
+  .modal{position:static!important;background:none!important;display:block!important;padding:0!important}
+  body:has(.modal__box) #panel{display:none!important}
+  a[href^="http"]::after{content:" (" attr(href) ")";font-size:.75em;word-break:break-all}
+  .steps li,.list li,.linea li{break-inside:avoid}
+}
+
+/* ---- 1.30 sin internet, recordatorio de eventos ---- */
+.offline{position:fixed;z-index:70;left:0;right:0;bottom:0;padding:.55rem 1rem calc(.55rem + env(safe-area-inset-bottom,0px));background:#2b3a55;color:#fff;font-size:.85rem;text-align:center}
+.offline[hidden]{display:none}
+.alerta--evento{background:#e6f7ea;color:#0f3a1d;border-color:#2e9e57}
+#alerta-clima ~ #aviso-evento{top:calc(env(safe-area-inset-top,0px) + 9.5rem)}
+html.theme-dark .alerta--evento{background:#12301e;color:#d9f5e3}
+@media print{.offline,#aviso-evento{display:none!important}}
+
+/* ---- 1.31 idioma ---- */
+.panel__lang{border:1px solid currentColor;background:transparent;color:inherit;border-radius:999px;padding:.2rem .7rem;font:inherit;font-size:.8rem;cursor:pointer;min-height:36px;opacity:.9}
+.panel__top{gap:.5rem}
+
+/* Caminos, pesca y actividades semanales */
+.caminos { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.camino { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 12px; background: var(--panel-2, rgba(127,127,127,.1)); border-left: 5px solid #1f7a4d; }
+.camino--warn { border-left-color: #c98a00; } .camino--bad { border-left-color: #b3261e; }
+.camino small { display: block; opacity: .85; } .camino__viejo { color: #b3261e; font-weight: 600; }
+.pesca__nivel { font-size: 1.2em; margin: 0 0 6px; } .pesca__nivel--buena { color: #1f7a4d; } .pesca__nivel--mala { color: #b3261e; }
+.pesca ul:not(.list) { margin: 4px 0 8px 18px; padding: 0; } .pesca__datos { opacity: .85; }
+
+/* ---------- Paleta del caballo: detalles que dan identidad ---------- */
+.panel__head::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: var(--espectro); }
+.panel__head { border-bottom: 0 !important; }
+.panel__over { color: #d8cfe0; } .panel__tag { color: #e3dbe8; }
+.tab[aria-selected="true"] { border-bottom-color: var(--c-naranja); }
+.item:hover { border-color: rgba(42, 35, 32, .4); }
+.tip { border-left-color: var(--c-amarillo); background: rgba(245, 196, 0, .18); }
+.chip[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); }
+.btn--primary { background: var(--c-azul); border-color: var(--c-azul); }
+.btn--primary:hover { background: #17497c; }
+html.theme-dark .btn--primary { background: #3a86d1; border-color: #3a86d1; }
+@media (prefers-color-scheme: dark) { html:not(.theme-light) .btn--primary { background: #3a86d1; border-color: #3a86d1; } }
+#splash { background: radial-gradient(120% 90% at 50% 30%, #3b3150, var(--navy-deep)); }
+.splash__credit { color: #a89fb2; } .splash__msg { color: #d4cbdc; }
+html.theme-dark .turno .btn:not(.btn--primary), html.theme-dark .aviso .btn:not(.btn--primary) { background: #fff; color: #123524; border-color: #2e8b57; }
+html.theme-dark .search input, html.theme-dark .owner__f input { background: #17121f; }
+@media (prefers-color-scheme: dark) {
+  html:not(.theme-light) .turno .btn:not(.btn--primary) { background: #fff; color: #123524; border-color: #2e8b57; }
+  html:not(.theme-light) .search input, html:not(.theme-light) .owner__f input { background: #17121f; }
+}

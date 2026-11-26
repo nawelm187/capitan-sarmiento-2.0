@@ -1,0 +1,3 @@
+# Eventos. Una línea por evento:
+#   AAAA-MM-DD (o AAAA-MM-DD a AAAA-MM-DD) | hora (opcional) | título | lugar | texto
+#   2026-12-05 | 21:00 | Baile en el club | Club Social | Entrada libre

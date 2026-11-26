@@ -1,0 +1,4 @@
+# Actividades que se repiten todas las semanas:
+#   Día | hora | Actividad | Lugar (opcional) | nota (opcional)
+#   Martes y jueves | 19:00 | Taller de folklore | Casa de la Cultura | Gratis
+# Días: lunes, "lunes y miércoles", "lunes a viernes", todos

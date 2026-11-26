@@ -1,0 +1,3 @@
+# Novedades del pueblo. Una línea por novedad:
+#   AAAA-MM-DD | título | texto | link (opcional)
+#   2026-11-25 | Corte de agua | Mañana de 8 a 12 en el barrio Centro. |

@@ -16,13 +16,18 @@ export const ICONS = {
   pin: svg('<path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.4"/>'),
 };
 
+// Íconos propios de los tipos que no tienen un buen símbolo en la tipografía de Google (siempre se ven, con o sin internet).
+const OWN = {
+  puente: svg('<path d="M2 17h20M4 17v-3M20 17v-3M4 14c2-6 14-6 16 0M8 12.4V17M12 11.6V17M16 12.4V17"/><path d="M2 20c3 1.5 5-1.5 10 0s7 1.5 10 0"/>', 20),
+  pesca: svg('<path d="M3 12c3-5 9-6 14-2l4-3v10l-4-3c-5 4-11 3-14-2z"/><circle cx="8" cy="11" r=".9"/>', 20),
+};
 export const CATS = [
-  { id: 'comer', label: 'Comer', color: '#bf4a2a', ink: '#fff', mi: 'restaurant' },
-  { id: 'dormir', label: 'Dormir', color: '#2d6a9f', ink: '#fff', mi: 'hotel' },
-  { id: 'ver', label: 'Qué ver', color: '#c98712', ink: '#fff', mi: 'attractions' },
-  { id: 'compras', label: 'Compras', color: '#7a4e8c', ink: '#fff', mi: 'shopping_bag' },
-  { id: 'salud', label: 'Salud', color: '#b53a4d', ink: '#fff', mi: 'local_hospital' },
-  { id: 'servicios', label: 'Servicios', color: '#4e7f3a', ink: '#fff', mi: 'info' },
+  { id: 'comer', label: 'Comer', color: '#d9620e', ink: '#fff', mi: 'restaurant' },
+  { id: 'dormir', label: 'Dormir', color: '#1e5fa0', ink: '#fff', mi: 'hotel' },
+  { id: 'ver', label: 'Qué ver', color: '#f5c400', ink: '#2a2236', mi: 'attractions' },
+  { id: 'compras', label: 'Compras', color: '#9b2a86', ink: '#fff', mi: 'shopping_bag' },
+  { id: 'salud', label: 'Salud', color: '#d4202c', ink: '#fff', mi: 'local_hospital' },
+  { id: 'servicios', label: 'Servicios', color: '#36862a', ink: '#fff', mi: 'info' },
 ];
 
 export const catInfo = (id) => CATS.find((c) => c.id === id) || CATS[2];
@@ -36,12 +41,14 @@ const FALLBACK = {
 };
 const fb = (cat) => `<span class="mi-fb">${ICONS[cat] || FALLBACK[cat] || ICONS.pin}</span>`;
 const glyph = (mi, cat) => `<span class="mi" aria-hidden="true">${mi}</span>${fb(cat)}`;
+const own = (key) => `<span class="mi-own" aria-hidden="true">${OWN[key]}</span>`;
 
 /** Ícono de una categoría. */
 export const catIcon = (id) => glyph(catInfo(id).mi, id);
 /** Ícono propio del lugar (ferretería, farmacia, iglesia…); si no tiene tipo, el de su categoría. */
 export const placeIcon = (p) => {
   const t = TYPES[p?.icon];
+  if (t?.svg) return own(t.svg);
   return t ? glyph(t.mi, p.category) : catIcon(p?.category);
 };
 /** Nombre del tipo ("Ferretería") o, si no hay, el de la categoría. */
@@ -52,7 +59,7 @@ export function loadIconFont(places = []) {
   if (fontStarted || typeof document === 'undefined') return;
   fontStarted = true;
   const names = new Set(CATS.map((c) => c.mi));
-  for (const p of places) if (TYPES[p.icon]) names.add(TYPES[p.icon].mi);
+  for (const p of places) if (TYPES[p.icon]?.mi) names.add(TYPES[p.icon].mi);
   const list = [...names].sort().join(',');
   const link = document.createElement('link');
   link.rel = 'stylesheet';

@@ -103,9 +103,12 @@ export class ChunkedBuildings {
     const r4 = hash2(z0 * 2.3 + 1.9, x0 * 1.3 + 5.7);
     // Variación suave de brillo: que no parezcan todas pintadas con el mismo tarro.
     const jit = 0.93 + r3 * 0.12;
-    const wall = { r: Math.min(1, wall0.r * jit), g: Math.min(1, wall0.g * jit), b: Math.min(1, wall0.b * jit) };
+    // Colores reales (de OpenStreetMap o de la imagen satelital: npm run colores): pisan al color al azar.
+    const hex = (s) => (/^#[0-9a-f]{6}$/i.test(s || '') ? { r: parseInt(s.slice(1, 3), 16) / 255, g: parseInt(s.slice(3, 5), 16) / 255, b: parseInt(s.slice(5, 7), 16) / 255 } : null);
+    const wReal = hex(opts.wallColor), rReal = hex(opts.roofColor);
+    const wall = wReal ? wReal : { r: Math.min(1, wall0.r * jit), g: Math.min(1, wall0.g * jit), b: Math.min(1, wall0.b * jit) };
     const roofJ = 0.9 + r4 * 0.16;
-    const roof = { r: Math.min(1, roof0.r * roofJ), g: Math.min(1, roof0.g * roofJ), b: Math.min(1, roof0.b * roofJ) };
+    const roof = rReal ? { r: Math.min(1, rReal.r * (0.97 + r4 * 0.06)), g: Math.min(1, rReal.g * (0.97 + r4 * 0.06)), b: Math.min(1, rReal.b * (0.97 + r4 * 0.06)) } : { r: Math.min(1, roof0.r * roofJ), g: Math.min(1, roof0.g * roofJ), b: Math.min(1, roof0.b * roofJ) };
 
     const key = `${Math.floor((outer[0].x + this.half) / this.cell)},${Math.floor((outer[0].z + this.half) / this.cell)}`;
     let ch = this.chunks.get(key);

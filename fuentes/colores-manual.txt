@@ -1,0 +1,4 @@
+# Colores a mano para edificios puntuales (iglesia, municipalidad, tu casa…):
+#   latitud, longitud | techo #aabbcc | pared #aabbcc
+#   -34.1712, -59.8431 | techo #8a3b2e | pared #f1e6c8
+# El punto tiene que caer dentro del edificio. Después: npm run colores -- --solo-aplicar

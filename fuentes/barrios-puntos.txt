@@ -1,0 +1,16 @@
+# Barrios que faltan en el mapa. Una línea por barrio:
+#     Nombre | link de Google Maps (o "lat, lng") del MEDIO del barrio
+# Cómo sacar el link: en Google Maps tocá (o clic) en el medio del barrio → Compartir → Copiar vínculo → pegalo después de la barra |
+# Los que no tienen link todavía se saltean sin problema.
+#
+# Cambio de nombre de uno que viene de OpenStreetMap:   Nombre viejo = Nombre nuevo
+Ruta 8 = Los Patos
+
+Los Milagros | -34.16514122053295, -59.79841137420812
+Filomena | -34.17780945778435, -59.78009234422924
+Fonavi | -34.17233947822747, -59.78195916236938
+La Liga | -34.169257049609215, -59.780585871372764
+Tropezón | -34.184248711443075, -59.795697435767366
+Mancha Verde | -34.166438603796976, -59.78140662716141
+La Huella | -34.164227322037284, -59.79693091978595
+29 de Junio | -34.16093459596379, -59.78491495629386

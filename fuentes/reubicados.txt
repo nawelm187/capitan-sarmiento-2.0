@@ -1,0 +1,65 @@
+# Lugares que moviste de lugar (id | latitud, longitud | nombre). Borrá una línea para que vuelva a su lugar original.
+osm-n14030290444 | -34.178218, -59.792533 | Museo de la Recreación Histórica
+extra-museo-y-archivo-historico-municipal | -34.175582, -59.793239 | Museo y Archivo Histórico Municipal
+osm-n2520504611 | -34.176633, -59.793454 | Banco Nación
+osm-n3452443048 | -34.177360, -59.790820 | Escuela Normal Superior Domingo Fidel Sarmiento
+osm-n3457367623 | -34.178042, -59.789243 | Club Ayacuá
+osm-n3457369632 | -34.176022, -59.793191 | Iglesia San carlos Borromeo
+osm-n3457372846 | -34.176779, -59.792922 | Cine Italo-Argentino
+osm-n3836695357 | -34.177547, -59.790191 | Escuela Primaria N° 1 Domingo Faustino Sarmiento
+osm-n5757465695 | -34.177163, -59.790905 | Jardín De Infantes Nº906
+osm-n14030290445 | -34.178832, -59.787003 | El Oriental
+extra-la-estacion-cerveceria | -34.176041, -59.793627 | La Estación (cervecería)
+extra-daimo | -34.177056, -59.792778 | Daimo
+extra-heladeria-calabrono | -34.176074, -59.793658 | Heladería Calabrono
+extra-club-atletico-sarmiento | -34.176220, -59.793311 | Club Atlético Sarmiento
+extra-caps-la-luisa | -34.128575, -59.930041 | CAPS La Luisa
+extra-banco-macro | -34.176346, -59.793365 | Banco Macro
+extra-fausto-bar | -34.177076, -59.792685 | Fausto Bar
+extra-la-ultima-cafe-bar | -34.177357, -59.791729 | La Última Café Bar
+extra-chucho-pizzas | -34.177202, -59.792261 | Chucho Pizzas
+extra-farmacia-perez | -34.177783, -59.790233 | Farmacia Pérez
+osm-w1379409311 | -34.132244, -59.936654 | Club Atlético Unión Labradores
+extra-escuela-secundaria-n-2 | -34.177412, -59.790633 | Escuela Secundaria Nº 2
+extra-estacion-ferroviaria-la-luisa | -34.131078, -59.947871 | Estación ferroviaria La Luisa
+extra-haras-el-paraiso | -34.131412, -59.948623 | Haras El Paraíso
+extra-parador-la-fusta | -34.123836, -59.911608 | Parador La Fusta
+osm-n3965009169 | -34.162193, -59.784596 | Remis Primero
+osm-w393286873 | -34.161112, -59.783842 | Terminal de Ómnibus de Capitán Sarmiento
+osm-n3962845241 | -34.144185, -59.842658 | Cabañas Camping Capitán Sarmiento
+extra-transporte-bailo-hnos | -34.158132, -59.790176 | Transporte Bailo Hnos.
+extra-compania-argentina-de-semillas-s-a | -34.159318, -59.791464 | Compañía Argentina de Semillas S.A.
+extra-paisano | -34.160749, -59.785890 | Paisano
+extra-estacion-de-servicio-shell-meira-hnos | -34.161636, -59.783164 | Estación de servicio Shell — Meira Hnos.
+extra-clinica-equina-srl | -34.161513, -59.783439 | Clínica Equina SRL
+extra-autopartes-sarmiento-s-a | -34.161285, -59.782982 | Autopartes Sarmiento S.A.
+extra-texas-bbq | -34.161184, -59.783446 | Texas BBQ
+extra-chaco-maderas | -34.165019, -59.783148 | Chaco Maderas
+extra-puente-avenida-de-circunvalacion | -34.175775, -59.773258 | Puente Avenida de Circunvalación
+osm-n4213290589 | -34.179219, -59.799684 | Hospital Municipal "San Carlos"
+osm-w335993992 | -34.180096, -59.796193 | Club San Carlos - Capitán Sarmiento - BA
+extra-laboratorio-iglab | -34.179046, -59.798979 | Laboratorio IGLAB
+extra-policonsultorios | -34.178806, -59.799174 | Policonsultorios
+extra-jardin-de-infantes-n-901-martin-miguel-de-guemes | -34.178209, -59.798634 | Jardín de Infantes Nº 901 Martín Miguel de Güemes
+osm-w238116755 | -34.177814, -59.797925 | Plaza San Carlos
+extra-monumento-y-museo-a-la-bandera-bonaerense | -34.177996, -59.797669 | Monumento y Museo a la Bandera Bonaerense
+extra-amanda | -34.176647, -59.795645 | Amanda
+extra-g-congelados | -34.176914, -59.795496 | G Congelados
+osm-n5973696883 | -34.176465, -59.795254 | Folguera
+extra-la-cuadra | -34.176790, -59.794661 | La Cuadra
+extra-super-centro-s-r-l | -34.176236, -59.794797 | Super Centro S.R.L.
+osm-n8909891877 | -34.174050, -59.793766 | Farmacia Del Pueblo
+extra-ocasiones | -34.174616, -59.791841 | Ocasiones
+extra-araceli-neumaticos | -34.174763, -59.791281 | Araceli Neumáticos
+extra-las-casitas-de-blanca-nieves | -34.174085, -59.792806 | Las Casitas de Blanca Nieves
+extra-puesto-1 | -34.174042, -59.796643 | Puesto 1
+extra-la-colectividad | -34.173313, -59.796359 | La Colectividad
+osm-n5973698085 | -34.173197, -59.795846 | Dia
+extra-supermercados-dia | -34.173201, -59.795855 | Supermercados DIA
+osm-n4213267896 | -34.172208, -59.795468 | Bomberos Voluntarios de Capitan Sarmiento
+extra-escuela-de-educacion-secundaria-n-3 | -34.171995, -59.797160 | Escuela de Educación Secundaria Nº 3
+extra-club-defensores-la-loma | -34.167368, -59.796879 | Club Defensores La Loma
+extra-posada-chambery | -34.166831, -59.789478 | Posada Chambery
+extra-la-mancha-verde-hotel | -34.166083, -59.789371 | La Mancha Verde Hotel
+extra-ibis-supermercado | -34.164849, -59.787686 | Ibis Supermercado
+extra-granja-tres-arroyos-s-a-planta-cahuane | -34.162921, -59.772269 | Granja Tres Arroyos S.A. — Planta Cahuane

@@ -109,10 +109,10 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
       const polys = g.type === 'Polygon' ? [g.coordinates] : g.coordinates;
       for (const p of polys) greens.push({ pts: ringToLocal(p[0]) });
     } else if (kind === 'water' && g.type === 'LineString') {
-      waterLines.push({ pts: g.coordinates.map(([lng, lat]) => toLocal(lng, lat)) });
+      waterLines.push({ name: f.properties.name || null, pts: g.coordinates.map(([lng, lat]) => toLocal(lng, lat)) });
     } else if (kind === 'water' && (g.type === 'Polygon' || g.type === 'MultiPolygon')) {
       const polys = g.type === 'Polygon' ? [g.coordinates] : g.coordinates;
-      for (const p of polys) waters.push({ pts: ringToLocal(p[0]) });
+      for (const p of polys) waters.push({ name: f.properties.name || null, pts: ringToLocal(p[0]) });
     }
   }
 
@@ -257,7 +257,7 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
         for (const rings of polys) {
           try {
             const sp = SPECIAL_COLORS[f.properties.special];
-            chunked.add(rings.map(ringToLocal), Number(f.properties.h), sp ? sp[0] : WALLS, sp ? sp[1] : ROOFS, hash2, { special: Boolean(sp) });
+            chunked.add(rings.map(ringToLocal), Number(f.properties.h), sp ? sp[0] : WALLS, sp ? sp[1] : ROOFS, hash2, { special: Boolean(sp), wallColor: f.properties.wc, roofColor: f.properties.rc });
           } catch (err) {
             // un edificio con geometría rara no debe frenar el resto, pero se cuenta para poder avisarlo
             failed++;
@@ -348,62 +348,107 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
   const medians = findMedians(roads, roadGrid);
 
   // ---- Suelo ----
-  const cv = document.createElement('canvas');
-  cv.width = cv.height = SIZE;
-  const ctx = cv.getContext('2d');
-  const px = (p) => [(p.x / EXT + 0.5) * SIZE, (p.z / EXT + 0.5) * SIZE];
-  ctx.fillStyle = '#7d8b5e';
-  ctx.fillRect(0, 0, SIZE, SIZE);
-
-  const fillPoly = (pts, color) => {
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    pts.forEach((p, i) => {
-      const [x, y] = px(p);
-      if (i) ctx.lineTo(x, y);
-      else ctx.moveTo(x, y);
-    });
-    ctx.closePath();
-    ctx.fill();
+  // Mapa normal (hasta ~2,4 km de radio): una sola textura de alta resolución.
+  // Mapa grande (todo el partido): una textura general de baja resolución para todo el terreno, más "baldosas" de alta
+  // resolución solo donde hay edificios (el pueblo, La Luisa, el balneario), así las calles se siguen viendo nítidas.
+  const BIG = half > 2400;
+  const mkTexture = (x0, z0, extent, size, minLine) => {
+    const cv = document.createElement('canvas');
+    cv.width = cv.height = size;
+    const ctx = cv.getContext('2d');
+    const k = size / extent;
+    const px = (p) => [(p.x - x0) * k, (p.z - z0) * k];
+    ctx.fillStyle = '#7d8b5e';
+    ctx.fillRect(0, 0, size, size);
+    const trace = (pts) => {
+      ctx.beginPath();
+      pts.forEach((p, i) => {
+        const [x, y] = px(p);
+        if (i) ctx.lineTo(x, y);
+        else ctx.moveTo(x, y);
+      });
+    };
+    const fillPoly = (pts, color) => { ctx.fillStyle = color; trace(pts); ctx.closePath(); ctx.fill(); };
+    const strokeLine = (pts, color, widthM) => { ctx.strokeStyle = color; ctx.lineWidth = Math.max(minLine, widthM * k); trace(pts); ctx.stroke(); };
+    return { cv, ctx, k, fillPoly, strokeLine };
   };
-  const strokeLine = (pts, color, widthM) => {
-    ctx.strokeStyle = color;
-    ctx.lineWidth = Math.max(1, widthM * m2px);
-    ctx.beginPath();
-    pts.forEach((p, i) => {
-      const [x, y] = px(p);
-      if (i) ctx.lineTo(x, y);
-      else ctx.moveTo(x, y);
+  const paint = (T, only) => {
+    const { ctx, k, fillPoly, strokeLine } = T;
+    const ok = only || (() => true);
+    greens.filter(ok).forEach((g) => fillPoly(g.pts, '#93ab70'));
+    waters.filter(ok).forEach((w) => fillPoly(w.pts, '#5f93b4'));
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    waterLines.filter(ok).forEach((w) => strokeLine(w.pts, '#5f93b4', 5));
+    roads.filter(ok).forEach((r) => strokeLine(r.pts, '#cbc7bd', roadWidth(r) + 4.6)); // vereda
+    roads.filter(ok).forEach((r) => strokeLine(r.pts, '#b0ada5', roadWidth(r))); // calzada (cemento)
+    rails.filter(ok).forEach((r) => {
+      strokeLine(r.pts, '#6b655c', 3.2);
+      ctx.setLineDash([2.5 * k, 3 * k]);
+      strokeLine(r.pts, '#cfc7b5', 4.6);
+      ctx.setLineDash([]);
     });
-    ctx.stroke();
+  };
+  const mkTex = (cv) => {
+    const tex = new THREE.CanvasTexture(cv);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = lowEnd ? 4 : 8;
+    return tex;
   };
 
-  greens.forEach((g) => fillPoly(g.pts, '#93ab70'));
-  waters.forEach((w) => fillPoly(w.pts, '#5f93b4'));
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  waterLines.forEach((w) => strokeLine(w.pts, '#5f93b4', 5));
-  roads.forEach((r) => strokeLine(r.pts, '#cbc7bd', roadWidth(r) + 4.6)); // vereda
-  roads.forEach((r) => strokeLine(r.pts, '#b0ada5', roadWidth(r))); // calzada (cemento)
-  rails.forEach((r) => {
-    strokeLine(r.pts, '#6b655c', 3.2);
-    ctx.setLineDash([2.5 * m2px, 3 * m2px]);
-    strokeLine(r.pts, '#cfc7b5', 4.6);
-    ctx.setLineDash([]);
-  });
-
-  const tex = new THREE.CanvasTexture(cv);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = lowEnd ? 4 : 8;
-  const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(EXT, EXT),
-    new THREE.MeshStandardMaterial({ map: tex, roughness: 1, metalness: 0 }),
-  );
-  ground.rotation.x = -Math.PI / 2;
-  ground.position.y = 0;
-  ground.receiveShadow = true;
-  ground.name = 'ground';
-  scene.add(ground);
+  let ground;
+  if (!BIG) {
+    const T = mkTexture(-half, -half, EXT, SIZE, 1);
+    paint(T);
+    ground = new THREE.Mesh(new THREE.PlaneGeometry(EXT, EXT), new THREE.MeshStandardMaterial({ map: mkTex(T.cv), roughness: 1, metalness: 0 }));
+    ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true;
+    ground.name = 'ground';
+    scene.add(ground);
+  } else {
+    // 1) terreno general
+    const Tf = mkTexture(-half, -half, EXT, lowEnd ? 2048 : 4096, 1);
+    paint(Tf);
+    ground = new THREE.Mesh(new THREE.PlaneGeometry(EXT, EXT), new THREE.MeshStandardMaterial({ map: mkTex(Tf.cv), roughness: 1, metalness: 0 }));
+    ground.rotation.x = -Math.PI / 2;
+    ground.position.y = -0.04;
+    ground.receiveShadow = true;
+    ground.name = 'ground';
+    scene.add(ground);
+    // 2) baldosas de alta resolución (1 km de lado) donde hay edificios
+    const TILE = 1000;
+    const TS = lowEnd ? 512 : 1024;
+    const counts = new Map();
+    for (const f of buildingFeatures) {
+      const ring = f.geometry.type === 'Polygon' ? f.geometry.coordinates[0] : f.geometry.coordinates?.[0]?.[0];
+      if (!ring?.length) continue;
+      const c = toLocal(ring[0][0], ring[0][1]);
+      const key = `${Math.floor(c.x / TILE)},${Math.floor(c.z / TILE)}`;
+      counts.set(key, (counts.get(key) || 0) + 1);
+    }
+    const bboxHit = (pts, x0, z0) => {
+      let a = Infinity, b = -Infinity, c = Infinity, d = -Infinity;
+      for (const p of pts) { if (p.x < a) a = p.x; if (p.x > b) b = p.x; if (p.z < c) c = p.z; if (p.z > d) d = p.z; }
+      return b >= x0 - 12 && a <= x0 + TILE + 12 && d >= z0 - 12 && c <= z0 + TILE + 12;
+    };
+    let tiles = 0;
+    for (const [key, n] of counts) {
+      if (n < 6 || tiles >= 60) continue;
+      const [ix, iz] = key.split(',').map(Number);
+      const x0 = ix * TILE;
+      const z0 = iz * TILE;
+      const T = mkTexture(x0, z0, TILE, TS, 1);
+      paint(T, (o) => bboxHit(o.pts, x0, z0));
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(TILE, TILE), new THREE.MeshStandardMaterial({ map: mkTex(T.cv), roughness: 1, metalness: 0, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
+      m.rotation.x = -Math.PI / 2;
+      m.position.set(x0 + TILE / 2, 0, z0 + TILE / 2);
+      m.receiveShadow = true;
+      m.name = 'ground-tile';
+      scene.add(m);
+      tiles++;
+    }
+    console.info(`Mapa grande: ${tiles} baldosas de alta resolución`);
+  }
 
   // Muestra el detalle (ventanas, puertas) solo en las celdas cercanas a la cámara.
   const updateDetail = (camPos) => {
@@ -412,7 +457,7 @@ export async function buildWorld(scene, gj, meta, { lowEnd = false, onProgress =
       m.visible = detailState.enabled && Math.hypot(camPos.x - bs.x, camPos.y - bs.y, camPos.z - bs.z) - bs.r < detailState.range;
     }
   };
-  const world = { updateDetail, detailState, EXT, half, roads, rails, greens, waters, ground, buildings, buildingCenters, medians, roadGrid, alignShift };
+  const world = { updateDetail, detailState, EXT, half, roads, rails, greens, waters, waterLines, ground, buildings, buildingCenters, medians, roadGrid, alignShift };
   try {
     const rm = buildRoadMeshes(scene, world, { lowEnd });
     world.medianTrees = rm.treeSpots;

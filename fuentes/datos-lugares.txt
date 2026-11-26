@@ -1,0 +1,155 @@
+# Teléfono, WhatsApp, horario y dirección de cada lugar. Completá lo que sepas y corré: npm run datos
+#   Nombre del lugar | teléfono | whatsapp | horario | dirección
+#   Horario como se habla: Lun a Vie 8 a 12 y 16 a 20; Sáb 9 a 13   (también: 24 hs · Dom cerrado)
+#   WhatsApp: código de país + 9 + código de área + número, sin espacios (5493764123456)
+#   Los campos vacíos no cambian nada.
+Estación Policía Comunal Capitán Sarmiento | +54 2478 48 1255 |  |  | Vicente López y Planes 586
+Banco Nación |  |  |  | Avenida Presidente Perón
+BBVA |  |  |  | Avenida Bartolomé Mitre
+La Esquina | +54 2478 48 1082 |  |  | Avenida Presidente Perón
+Escuela Normal Superior Domingo Fidel Sarmiento | +54 2478 48 1927 |  |  | Avenida Presidente Perón 604
+Club Ayacuá |  |  |  | 
+Club Sarmiento Piletas |  |  |  | Instalación deportiva urbana
+Iglesia San carlos Borromeo |  |  |  | Zona San Carlos
+Cine Italo-Argentino |  |  |  | Centro
+Escuela Primaria N° 1 Domingo Faustino Sarmiento |  |  |  | Avenida Presidente Perón 604
+Remis Primero |  |  |  | 
+Centro de Educación de Adultos 701 |  |  |  | Sarmiento 1194
+Bomberos Voluntarios de Capitan Sarmiento | +54 2478 481500 |  |  | Mármol 536
+Parroquia Nuestra Señora de Pilar |  |  |  | Vicente López y Planes y Centenario
+Hospital Municipal "San Carlos" |  |  |  | Avenida San Martín 450
+Escuela De Educación Secundaria Nº1 Dr. Mateo V.Jelicich |  |  |  | Guido Lucotti 757
+Correo Argentino |  |  |  | Avenida Bartolomé Mitre 272
+Jardín De Infantes Nº906 |  |  |  | Avenida Presidente Perón 604
+Jardín De Infantes Nº 903 Martha Salotti |  |  |  | 12 de Octubre 751
+Escuela De Educación Primaria Nº 4 Juan Bautista Alberdi |  |  |  | Sarmiento 1194
+Escuela De Educación Primaria Nº5 Bernardino Rivadavia |  |  |  | Alsina 312
+Escuela De Educación Primaria 11 General José De San Martín |  |  |  | Sarmiento
+Kovasevich |  |  |  | 
+Grido |  |  |  | 
+Bava |  |  |  | Av. Leandro N. Alem 708 / 756
+Folguera |  |  |  | 
+Dia |  |  |  | Avenida Rivadavia 536
+Los Pinos |  |  |  | 
+Gimnasio Crom |  |  | Mo-Fr 08:00-22:00 | Juan Manuel de Rosas 465
+Farmacia Del Pueblo |  |  |  | 
+Municipalidad de Capitán Sarmiento |  |  |  | Centenario 499
+Museo de la Recreación Histórica |  |  |  | Francia 137
+El Oriental |  |  |  | 
+Plaza San Martín |  |  |  | 
+Plaza San Carlos |  |  |  | Barrio San Carlos
+Club San Carlos - Capitán Sarmiento - BA |  |  |  | Daimo Bojanich 402
+Terminal de Ómnibus de Capitán Sarmiento |  |  |  | Ruta 8 km 144,5
+Museo y Archivo Histórico Municipal |  |  |  | 
+Parque Natural Capitán Sarmiento |  |  |  | 
+Las Magnolias |  |  |  | 
+La Estación (cervecería) |  |  |  | 
+La Cuadra |  |  |  | 
+La Mancha Cocina de Fuegos |  |  |  | 
+Amanda |  |  |  | 
+Daimo |  |  |  | 
+Heladería SAS |  |  |  | 
+Heladería Calabrono |  |  |  | 
+Club Atlético Sarmiento |  |  |  | 
+Club Defensores La Loma |  |  |  | 
+La Mancha Verde Hotel |  |  |  | 
+Posada Chambery |  |  |  | 
+Despensa Aldana |  |  |  | 
+Centro Cultural La Estación |  |  |  | Antigua estación
+CAPS San Cayetano |  |  |  | La Pampa entre Newbery y Circunvalación
+CAPS La Loma |  |  |  | La Plata y San Nicolás s/n
+CAPS La Luisa |  |  |  | Cabo O. Fregotte s/n, La Luisa
+Centro Provincial de Atención — Capitán Sarmiento |  |  |  | La Pampa 436, entre Cardenal Samoré y Circunvalación
+Centro Integral de Rehabilitación Oral C.I.R.O. |  |  |  | Av. Mitre 123
+Kine CS |  |  |  | Avellaneda 6198
+Laboratorio IGLAB |  |  |  | Padre Lacabe 524
+Laboratorio Ruiz |  |  |  | Av. de Mayo 285
+Laboratorio de Análisis Clínicos García |  |  |  | Av. Mitre 434
+Policlínica S.T.I.A. Capitán Sarmiento |  |  |  | Vicente López y Planes 895
+Policonsultorios |  |  |  | San Martín 392
+Hogar Geriátrico Solar El Sauce |  |  |  | Ruta Nacional 8 km 144,5
+Flga. Daniela Wüthrich |  |  |  | España 831
+Banco Macro |  |  |  | Centro
+Cooperativa Agrícola Ganadera Sarmiento Ltda. |  |  |  | Bv. Mitre 500
+Estación de servicio Shell — Meira Hnos. |  |  |  | Av. Leandro N. Alem s/n
+Centro de Adultos Nº 701 |  |  |  | Sarmiento y G. Lucotti 1194
+Escuela de Educación Secundaria Nº 3 |  |  |  | Casco urbano
+Escuela de Educación Secundaria Técnica Nº 1 Segundo Agustín Luna |  |  |  | Italia 324
+Jardín de Infantes Nº 901 Martín Miguel de Güemes |  |  |  | Sector San Carlos
+Escuela Primaria Nº 9 Malvinas Argentinas |  |  |  | Sector de la Terminal
+Supermercados DIA |  |  |  | Av. Rivadavia 536
+Super Centro S.R.L. |  |  |  | Av. de Mayo 302
+Mu-coop Supermercado |  |  |  | Bv. Mitre 500
+Super Campeones |  |  |  | Av. Rivadavia 472
+Ibis Supermercado |  |  |  | Italia 1286
+La Colectividad |  |  |  | Av. Rivadavia 507
+Paisano |  |  |  | 
+Maxikiosco Iván — Pago Fácil — Western Union |  |  |  | Mármol, altura sin publicar
+G Congelados |  |  |  | 
+M'Encanta |  |  |  | Av. L. N. Alem 64
+Ocasiones |  |  |  | Av. Rivadavia 883
+Casa Álvarez |  |  |  | Pte. Perón 371
+Casa Aldo Langioni |  |  |  | Av. Rivadavia 653
+Araceli Neumáticos |  |  |  | Av. Rivadavia 901
+Autopartes Sarmiento S.A. |  |  |  | Ruta 8, altura sin publicar
+Chaco Maderas |  |  |  | A. Palacios 1203
+Parrilla Brasas y Risas |  |  |  | 
+Vinoteca Varietal |  |  |  | Av. de Mayo
+Fausto Bar |  |  |  | Av. Presidente Perón 447
+El Granero Café Bar |  |  |  | 
+La Posta de Capitán Sarmiento |  |  |  | 
+La Última Café Bar |  |  |  | Daimo Bojanich 8
+La Torre Pizza |  |  |  | Av. Presidente Perón 411
+El Arrabal Pizza |  |  |  | Av. Rivadavia 561
+Morfi |  |  |  | Av. Mitre 560
+Puesto 1 |  |  |  | Av. Roque Sáenz Peña y Bandera
+La Taipa Comidas |  |  |  | Av. Leandro N. Alem
+Chucho Pizzas |  |  |  | 
+Texas BBQ |  |  |  | 
+Clínica Equina SRL |  |  |  | Av. L. N. Alem esquina 29 de Junio
+Farmacia Lagorio |  |  |  | Av. Roque Sáenz Peña 598
+Farmacia Ruiz |  |  |  | Av. Leandro N. Alem 504
+Farmacia Pérez |  |  |  | Av. Presidente J. D. Perón 705
+Club Atlético Independiente |  |  |  | Av. Mitre 560
+Club Los 14 |  |  |  | Centenario
+Monumento y Museo a la Bandera Bonaerense |  |  |  | 
+Prado Español |  |  |  | 
+Proveeduría |  |  |  | 
+Cabañas Camping Capitán Sarmiento | +54 9 11 44157386 |  |  | 
+Escuela Primaria 7 Almirante Guillermo Brown |  |  |  | 
+Jardín De Infantes 1 |  |  |  | 
+Camping y Balneario Municipal Capitán Sarmiento |  |  |  | Predio recreativo sobre RN 8
+Piletas Camping Capitán Sarmiento |  |  | 10:00-20:00 | Predio sobre RN 8
+Santa Margarita |  |  |  | 
+Club Atlético Unión Labradores |  |  |  | Domingo Fidel Sarmiento s/n, La Luisa
+Cooperativa Eléctrica Rural de La Luisa |  |  |  | Cabo Fregotte 1247, La Luisa
+Escuela Secundaria Nº 2 |  |  |  | Zona del Museo de la Recreación Histórica
+Casa de la Cultura (ex Cine Español) |  |  |  | 
+Las Casitas de Blanca Nieves |  |  |  | 
+Cámara de Industria, Comercio, Bienes Raíces y Afines |  |  |  | José Mármol 803
+Radio FM Universo 97.3 MHz |  |  |  | José Mármol 857
+Centro de Jubilados y Pensionados |  |  |  | Av. Rivadavia 593
+Transporte Bailo Hnos. |  |  |  | Av. Roque Sáenz Peña 501
+Granja Tres Arroyos S.A. — Planta Cahuane |  |  |  | Ruta 8 s/n
+Puente Alfredo J. Palacios |  |  |  | 
+Puente Avenida de Circunvalación |  |  |  | 
+Puente Camino Secundario 010-02 |  |  |  | 
+Puente Camino Secundario 121-04 |  |  |  | 
+Puente Colectora Norte |  |  |  | 
+Puente Ex-Ruta Nacional 8 |  |  |  | 
+Puente FC Mitre |  |  |  | 
+Puente Mitre |  |  |  | 
+Puente Ruta Nacional 8 |  |  |  | 
+CAPS La Cumparsita — Espinel Bavio |  |  |  | Sarmiento y San Juan 1626
+Laboratorio de Análisis Clínicos Tambutti |  |  |  | Mitre 532
+Estación ferroviaria La Luisa |  |  |  | La Luisa
+Cristalería González |  |  |  | Av. Rivadavia 186
+La Estación Fast Food Bar |  |  |  | Zona de la estación
+Chocolatería Dulces Secretos |  |  |  | Av. Bartolomé Mitre 672
+Parador La Fusta |  |  |  | La Luisa, sobre RN 8
+Bruna Cervecería |  |  |  | Cruce Mitre / Juan Manuel de Rosas
+Goin Emilio F. |  |  |  | Av. Rivadavia 946
+Compañía Argentina de Semillas S.A. |  |  |  | Av. Roque Sáenz Peña 1035
+Haras El Paraíso |  |  |  | La Luisa, frente a la estación; acceso RN 8 km 157,5
+Lavadero Capitán Sarmiento — Rafael Álvarez |  |  |  | Av. Sáenz Peña 1055
+Cementerio Municipal |  |  |  | 

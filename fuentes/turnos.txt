@@ -1,0 +1,3 @@
+# Farmacia de turno. Una línea por período:
+#   desde | hasta | nombre de la farmacia | nota (opcional)
+#   2026-11-23 | 2026-11-29 | Farmacia Del Pueblo | de 8 a 8

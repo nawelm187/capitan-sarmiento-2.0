@@ -7,7 +7,7 @@
 Museo y Archivo Histórico Municipal | museo |
 Parque Natural Capitán Sarmiento | atractivo |
 Las Magnolias | atractivo |
-Las Casitas de Blanca Nieves | atractivo |
+Las Casitas de Blanca Nieves | atractivo | -34.173964216669766, -59.79280285767052 | 
 Bodegón Sarmiento | restaurante |
 La Estación (cervecería) | bar |
 La Cuadra | pizzeria |
@@ -19,122 +19,70 @@ Club Atlético Sarmiento | club |
 La Mancha Verde Hotel | hotel |
 Posada Chambery | hospedaje |
 
-CAPS San Cayetano | clinica | -34.18187287655321, -59.78654425767054 | La Pampa entre Newbery y Circunvalación
+Escuela Secundaria Nº 2 | escuela | -34.177122889811685, -59.790906186505794 | Zona del Museo de la Recreación Histórica
 
-CAPS La Loma | clinica | -34.17131811213257, -59.79986928463209 | La Plata y San Nicolás s/n
+Casa de la Cultura (ex Cine Español) | cultura | -34.17212304128907, -59.79224257149744 | 
 
-CAPS La Luisa | clinica | -34.18191725413749, -59.786490613494195 | Cabo O. Fregotte s/n, La Luisa
+Cámara de Industria, Comercio, Bienes Raíces y Afines | estudio | -34.17313712189286, -59.792101611647325 | José Mármol 803
 
-Centro Provincial de Atención — Capitán Sarmiento | clinica | -34.18171732210741, -59.78665805184688 | La Pampa 436, entre Cardenal Samoré y Circunvalación
+Radio FM Universo 97.3 MHz | servicio | -34.1731345039556, -59.78033045767054 | José Mármol 857
 
-CAPS La Luisa | clinica | -34.129676813548734, -59.93244568252241 | Cabo O. Fregotte s/n, La Luisa
+Centro de Jubilados y Pensionados | servicio | -34.17357039047814, -59.79554814299482 | Av. Rivadavia 593
 
-Centro Integral de Rehabilitación Oral C.I.R.O. | dentista | -34.17459593302059, -59.79262838499436 | Av. Mitre 123
+Transporte Bailo Hnos. | servicio | -34.15790324654382, -59.79080269999999 | Av. Roque Sáenz Peña 501
 
-Kine CS | clinica | -34.17687902142201, -59.79488075767054 | Avellaneda 6198
+Granja Tres Arroyos S.A. — Planta Cahuane | servicio | -34.160955670897465, -59.77302358409282 | Ruta 8 s/n
 
-Laboratorio IGLAB | clinica | -34.17895917643801, -59.79910761349419 | Padre Lacabe 524
+CAPS La Cumparsita — Espinel Bavio | clinica | -34.172011262623165, -59.78087672113632 | Sarmiento y San Juan 1626
 
-Laboratorio Ruiz | clinica | -34.17574341497994, -59.79599055767053 | Av. de Mayo 285
+Laboratorio de Análisis Clínicos Tambutti | clinica | -34.170940734017925, -59.7915210839662 | Mitre 532
 
-Laboratorio de Análisis Clínicos García | clinica | -34.17169635982407, -59.79189125767054 | Av. Mitre 434
+Estación ferroviaria La Luisa | estacion | -34.13107705528642, -59.94788932883579 | La Luisa
 
-Policlínica S.T.I.A. Capitán Sarmiento | clinica | -34.17220460383235, -59.79068257350271 | Vicente López y Planes 895
+Cristalería González | materiales | -34.17534182471737, -59.78910468701425 | Av. Rivadavia 186
 
-Policonsultorios | clinica | -34.17842735171536, -59.799255473011605 | San Martín 392
+La Estación Fast Food Bar | comida_rapida | -34.175766815001495, -59.79375734926002 | Zona de la estación
 
-Hogar Geriátrico Solar El Sauce | clinica | -34.15936798139872, -59.78236361534106 | Ruta Nacional 8 km 144,5
+Chocolatería Dulces Secretos | cafe | -34.16947283977913, -59.791044588357934 | Av. Bartolomé Mitre 672
 
-Flga. Daniela Wüthrich | clinica | -34.182809178671036, -59.783064373011605 | España 831
+Parador La Fusta | parrilla | -34.123909016715025, -59.911492555821035 | La Luisa, sobre RN 8
 
-Banco de la Provincia de Buenos Aires | banco | -34.17302783297915, -59.792098028835255 | Centro
+Bruna Cervecería | bar | -34.175741176309145, -59.79346969999742 | Cruce Mitre / Juan Manuel de Rosas
 
-Banco Macro | banco | -34.17617969197515, -59.79334952883526 | Centro
+Goin Emilio F. | veterinaria | -34.17482024142788, -59.7909450008188 | Av. Rivadavia 946
 
-Cooperativa Agrícola Ganadera Sarmiento Ltda. | cooperativa | -34.18273687527162, -59.7830330865058 | Bv. Mitre 500
+Compañía Argentina de Semillas S.A. | agro | -34.1597977225197, -59.7911815306801 | Av. Roque Sáenz Peña 1035
 
-Estación de servicio Shell — Meira Hnos. | combustible | -34.16149745629014, -59.783106968138696 | Av. Leandro N. Alem s/n
+Haras El Paraíso | estancia | -34.13122106013261, -59.948821390714265 | La Luisa, frente a la estación; acceso RN 8 km 157,5
 
-Centro de Adultos Nº 701 | escuela | -34.17081321153284, -59.78552152883526 | Sarmiento y G. Lucotti 1194
+Lavadero Capitán Sarmiento — Rafael Álvarez | lavadero | -34.16577759975922, -59.793377996905335 | Av. Sáenz Peña 1055
 
-Escuela de Educación Secundaria Nº 3 | escuela | -34.17202490121302, -59.79734155951739 | Casco urbano
+Cementerio Municipal | servicio | -34.16810461332814, -59.822201136811564 | 
 
-Escuela de Educación Secundaria Técnica Nº 1 Segundo Agustín Luna | escuela | -34.17428804610969, -59.791325957670544 | Italia 324
+CAPS La Cumparsita — Espinel Bavio | clinica | -34.17204800747256, -59.780666500499954 | Sarmiento y San Juan 1626
 
-Jardín de Infantes Nº 901 Martín Miguel de Güemes | jardin | -34.178063323352966, -59.7987875595174 | Sector San Carlos
+Laboratorio de Análisis Clínicos Tambutti | clinica | -34.17094569140527, -59.791538979820565 | Mitre 532
 
-Escuela Primaria Nº 9 Malvinas Argentinas | escuela | -34.1622192648713, -59.78041200168242 | Sector de la Terminal
+Haras El Paraíso | estancia | -34.13124579145018, -59.94860816083401 | La Luisa, frente a la estación; acceso RN 8 km 157,5
 
-Supermercados DIA | supermercado | -34.17304631517332, -59.79586234232945 | Av. Rivadavia 536
+Parador La Fusta | parrilla | -34.124026697999874, -59.9115475411031 | La Luisa, sobre RN 8
 
-Super Centro S.R.L. | supermercado | -34.17614206800718, -59.794840842329464 | Av. de Mayo 302
+Chocolatería Dulces Secretos | cafe | -34.16947283977913, -59.79092657116419 | Av. Bartolomé Mitre 672
 
-Mu-coop Supermercado | supermercado | -34.17109844780344, -59.791770267531916 | Bv. Mitre 500
+La Estación Fast Food Bar | comida_rapida | -34.175764640688655, -59.79375330674615 | Zona de la estación
 
-Super Campeones | supermercado | -34.17306522767301, -59.79626587356345 | Av. Rivadavia 472
+Cristalería González | materiales | -34.175340646976856, -59.78910726940303 | Av. Rivadavia 186
 
-Ibis Supermercado | supermercado | -34.164661914942705, -59.78764329999998 | Italia 1286
+Estación ferroviaria La Luisa | estacion | -34.131041531840644, -59.9478678711642 | La Luisa
 
-La Colectividad | supermercado | -34.17309643312707, -59.79648315767054 | Av. Rivadavia 507
+Goin Emilio F. | veterinaria | -34.17471574667648, -59.79090388465603 | Av. Rivadavia 946
 
-Paisano | supermercado | -34.16063997268908, -59.785964215341075 | 
+Compañía Argentina de Semillas S.A. | agro | -34.159598256630886, -59.79128868290576 | Av. Roque Sáenz Peña 1035
 
-Maxikiosco Iván — Pago Fácil — Western Union | kiosco | -34.17255768492715, -59.79370582883526 | Mármol, altura sin publicar
+Lavadero Capitán Sarmiento — Rafael Álvarez | lavadero | -34.165748895250104, -59.79339221883589 | Av. Sáenz Peña 1055
 
-G Congelados | almacen | -34.17678022126093, -59.795646186505806 | 
+Cementerio Municipal | servicio | -34.16804247453349, -59.82222795890105 | 
 
-M'Encanta | jugueteria | -34.17685367086933, -59.789810365614095 | Av. L. N. Alem 64
+Bruna Cervecería | bar | -34.17577377562434, -59.79347068618207 | Cruce Mitre / Juan Manuel de Rosas
 
-Ocasiones | regaleria | -34.174444941167884, -59.79182442883528 | Av. Rivadavia 883
-
-Casa Álvarez | ropa | -34.17649789259437, -59.793947215341056 | Pte. Perón 371
-
-Casa Aldo Langioni | muebleria | -34.17357531603573, -59.79485808650581 | Av. Rivadavia 653
-
-Araceli Neumáticos | taller | -34.174550159991725, -59.79126120033272 | Av. Rivadavia 901
-
-Autopartes Sarmiento S.A. | taller | -34.161254840608244, -59.783312499999994 | Ruta 8, altura sin publicar
-
-Chaco Maderas | materiales | -34.164690069619944, -59.783329886505804 | A. Palacios 1203
-
-Parrilla Brasas y Risas | parrilla | -34.161130951125294, -59.7848312 | 
-
-Vinoteca Varietal | bar | -34.17653962513913, -59.79422075767054 | Av. de Mayo
-
-Fausto Bar | bar | -34.176985549656436, -59.7926794865058 | Av. Presidente Perón 447
-
-El Granero Café Bar | cafe | -34.172642661565824, -59.79233721349418 | 
-
-La Posta de Capitán Sarmiento | parrilla | -34.15665444138005, -59.79705045582367 | 
-
-La Última Café Bar | cafe | -34.177249674010326, -59.79182241534106 | Daimo Bojanich 8
-
-La Torre Pizza | pizzeria | -34.1768955933683, -59.79302181349419 | Av. Presidente Perón 411
-
-El Arrabal Pizza | pizzeria | -34.173284209935936, -59.79573112883526 | Av. Rivadavia 561
-
-Morfi | restaurante | -34.17042805067032, -59.7914563 | Av. Mitre 560
-
-Puesto 1 | restaurante | -34.17376816363747, -59.79665107116473 | Av. Roque Sáenz Peña y Bandera
-
-La Taipa Comidas | restaurante | -34.171754423983344, -59.78742805582368 | Av. Leandro N. Alem
-
-Chucho Pizzas | pizzeria | -34.17710319779445, -59.79197372883526 | 
-
-Texas BBQ | restaurante | -34.161045417916725, -59.783479357670544 | 
-
-Clínica Equina SRL | veterinaria | -34.1614506515791, -59.783460299999994 | Av. L. N. Alem esquina 29 de Junio
-
-Farmacia Lagorio | farmacia | -34.1701194336613, -59.79539585767055 | Av. Roque Sáenz Peña 598
-
-Farmacia Ruiz | farmacia | -34.17303503872101, -59.78820937116474 | Av. Leandro N. Alem 504
-
-Farmacia Pérez | farmacia | -34.17770027465022, -59.79035175767054 | Av. Presidente J. D. Perón 705
-
-Club Atlético Independiente | club | -34.170333580599625, -59.791799042329465 | Av. Mitre 560
-
-Club Los 14 | club | -34.17305719162358, -59.79402165767055 | Centenario
-
-Monumento y Museo a la Bandera Bonaerense | monumento | -34.17782172669007, -59.79792731534106 | 
-
-Prado Español | cultura | -34.171295835702765, -59.79075525767055 | 
+Farmacia Folguera | farmacia | -34.177248046010504, -59.79623251670148 | Cruce San Martin / Aristóbulo del Valle

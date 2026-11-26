@@ -5,3 +5,4 @@ Centro de Educación Física Nº 120 Adalberto César Minervini | escuela | -34.
 Centro de Formación Profesional Nº 401 | escuela | -34.174483, -59.7914 | Italia 324 | GEOCODIFICADO por dirección (OpenStreetMap): verificar el pin
 Escuela de Educación Secundaria Técnica Nº 1 Segundo Agustín Luna | escuela | -34.174483, -59.7914 | Italia 324 | GEOCODIFICADO por dirección (OpenStreetMap): verificar el pin
 Supermercados DIA | supermercado | -34.173232, -59.795861 | Av. Rivadavia 536 | GEOCODIFICADO por dirección (OpenStreetMap): verificar el pin
+Farmacia Folguera | farmacia | -34.17725391773537, -59.79623788662495 | Aristóbulo del Valle

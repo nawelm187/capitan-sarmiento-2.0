@@ -37,6 +37,8 @@ export const TYPES = {
   silo: { label: 'Silos', cat: 'ver', mi: 'agriculture' },
   estancia: { label: 'Estancia', cat: 'ver', mi: 'cottage' },
   aerodromo: { label: 'Aeródromo', cat: 'servicios', mi: 'flight' },
+  estacionamiento: { label: 'Estacionamiento', cat: 'servicios', mi: 'local_parking' },
+  bano: { label: 'Baño público', cat: 'servicios', mi: 'wc' },
   // Compras
   ferreteria: { label: 'Ferretería', cat: 'compras', mi: 'hardware' },
   supermercado: { label: 'Supermercado', cat: 'compras', mi: 'shopping_cart' },
@@ -65,6 +67,9 @@ export const TYPES = {
   farmacia: { label: 'Farmacia', cat: 'salud', mi: 'local_pharmacy' },
   dentista: { label: 'Odontología', cat: 'salud', mi: 'dentistry' },
   veterinaria: { label: 'Veterinaria', cat: 'salud', mi: 'pets' },
+  // Agua y pesca
+  puente: { label: 'Puente', cat: 'ver', svg: 'puente' }, // íconos propios (dibujados en icons.js): no dependen de la tipografía de Google
+  pesca: { label: 'Lugar de pesca', cat: 'ver', svg: 'pesca' },
   // Servicios
   municipalidad: { label: 'Municipalidad', cat: 'servicios', mi: 'account_balance' },
   policia: { label: 'Policía', cat: 'servicios', mi: 'local_police' },
@@ -170,6 +175,8 @@ export function classify(t) {
     if (/steak|asado|parrilla|argentin/i.test(`${t.cuisine || ''} ${name}`)) return 'parrilla';
     return 'restaurante';
   }
+  if (t.amenity === 'toilets') return 'bano';
+  if (t.amenity === 'parking' && name && !/privado|particular/i.test(`${name} ${t.access || ''}`) && t.access !== 'private') return 'estacionamiento';
   if (t.amenity && AMENITY[t.amenity]) return AMENITY[t.amenity];
   if (t.shop) return SHOP[t.shop] || 'tienda';
   if (t.office) return OFFICE[t.office] || 'estudio';

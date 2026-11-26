@@ -1,0 +1,14 @@
+# Lugares que eliminaste de la guía (id | nombre). Borrá una línea para recuperarlos con npm run lugares.
+osm-n14030290444 | Museo de la Recreación Histórica
+extra-centro-cultural-la-estacion | Centro Cultural La Estación
+extra-la-estacion-cerveceria | La Estación (cervecería)
+osm-n3965009169 | Remis Primero
+extra-puente-avenida-de-circunvalacion | Puente Avenida de Circunvalación
+extra-centro-provincial-de-atencion-capitan-sarmiento | Centro Provincial de Atención — Capitán Sarmiento
+extra-flga-daniela-wuthrich | Flga. Daniela Wüthrich
+extra-cooperativa-agricola-ganadera-sarmiento-ltda | Cooperativa Agrícola Ganadera Sarmiento Ltda.
+osm-n5973696883 | Folguera
+osm-n5973698085 | Dia
+extra-farmacia-lagorio | Farmacia Lagorio
+extra-lavadero-capitan-sarmiento-rafael-alvarez | Lavadero Capitán Sarmiento — Rafael Álvarez
+extra-la-mancha-verde-hotel | La Mancha Verde Hotel

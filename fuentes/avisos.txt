@@ -1,0 +1,3 @@
+# Avisos que se muestran arriba de todo mientras estén vigentes (fechas AAAA-MM-DD):
+#   desde | hasta | tipo (ruta, clima u otro) | título | texto
+#   2026-11-24 | 2026-11-26 | ruta | Ruta 8 con desvío | Obras entre el km 150 y 153, circular con precaución.

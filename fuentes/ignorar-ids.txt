@@ -1,0 +1,12 @@
+# Lugares de OpenStreetMap que no se quieren (repetidos). Una id por línea.
+osm-n2520503490
+osm-n2520507593
+osm-n3420165272
+osm-n3825846971
+osm-n4213265404
+osm-n4213266589
+osm-n5049882620
+osm-n5973696877
+osm-n5973696880
+osm-n14030279984
+osm-n14030290431

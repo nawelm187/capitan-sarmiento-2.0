@@ -22,6 +22,7 @@ export function initLabels(scene, places) {
   let activeId = null;
   let level = 0; // 0 cerca (todo con nombre) · 1 media (solo punto) · 2 lejos (solo importantes)
 
+  let searchItem = null;
   function make(p) {
     const info = catInfo(p.category);
     const el = document.createElement('button');
@@ -78,6 +79,14 @@ export function initLabels(scene, places) {
       layers = new Set(set);
       apply();
     },
+    /** Pin temporal del buscador de direcciones (null lo saca). */
+    setSearchPin(h) {
+      if (searchItem) { group.remove(searchItem.obj); searchItem.anchor.remove(); searchItem = null; }
+      if (!h) return;
+      searchItem = make({ id: '__busqueda', name: h.title, category: 'ver', icon: 'monumento', lat: h.lat, lng: h.lng, roofH: 0 });
+      searchItem.el.classList.add('is-on');
+      searchItem.el.onclick = null;
+    },
     /** Lugares que se muestran aunque su capa esté apagada (paradas de un recorrido). */
     setExtra(ids) {
       extra = new Set(ids || []);
@@ -90,8 +99,8 @@ export function initLabels(scene, places) {
     /** Cantidad de pines dibujados ahora. */
     count: () => items.size,
     /** Según la distancia de la cámara: nombres (cerca), solo puntos (medio) o solo lugares importantes (lejos). */
-    update(camera) {
-      const d = camera.position.length();
+    update(camera, dist) {
+      const d = dist ?? camera.position.length();
       const lv = d > 1100 ? 2 : d > 600 ? 1 : 0;
       if (lv === level) return; // casi todos los cuadros no hay nada que hacer
       level = lv;

@@ -17,13 +17,19 @@ import { clamp } from './util.js';
 import { buildWorld } from './world.js';
 import { buildWide } from './wide.js';
 import { initLandmarks } from './landmarks.js';
+import { calzarTodos } from './calzar.js';
 import { initCasas } from './casas-destacadas.js';
+import { initBarrios } from './barrios.js';
 import { initLabels } from './labels.js';
 import { initNav } from './nav.js';
 import { initLife } from './life.js';
 import { initMascotas } from './mascotas.js';
 import { initUI } from './ui.js';
+import { buildStreetIndex } from './streets.js';
+import { initStreetLabels } from './streetlabels.js';
+import { loadPrefs, applyPrefs } from './prefs.js';
 import { loadIconFont } from './icons.js';
+import { initMap2D } from './map2d.js';
 import { initAtmosphere } from './atmosphere.js';
 
 const $ = (id) => document.getElementById(id);
@@ -110,7 +116,7 @@ function stubNav(tours, places) {
     goStep: go, next: () => go(step + 1), prev: () => go(step - 1),
   };
 }
-const stubLabels = { setLayers() {}, setExtra() {}, highlight() {}, update() {}, count: () => 0 };
+const stubLabels = { setSearchPin() {}, setLayers() {}, setExtra() {}, highlight() {}, update() {}, count: () => 0 };
 
 async function main() {
   const meta = await getJSON('data/meta.json');
@@ -121,7 +127,7 @@ async function main() {
   document.title = `${meta.name} · ${meta.town}`;
 
   await stage(8, 'Descargando datos…');
-  const [gj, places, tours, guides, landmarks, casonas, mascots, pending] = await Promise.all([
+  const [gj, places, tours, guides, landmarks, casonas, mascots, pending, barriosData, turnos, agenda, perdidos, opiniones, historia, oficios, populares, rural] = await Promise.all([
     getJSON('data/sarmiento-osm.geojson', v),
     getJSON('data/places.json', v),
     getJSON('data/tours.json', v),
@@ -130,6 +136,15 @@ async function main() {
     optional(getJSON('data/casonas.json', v), { items: [] }),
     optional(getJSON('data/mascots.json', v), { items: [] }),
     optional(getJSON('data/pendientes.json', v), []),
+    optional(getJSON('data/barrios.json', v), []),
+    optional(getJSON('data/turnos.json', v), []),
+    optional(getJSON('data/agenda.json', v), { novedades: [], eventos: [] }),
+    optional(getJSON('data/perdidos.json', v), []),
+    optional(getJSON('data/opiniones.json', v), []),
+    optional(getJSON('data/historia.json', v), []),
+    optional(getJSON('data/oficios.json', v), []),
+    optional(getJSON('data/populares.json', v), []),
+    optional(getJSON('data/rural.json', v), { caminos: [], semanal: [] }),
   ]);
 
   loadIconFont(places); // íconos de Google (tipografía chica); mientras tanto se ven los de respaldo
@@ -137,18 +152,32 @@ async function main() {
 
   // ---------- Renderer (con salida de emergencia sin WebGL) ----------
   const canvas = $('gl');
+  const prefs = loadPrefs();
+  applyPrefs(prefs);
   let renderer = null;
   try {
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
+    if (!prefs.simple && !prefs.map2d) renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
   } catch (e) {
     console.warn('WebGL no disponible', e);
+  }
+  // Mapa liviano 2D: lo elige la persona (Accesibilidad) o es la salida cuando el navegador no tiene WebGL
+  if (!renderer && !prefs.simple) {
+    const norm2 = (t) => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const wantedStart = norm2(meta.startPlace || '');
+    const spots = [...places, ...(landmarks.items || [])].filter((q) => Number.isFinite(q.lat) && Number.isFinite(q.lng));
+    const start = (wantedStart ? spots.find((q) => norm2(q.name).includes(wantedStart) || norm2(q.id) === wantedStart) : meta.startPlace === undefined ? spots.find((q) => q.icon === 'banconacion' || q.kind === 'banconacion') : null) || meta.focus || null;
+    await stage(70, 'Armando el mapa…');
+    const m2 = initMap2D({ gj, places, barrios: barriosData, tours, meta, start, reducedMotion: prefs.calm, lowEnd: LOW_END });
+    initUI({ meta, places, pending, turnos, agenda, perdidos, opiniones, historia, oficios, populares, rural, streets: buildStreetIndex(m2.roads), tours, guides, nav: m2.nav, labels: m2.labels, controls: m2.controls, hasGL: true, hasBarrios: m2.barriosCount > 0, hasCalles: true });
+    hideSplash();
+    return;
   }
   if (!renderer) {
     const warn = document.createElement('div');
     warn.className = 'nogl';
-    warn.textContent = 'Tu navegador no pudo iniciar la maqueta 3D. Podés usar la guía en modo lista.';
+    warn.textContent = prefs.simple ? 'Modo lista (sin 3D). Podés volver a la maqueta desde «Accesibilidad».' : 'Tu navegador no pudo iniciar la maqueta 3D. Podés usar la guía en modo lista.';
     document.body.append(warn);
-    initUI({ meta, places, pending, tours, guides, nav: stubNav(tours, places), labels: stubLabels, controls: null, hasGL: false });
+    initUI({ meta, places, pending, turnos, agenda, perdidos, opiniones, historia, oficios, populares, rural, tours, guides, nav: stubNav(tours, places), labels: stubLabels, controls: null, hasGL: false, hasBarrios: false });
     hideSplash();
     return;
   }
@@ -164,18 +193,33 @@ async function main() {
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(COLORS.bg);
-  scene.fog = new THREE.Fog(COLORS.bg, 1500, 5200);
+  // Mapa grande (todo el partido): la niebla, el alcance de la cámara y el zoom máximo crecen con el tamaño del mapa.
+  const MAP_HALF = meta.osm?.halfSizeMeters ?? 2000;
+  const BIG_MAP = MAP_HALF > 2400;
+  const MAX_DIST = BIG_MAP ? Math.min(MAP_HALF * 1.6, 16000) : 2400;
+  scene.fog = BIG_MAP ? new THREE.Fog(COLORS.bg, 1800, Math.max(5200, MAP_HALF * 2)) : new THREE.Fog(COLORS.bg, 1500, 5200);
+  // El punto donde arranca la cámara: el pueblo (meta.focus). Si no se indica, el centro del mapa.
+  // Si hay un lugar de inicio (meta.startPlace, se cambia con `npm run inicio`), la cámara arranca cerca de ese lugar.
+  // Sin indicar nada, arranca en el Banco Nación (centro del pueblo) si existe; si no, en meta.focus.
+  const norm = (t) => String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const allSpots = [...places, ...(landmarks.items || [])].filter((q) => Number.isFinite(q.lat) && Number.isFinite(q.lng));
+  const wanted = norm(meta.startPlace || '');
+  const startSpot = wanted
+    ? allSpots.find((q) => norm(q.name).includes(wanted) || norm(q.id) === wanted)
+    : meta.startPlace === undefined ? allSpots.find((q) => q.icon === 'banconacion' || q.kind === 'banconacion') : null;
+  const FOCUS = startSpot ? toLocal(startSpot.lng, startSpot.lat) : meta.focus ? toLocal(meta.focus.lng, meta.focus.lat) : { x: 0, z: 0 };
 
-  const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 2, 12000);
-  camera.position.set(260, 420, 520);
+  const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 2, BIG_MAP ? Math.max(12000, MAP_HALF * 4) : 12000);
+  if (startSpot) camera.position.set(FOCUS.x + 120, 190, FOCUS.z + 240);
+  else camera.position.set(FOCUS.x + 260, 420, FOCUS.z + 520);
 
   const controls = new OrbitControls(camera, renderer.domElement);
-  controls.target.set(0, 0, 0);
+  controls.target.set(FOCUS.x, 0, FOCUS.z);
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
   controls.screenSpacePanning = false;
   controls.minDistance = 40;
-  controls.maxDistance = 2400;
+  controls.maxDistance = MAX_DIST;
   controls.maxPolarAngle = Math.PI / 2.05;
   controls.mouseButtons = { LEFT: THREE.MOUSE.PAN, MIDDLE: THREE.MOUSE.DOLLY, RIGHT: THREE.MOUSE.ROTATE };
   controls.touches = { ONE: THREE.TOUCH.PAN, TWO: THREE.TOUCH.DOLLY_ROTATE };
@@ -233,6 +277,7 @@ async function main() {
 
   // ---------- Mundo ----------
   await stage(48, 'Armando la maqueta del pueblo…');
+  try { calzarTodos(gj, landmarks.items); } catch (e) { console.warn('No se pudieron calzar los edificios importantes:', e); }
   const skipRects = (landmarks.items || [])
     .filter((it) => it.w && it.d && it.w <= 70 && it.d <= 50 && it.replaceBuilding !== false)
     .map((it) => ({ ...toLocal(it.lng, it.lat), w: it.w, d: it.d, rot: ((it.rotY || 0) * Math.PI) / 180 }));
@@ -259,7 +304,17 @@ async function main() {
 
   const labels = initLabels(scene, places);
   const nav = initNav(scene, camera, controls, places, tours, world);
-  const ui = initUI({ meta, places, pending, tours, guides, nav, labels, controls, hasGL: true });
+  const barrios = initBarrios(scene, barriosData);
+  const calleLabels = initStreetLabels(scene, world);
+  on('calles:toggle', () => { calleLabels.setEnabled(!calleLabels.enabled); emit('calles:state', calleLabels.enabled); });
+  on('barrios:toggle', () => emit('barrios:state', barrios.setVisible(!barrios.visible)));
+  on('barrio:select', (id) => {
+    const b = barrios.find(id);
+    if (!b) return;
+    const ll = toLngLat(b.x, b.z);
+    nav.flyTo(ll.lng, ll.lat, { dist: clamp(b.size * 1.1, controls.minDistance + 60, controls.maxDistance), pitch: 55, dur: 1.2 });
+  });
+  const ui = initUI({ meta, places, pending, turnos, agenda, perdidos, opiniones, historia, oficios, populares, rural, streets: buildStreetIndex(world.roads), tours, guides, nav, labels, controls, hasGL: true, hasBarrios: barrios.count > 0, hasCalles: calleLabels.count > 0 });
   atm.onInfo((i) => emit('weather:update', i));
   setProgress(95);
 
@@ -359,7 +414,17 @@ async function main() {
     sun.target.position.copy(controls.target);
     sun.position.copy(controls.target).add(atm.sunOffset);
     atm.update(dt, camera, controls.target);
-    labels.update(camera);
+    // Al alejarse, el plano cercano de la cámara se aleja también: así no parpadean ni se "rompen" calles y techos (precisión de profundidad).
+    {
+      const dist = camera.position.distanceTo(controls.target);
+      const near = Math.min(60, Math.max(2, dist / 120));
+      if (Math.abs(near - camera.near) / camera.near > 0.15) {
+        camera.near = near;
+        camera.updateProjectionMatrix();
+      }
+    }
+    labels.update(camera, camera.position.distanceTo(controls.target));
+    calleLabels.update(controls.target, camera.position.distanceTo(controls.target), camera, window.innerWidth, window.innerHeight);
     ui.update();
 
     {
