@@ -9,7 +9,7 @@
 // Siempre corré este comando (y no solo `npm run osm`): bajar el mapa borra los edificios importados.
 
 import { execFileSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
@@ -24,12 +24,13 @@ try {
   process.exit(1);
 }
 
-const src = 'fuentes/edificios_capitan_sarmiento.geojson';
-if (existsSync(root + src)) {
+const srcs = readdirSync(root + 'fuentes').filter((f) => /^edificios.*\.(geojson|geojsonl|json)$/i.test(f)).sort().map((f) => 'fuentes/' + f);
+if (srcs.length) {
   console.log('\n2/4  Sumando los edificios reales…');
-  run('tools/import-buildings.mjs', src, '--source=Overture Maps Foundation (Google Open Buildings)');
+  run('tools/import-buildings.mjs', ...srcs, '--source=Overture Maps Foundation (Google Open Buildings)');
+  try { const m = JSON.parse(readFileSync(root + 'data/meta.json', 'utf8')); if (m.approxZonas) run('tools/fill-buildings.mjs', `--zona=${m.approxZonas}`); } catch { /* sin zonas aproximadas */ }
 } else {
-  console.log(`\n2/4  No encontré ${src}: el mapa queda con los edificios de OpenStreetMap solamente (npm run fill agrega casas aproximadas).`);
+  console.log('\n2/4  No encontré archivos fuentes/edificios*.geojson: el mapa queda con los edificios de OpenStreetMap solamente (npm run fill agrega casas aproximadas).');
 }
 
 console.log('\n3/4  Bajando lugares y edificios especiales (iglesias, museo, municipalidad…)…');

@@ -1,7 +1,7 @@
 // Service worker: la guía carga más rápido en las visitas siguientes y queda disponible sin conexión.
 // `VERSION` lo actualiza `npm run bump` (tools/bump-version.mjs); no lo cambies a mano.
 // IMPORTANTE: cada vez que cambies archivos de data/ o del código, corré `npm run bump -- patch`.
-const VERSION = '1.6.2';
+const VERSION = '1.33.1';
 const CORE = `sarmiento-core-${VERSION}`; // código y estáticos de esta versión
 const DATA = `sarmiento-data-${VERSION}`; // data/*.json de esta versión (la URL lleva ?v=VERSION)
 const RUNTIME = 'sarmiento-runtime-v1'; // three.js y tipografías (CDN)
@@ -12,8 +12,10 @@ const CORE_FILES = [
   'manifest.webmanifest',
   'css/style.css',
   'js/main.js', 'js/bus.js', 'js/atmosphere.js', 'js/buildings.js', 'js/sky-model.js', 'js/sun.js', 'js/weather.js', 'js/casas-destacadas.js', 'js/config.js', 'js/geo.js', 'js/icons.js',
-  'js/labels.js', 'js/layers.js', 'js/landmarks.js', 'js/life.js', 'js/mascotas.js', 'js/nav.js', 'js/route.js', 'js/roads.js', 'js/routing.js', 'js/kinds.js', 'js/road-mesh.js',
+  'js/barrios.js', 'js/labels.js', 'js/layers.js', 'js/prefs.js', 'js/streets.js', 'js/voz.js', 'js/avisos.js', 'js/streetlabels.js', 'js/map2d.js', 'js/comercio.js', 'js/perdidos.js', 'js/midia.js', 'js/anim.js', 'js/visitas.js', 'js/panorama.js', 'js/favoritos.js', 'js/temporada.js', 'js/finde.js', 'js/clima.js', 'js/escuchar.js', 'js/comandos.js', 'js/manoslibres.js', 'js/calendario.js', 'js/reporte.js', 'js/llegando.js', 'js/historia.js', 'js/oficios.js', 'js/rural.js', 'js/calzar.js', 'js/i18n.js', 'js/opiniones.js', 'js/buscador.js', 'js/intro.js', 'js/instalar.js', 'js/qr.js', 'js/main2d.js', 'js/entry.js', 'js/cerca.js', 'js/hours.js', 'js/landmarks.js', 'js/life.js', 'js/mascotas.js', 'js/nav.js', 'js/route.js', 'js/roads.js', 'js/routing.js', 'js/kinds.js', 'js/road-mesh.js',
   'js/scene-utils.js', 'js/ui.js', 'js/util.js', 'js/wide.js', 'js/world.js',
+  'js/partido-layer.js',
+  'js/poi-config.js',
   'data/meta.json',
   'icons/icon-192.png', 'icons/icon-512.png', 'img/logo-sarmiento.webp',
 ];
@@ -30,7 +32,7 @@ const CDN_FILES = [
     'postprocessing/MaskPass', 'postprocessing/RenderPass', 'postprocessing/ShaderPass', 'postprocessing/UnrealBloomPass',
     'postprocessing/OutputPass', 'shaders/CopyShader', 'shaders/LuminosityHighPassShader', 'shaders/OutputShader',
     'shaders/HorizontalTiltShiftShader', 'shaders/VerticalTiltShiftShader', 'renderers/CSS2DRenderer'].map((f) => `examples/jsm/${f}.js`),
-].map((f) => CDN + f);
+].map((f) => CDN + f).concat(['index.js', 'SplitText.js', 'ScrollTrigger.js', 'gsap-core.js', 'CSSPlugin.js'].map((f) => 'https://cdn.jsdelivr.net/npm/gsap@3.13.0/' + f));
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

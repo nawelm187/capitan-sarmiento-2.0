@@ -1,0 +1,30 @@
+Salud de la guía · 2026-11-26 · 152 lugares
+
+🕒 Con horario:   3 (2%)
+📞 Con contacto:  6 (4%)
+📍 Con dirección: 103 (68%)
+🗺️ Ubicados en el mapa: 152 (100%)
+💬 Opiniones publicadas: 0
+💊 Farmacia de turno de hoy: NO está cargada (npm run turnos)
+🥾 Recorridos: 8 · todos bien
+
+Puntaje general: 1% de los lugares tienen todo completo.
+
+Cargá primero estos (comercios importantes a los que les falta horario o contacto):
+  · Estación Policía Comunal Capitán Sarmiento — falta horario
+  · Banco Nación — falta horario — falta teléfono
+  · BBVA — falta horario — falta teléfono
+  · La Esquina — falta horario
+  · Escuela Normal Superior Domingo Fidel Sarmiento — falta horario
+  · Escuela Primaria N° 1 Domingo Faustino Sarmiento — falta horario — falta teléfono
+  · Remis Primero — falta horario — falta teléfono
+  · Centro de Educación de Adultos 701 — falta horario — falta teléfono
+  · Bomberos Voluntarios de Capitan Sarmiento — falta horario
+  · Hospital Municipal "San Carlos" — falta horario — falta teléfono
+  · Escuela De Educación Secundaria Nº1 Dr. Mateo V.Jelicich — falta horario — falta teléfono
+  · Correo Argentino — falta horario — falta teléfono
+  · Jardín De Infantes Nº906 — falta horario — falta teléfono
+  · Jardín De Infantes Nº 903 Martha Salotti — falta horario — falta teléfono
+  · Escuela De Educación Primaria Nº 4 Juan Bautista Alberdi — falta horario — falta teléfono
+
+Para completar datos: npm run datos

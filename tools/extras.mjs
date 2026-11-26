@@ -51,6 +51,8 @@ const SOURCES = [
   { url: file, inv: false },
   { url: new URL('../fuentes/inventario-ampliado.txt', import.meta.url), inv: true },
   { url: new URL('../fuentes/geocodificados.txt', import.meta.url), inv: true },
+  { url: new URL('../fuentes/puentes.txt', import.meta.url), inv: true },
+  { url: new URL('../fuentes/puentes-manual.txt', import.meta.url), inv: true },
 ];
 const rows = [];
 for (const src of SOURCES) {

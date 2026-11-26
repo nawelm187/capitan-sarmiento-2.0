@@ -27,7 +27,8 @@ import { setCenter, toLocal } from '../js/geo.js';
 
 const dataDir = new URL('../data/', import.meta.url);
 const argv = process.argv.slice(2);
-const file = argv.find((a) => !a.startsWith('--'));
+const files = argv.filter((a) => !a.startsWith('--')); // podés pasar varios archivos (el pueblo, La Luisa, etc.)
+const file = files[0];
 const args = Object.fromEntries(argv.filter((a) => a.startsWith('--')).map((a) => {
   const [k, v] = a.replace(/^--/, '').split('=');
   return [k, v ?? true];
@@ -49,11 +50,13 @@ const MIN_AREA = Number(args['min-area'] ?? 6);
 const r6 = (n) => Math.round(n * 1e6) / 1e6;
 
 // ---------- Leer el archivo ----------
-const text = await readFile(file, 'utf8');
 let features = [];
+for (const f1 of files) {
+const text = await readFile(f1, 'utf8');
+const before = features.length;
 try {
   const j = JSON.parse(text);
-  features = j.type === 'FeatureCollection' ? j.features : j.type === 'Feature' ? [j] : [];
+  features.push(...(j.type === 'FeatureCollection' ? j.features : j.type === 'Feature' ? [j] : []));
 } catch {
   for (const line of text.split(/\r?\n/)) {
     const t = line.trim().replace(/^\x1e/, '');
@@ -64,11 +67,13 @@ try {
     } catch { /* línea inválida: se ignora */ }
   }
 }
+if (files.length > 1) console.log(`  ${f1}: ${features.length - before} elementos`);
+}
 if (!features.length) {
   console.error('No encontré features GeoJSON en el archivo. ¿Es un .geojson / .geojsonl?');
   process.exit(1);
 }
-console.log(`Archivo: ${features.length} elementos`);
+console.log(`Archivo${files.length > 1 ? 's' : ''}: ${features.length} elementos`);
 
 // ---------- Existentes ----------
 const polysOf = (g) => (g?.type === 'Polygon' ? [g.coordinates] : g?.type === 'MultiPolygon' ? g.coordinates : []);

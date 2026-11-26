@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Revisar mensajes</title>
+<style>
+  :root { color-scheme: light dark; --bg: #f6f4ef; --fg: #1d1b16; --card: #fff; --line: #d8d2c4; --ok: #1f7a4d; --bad: #b3261e; --acc: #1b5fa8; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #17181a; --fg: #eee; --card: #232528; --line: #3a3d41; --ok: #5bd38f; --bad: #ff8a80; --acc: #7db4ee; } }
+  body { margin: 0; font: 16px/1.45 system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+  main { max-width: 760px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 1.4em; margin: 0 0 8px; }
+  textarea { width: 100%; min-height: 150px; box-sizing: border-box; padding: 10px; font: inherit; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--fg); }
+  button { font: inherit; padding: 9px 16px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--fg); cursor: pointer; }
+  button.main { background: var(--acc); color: #fff; border-color: var(--acc); font-weight: 600; }
+  button:disabled { opacity: .5; cursor: default; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+  ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  li { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+  li.mal { border-color: var(--bad); }
+  li label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+  li input { margin-top: 5px; width: 18px; height: 18px; }
+  .tipo { font-size: .8em; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; opacity: .7; }
+  .bad { color: var(--bad); } .ok { color: var(--ok); }
+  code { font-size: .8em; opacity: .7; word-break: break-all; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Revisar mensajes</h1>
+  <p id="off" class="bad" hidden>Esto solo funciona abierto desde <b>npm run serve</b> en tu PC: http://localhost:8080/revisar</p>
+  <p>Pegá acá el mensaje que te llegó por WhatsApp o correo (puede ser más de uno). Busco la línea que empieza con <b>OPINION:</b>, <b>PERDIDO:</b>, <b>DATOS:</b> o <b>ERROR:</b>, te la muestro y vos aprobás las que están bien.</p>
+  <textarea id="txt" placeholder="Pegá el mensaje completo acá…" aria-label="Mensajes pegados"></textarea>
+  <div class="row"><button class="main" id="ver">Revisar</button><button id="limpiar">Borrar todo</button></div>
+  <div id="res"></div>
+  <div class="row" id="acc" hidden><button class="main" id="ok">Aprobar las marcadas</button></div>
+  <p id="est" role="status"></p>
+</main>
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+async function llamar(accion, extra = {}) {
+  const r = await fetch('/api/revisar', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ accion, texto: $('#txt').value, ...extra }) });
+  const j = await r.json(); if (!r.ok) throw new Error(j.error || 'Error'); return j;
+}
+$('#ver').onclick = async () => {
+  $('#est').textContent = ''; $('#est').className = '';
+  try {
+    const { items } = await llamar('ver');
+    $('#res').innerHTML = items.length ? `<ul>${items.map((it, i) => `<li class="${it.valido ? '' : 'mal'}"><label><input type="checkbox" data-i="${i}" ${it.valido ? 'checked' : 'disabled'}><span><span class="tipo">${esc(it.titulo)}</span><br>${esc(it.resumen)}${it.valido ? '' : `<br><b class="bad">No se puede aprobar: ${esc(it.problema)}</b>`}<br><code>${esc(it.linea)}</code></span></label></li>`).join('')}</ul>` : '<p class="bad">No encontré ninguna línea OPINION:, PERDIDO:, DATOS: o ERROR:. Pegá el mensaje completo, con la última línea.</p>';
+    $('#acc').hidden = !items.some((x) => x.valido);
+  } catch (e) { if (/fetch|Failed/i.test(e.message)) $('#off').hidden = false; $('#est').textContent = e.message; $('#est').className = 'bad'; }
+};
+$('#limpiar').onclick = () => { $('#txt').value = ''; $('#res').innerHTML = ''; $('#acc').hidden = true; $('#est').textContent = ''; };
+$('#ok').onclick = async () => {
+  const indices = [...document.querySelectorAll('#res input:checked')].map((c) => +c.dataset.i);
+  if (!indices.length) { $('#est').textContent = 'No marcaste ninguna.'; return; }
+  $('#ok').disabled = true;
+  try {
+    const j = await llamar('aprobar', { indices });
+    const nuevos = j.hechos.filter((h) => !h.ya).length, ya = j.hechos.length - nuevos;
+    $('#est').textContent = `✔ ${nuevos} aprobada(s)${ya ? `, ${ya} ya estaba(n)` : ''}. ${j.ejecutados.length ? 'Se actualizaron los datos. ' : ''}Recargá la guía con Ctrl+F5 y después subila con git push.`;
+    $('#est').className = 'ok'; $('#txt').value = ''; $('#res').innerHTML = ''; $('#acc').hidden = true;
+  } catch (e) { $('#est').textContent = 'No se pudo: ' + e.message; $('#est').className = 'bad'; }
+  $('#ok').disabled = false;
+};
+</script>
+</body>
+</html>

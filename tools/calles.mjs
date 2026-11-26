@@ -4,6 +4,11 @@
 //   npm run calles                  (la página alinea sola las calles con las casas al cargar)
 //   npm run calles -- --alinear     (además mueve las casas en el archivo; normalmente no hace falta)
 //
+// MAPA GRANDE (todo el partido o hasta La Luisa y el balneario):
+//   npm run mapa -- --center=-34.151,-59.859 --half=8500 --foco=-34.1728,-59.7886 --edificios-osm
+//     --center  centro del mapa (entre el pueblo y La Luisa)      --half  radio en metros (8500 = un cuadrado de 17 km)
+//     --foco    donde arranca la cámara (el pueblo)               --edificios-osm  suma las casas de OpenStreetMap donde no hay otras
+//
 // Después corré:  npm run lugares   (pega los lugares a su edificio y rearma los recorridos por las calles)
 
 import { execFileSync } from 'node:child_process';
@@ -24,6 +29,11 @@ if (args.center) {
   meta.center = { lat, lng };
 }
 if (args.half) meta.osm = { ...(meta.osm || {}), halfSizeMeters: Number(args.half) };
+if (args.foco) {
+  const [lat, lng] = String(args.foco).split(',').map(Number);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) throw new Error('--foco debe ser LAT,LNG (ej. --foco=-34.1728,-59.7886)');
+  meta.focus = { lat, lng };
+}
 const half = meta.osm?.halfSizeMeters ?? 2000;
 setCenter(meta.center);
 const sw = toLngLat(-half, half);
@@ -54,9 +64,10 @@ async function overpass(query) {
 }
 
 console.log('Bajando las calles reales de OpenStreetMap (hace falta internet)…');
-const data = await overpass(`[out:json][timeout:180];
+const BIG = half > 2400;
+const data = await overpass(`[out:json][timeout:${BIG ? 400 : 180}];
 (
-  way["highway"](${bbox});
+  way["highway"]${BIG ? '["highway"!~"^(track|path|footway|cycleway|bridleway|steps|pedestrian|corridor)$"]' : ''}(${bbox});
   way["railway"~"^(rail|abandoned|disused|light_rail)$"](${bbox});
   way["waterway"~"^(river|stream|canal|drain)$"](${bbox});
   way["natural"="water"](${bbox});
@@ -81,6 +92,13 @@ for (const e of data.elements || []) {
   let geometry = { type: 'LineString', coordinates: coords };
   if (t.highway) {
     if (SKIP_HW.has(t.highway) || t.area === 'yes') continue;
+    // en el mapa grande los caminitos de servicio solo se guardan cerca del pueblo
+    if (BIG && t.highway === 'service') {
+      const mid = coords[coords.length >> 1];
+      const f = toLocal(mid[0], mid[1]);
+      const fc = meta.focus ? toLocal(meta.focus.lng, meta.focus.lat) : { x: 0, z: 0 };
+      if (Math.hypot(f.x - fc.x, f.z - fc.z) > 2600) continue;
+    }
     kind = 'road';
   } else if (t.railway) kind = 'rail';
   else if (t.waterway) kind = 'water';
@@ -191,8 +209,62 @@ if (args.alinear && best.s < base * 0.7 && (best.dx || best.dz)) {
   console.log(`✔ Edificios corridos ${best.dx} m al este y ${best.dz} m al sur para que calzaran con las calles.`);
 }
 
-const others = gj.features.filter((f) => !['road', 'rail', 'water', 'green'].includes(f.properties?.kind));
-await writeFile(gjUrl, JSON.stringify({ ...gj, features: [...feats, ...others] }));
+if (args['edificios-osm']) {
+  console.log('Bajando también las casas de OpenStreetMap (solo se suman donde no hay otras)…');
+  const bd = await overpass(`[out:json][timeout:${BIG ? 400 : 240}];
+way["building"](${bbox});
+out tags geom;`);
+  // casas que ya hay: se evita repetir cualquiera cuyo punto central caiga adentro
+  const cellB = 60;
+  const hash = new Map();
+  const polyOf = (f) => {
+    const ring = f.geometry.type === 'Polygon' ? f.geometry.coordinates[0] : f.geometry.type === 'MultiPolygon' ? f.geometry.coordinates[0]?.[0] : null;
+    return ring?.map(([lng, lat]) => toLocal(lng, lat)) || null;
+  };
+  const inPoly = (x, z, pts) => {
+    let c = false;
+    for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+      const a = pts[i];
+      const b = pts[j];
+      if (a.z > z !== b.z > z && x < ((b.x - a.x) * (z - a.z)) / (b.z - a.z) + a.x) c = !c;
+    }
+    return c;
+  };
+  for (const f of buildings) {
+    const pts = polyOf(f);
+    if (!pts) continue;
+    const xs = pts.map((p) => p.x);
+    const zs = pts.map((p) => p.z);
+    for (let cx = Math.floor(Math.min(...xs) / cellB); cx <= Math.floor(Math.max(...xs) / cellB); cx++) {
+      for (let cz = Math.floor(Math.min(...zs) / cellB); cz <= Math.floor(Math.max(...zs) / cellB); cz++) {
+        const k = cx + ',' + cz;
+        if (!hash.has(k)) hash.set(k, []);
+        hash.get(k).push(pts);
+      }
+    }
+  }
+  let addedB = 0;
+  for (const e of bd.elements || []) {
+    if (e.type !== 'way' || !e.geometry || e.geometry.length < 4) continue;
+    const coords = e.geometry.map((p) => [r6(p.lon), r6(p.lat)]);
+    if (coords[0][0] !== coords[coords.length - 1][0] || coords[0][1] !== coords[coords.length - 1][1]) continue;
+    const pts = coords.map(([lng, lat]) => toLocal(lng, lat));
+    const cx = pts.reduce((a, p) => a + p.x, 0) / pts.length;
+    const cz = pts.reduce((a, p) => a + p.z, 0) / pts.length;
+    if ((hash.get(Math.floor(cx / cellB) + ',' + Math.floor(cz / cellB)) || []).some((q) => inPoly(cx, cz, q))) continue;
+    const t = e.tags || {};
+    const levels = Number(t['building:levels']);
+    const h = Number(String(t.height || '').replace(',', '.')) || (levels ? levels * 3.1 + 0.8 : 4.5);
+    const gf = { type: 'Feature', properties: { kind: 'building', h: Math.round(h * 10) / 10, source: 'osm' }, geometry: { type: 'Polygon', coordinates: [coords] } };
+    if (t.name) gf.properties.name = t.name;
+    buildings.push(gf);
+    addedB++;
+  }
+  console.log(`Casas de OpenStreetMap sumadas: ${addedB}.`);
+}
+const others = gj.features.filter((f) => !['road', 'rail', 'water', 'green', 'building'].includes(f.properties?.kind));
+const allBuildings = buildings;
+await writeFile(gjUrl, JSON.stringify({ ...gj, features: [...feats, ...others, ...allBuildings] }));
 if (wasDemo && !args['keep-demo']) {
   const empty = (name, v) => writeFile(new URL(name, dataDir), JSON.stringify(v, null, 2) + '\n');
   await Promise.all([empty('places.json', []), empty('tours.json', []), empty('landmarks.json', { items: [] }), empty('casonas.json', { items: [] }), empty('mascots.json', { items: [] })]);
@@ -201,6 +273,7 @@ if (wasDemo && !args['keep-demo']) {
 }
 meta.dataSource = 'osm';
 meta.dataRev = Date.now().toString(36);
+try { meta.version = (await readFile(new URL('../VERSION', import.meta.url), 'utf8')).trim() || meta.version; } catch { /* sin VERSION */ }
 await writeFile(new URL('meta.json', dataDir), JSON.stringify(meta, null, 2) + '\n');
 
 console.log('Calles reales guardadas:', counts, moved ? '(edificios alineados)' : '');

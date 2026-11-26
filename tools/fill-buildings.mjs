@@ -34,7 +34,12 @@ const gj = JSON.parse(await readFile(geoUrl, 'utf8'));
 setCenter(meta.center);
 
 const MAX = Number(args.max) || 6000;
-const MIN_ROAD = Number(args['min-road']) || 700; // metros de calle en una ventana de 300x300 m
+// --zona=luisa  (o  lat,lng,radio;lat,lng,radio): casas aproximadas SOLO en esas zonas (para pueblitos sin datos de edificios)
+const ZONAS_NOMBRADAS = { luisa: '-34.1295,-59.9305,950' };
+const zonasTxt = String(args.zona || '').split(';').map((z) => ZONAS_NOMBRADAS[z.trim().toLowerCase()] || z.trim()).filter(Boolean);
+const zonas = zonasTxt.map((z) => z.split(',').map(Number)).filter((z) => z.length === 3 && z.every(Number.isFinite)).map(([lat, lng, r]) => ({ ...toLocal(lng, lat), r }));
+const enZona = (x, z) => !zonas.length || zonas.some((q) => Math.hypot(q.x - x, q.z - z) <= q.r);
+const MIN_ROAD = Number(args['min-road']) || (zonas.length ? 350 : 700); // metros de calle en una ventana de 300x300 m
 const rng = mulberry32(Number(args.seed) || 1);
 const r6 = (n) => Math.round(n * 1e6) / 1e6;
 
@@ -214,7 +219,7 @@ for (const road of front) {
       const nz = s.tx * side;
       const box = { cx: s.x + nx * off, cz: s.z + nz * off, ux: s.tx, uz: s.tz, hu: w / 2, hv: dp / 2 };
       const dens3 = density(box.cx, box.cz);
-      if (dens3 < MIN_ROAD) { why.zona++; continue; }
+      if (dens3 < MIN_ROAD || !enZona(box.cx, box.cz)) { why.zona++; continue; }
       const corners = [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([a, b]) => ({
         x: box.cx + s.tx * box.hu * a + (-s.tz) * box.hv * b,
         z: box.cz + s.tz * box.hu * a + s.tx * box.hv * b,
@@ -255,6 +260,7 @@ for (const b of generated) {
   });
 }
 meta.approxBuildings = generated.length;
+if (zonasTxt.length) meta.approxZonas = zonasTxt.join(';'); else delete meta.approxZonas;
 await writeFile(geoUrl, JSON.stringify(gj));
 meta.dataRev = Date.now().toString(36); // cambia la clave de caché de los datos: el navegador baja los nuevos
 await writeFile(metaUrl, JSON.stringify(meta, null, 2) + '\n');

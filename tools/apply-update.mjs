@@ -18,9 +18,12 @@ const rd = (p) => readFile(new URL(p, root), 'utf8');
 const wr = (p, s) => writeFile(new URL(p, root), s);
 const node = (...a) => execFileSync(process.execPath, a, { cwd: rootPath, stdio: 'inherit' });
 
+// 0. Copia de seguridad de data/ y fuentes/ (por si algo sale mal)
+try { node('tools/respaldo.mjs', '--silencioso'); } catch { /* sin respaldo previo: no frena la actualización */ }
+
 // 1. package.json
 const pkg = JSON.parse(await rd('package.json'));
-pkg.scripts = { ...pkg.scripts, serve: 'node tools/serve.mjs', fill: 'node tools/fill-buildings.mjs', mapa: 'node tools/rebuild-map.mjs', buildings: 'node tools/import-buildings.mjs', calles: 'node tools/calles.mjs', lugares: 'node tools/lugares.mjs', extras: 'node tools/extras.mjs', recorridos: 'node tools/recorridos.mjs', guias: 'node tools/guias.mjs' };
+pkg.scripts = { ...pkg.scripts, serve: 'node tools/serve.mjs', fill: 'node tools/fill-buildings.mjs', mapa: 'node tools/rebuild-map.mjs', buildings: 'node tools/import-buildings.mjs', calles: 'node tools/calles.mjs', lugares: 'node tools/lugares.mjs', extras: 'node tools/extras.mjs', recorridos: 'node tools/recorridos.mjs', guias: 'node tools/guias.mjs', respaldo: 'node tools/respaldo.mjs', agenda: 'node tools/agenda.mjs', datos: 'node tools/datos.mjs', luisa: 'node tools/fill-buildings.mjs --zona=luisa', qr: 'node tools/qr.mjs', contacto: 'node tools/contacto.mjs', fotos: 'node tools/fotos.mjs', perdidos: 'node tools/perdidos.mjs', visitas: 'node tools/visitas.mjs', opiniones: 'node tools/opiniones.mjs', seguridad: 'node tools/seguridad.mjs', monitoreo: 'node tools/monitoreo.mjs', historia: 'node tools/historia.mjs', oficios: 'node tools/oficios.mjs', salud: 'node tools/salud.mjs', rural: 'node tools/rural.mjs', colores: 'node tools/colores.mjs', reubicar: 'node tools/reubicar.mjs', revisar: 'node tools/serve.mjs', estadisticas: 'node tools/estadisticas.mjs', velocidad: 'npx --yes lighthouse http://localhost:8080 --view --only-categories=performance,accessibility,seo,best-practices' };
 await wr('package.json', JSON.stringify(pkg, null, 2) + '\n');
 console.log('✔ package.json: scripts serve (Node), fill y buildings');
 
@@ -87,11 +90,28 @@ try {
 }
 
 // 3b. Edificios reales
-const src = 'fuentes/edificios_capitan_sarmiento.geojson';
-if (existsSync(new URL(src, root))) {
+const { readdirSync: ls0 } = await import('node:fs');
+const srcs = ls0(fileURLToPath(new URL('fuentes/', root))).filter((f) => /^edificios.*\.(geojson|geojsonl|json)$/i.test(f)).sort().map((f) => 'fuentes/' + f);
+if (srcs.length) {
   console.log('… importando edificios reales (puede tardar unos segundos)');
-  node('tools/import-buildings.mjs', src, '--source=Overture Maps Foundation (Google Open Buildings)');
-} else console.log('• No encontré ' + src + ': se omite la importación de edificios.');
+  node('tools/import-buildings.mjs', ...srcs, '--source=Overture Maps Foundation (Google Open Buildings)');
+  // las casas aproximadas (si pediste `npm run luisa`) se vuelven a generar: la importación las borra
+  try { const m = JSON.parse(await rd('data/meta.json')); if (m.approxZonas) node('tools/fill-buildings.mjs', `--zona=${m.approxZonas}`); } catch { /* sin data/meta.json */ }
+} else console.log('• No encontré archivos fuentes/edificios*.geojson: se omite la importación de edificios.');
+
+// 3c. Módulos JS que haya en tu carpeta js/ y no estén anotados (así funcionan sin conexión y arrancan rápido)
+{
+  const { readdirSync } = await import('node:fs');
+  const files = readdirSync(fileURLToPath(new URL('js/', root))).filter((f) => f.endsWith('.js') && f !== 'main.js');
+  let sw = await rd('sw.js');
+  let html = await rd('index.html');
+  const extra = [];
+  for (const f of files) {
+    if (!sw.includes(`'js/${f}'`)) { sw = sw.replace(/(const CORE_FILES = \[[\s\S]*?)(\n  'data\/meta\.json')/, (m, x, y) => `${x}\n  'js/${f}',${y}`); extra.push(f); }
+    if (!['entry.js', 'main2d.js'].includes(f) && !html.includes(`rel="modulepreload" href="js/${f}"`)) html = html.replace(/(<link rel="modulepreload" href="js\/world\.js">)/, `$1\n<link rel="modulepreload" href="js/${f}">`);
+  }
+  if (extra.length) { await writeFile(new URL('sw.js', root), sw); await writeFile(new URL('index.html', root), html); console.log('✔ sw.js e index.html: se sumaron ' + extra.join(', ')); }
+}
 
 // 4. Versión y changelog
 const ver = (await rd('VERSION')).trim();

@@ -494,8 +494,13 @@ const mergeBy = (olds, news) => {
 // Si ya tenés a mano un lugar con ese nombre, no se repite el de OSM.
 const nameKey = (s) => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]/g, '');
 const handNames = new Set(oldPlaces.filter((p) => !String(p.id).startsWith('osm-')).map((p) => nameKey(p.name)));
+// Ids de OpenStreetMap que se juntaron con otro repetido (npm run duplicados): no se vuelven a traer.
+const ignoredIds = new Set();
+try {
+  for (const l of (await readFile(new URL('../fuentes/ignorar-ids.txt', import.meta.url), 'utf8')).split(/\r?\n/)) if (l.trim() && !l.startsWith('#')) ignoredIds.add(l.trim());
+} catch { /* no hay lista */ }
 const placesNew = [];
-for (const p of places.filter((x) => !handNames.has(nameKey(x.name)))) {
+for (const p of places.filter((x) => !handNames.has(nameKey(x.name)) && !ignoredIds.has(x.id))) {
   if (!placesNew.some((o) => nameKey(o.name) === nameKey(p.name) && dist(o, p) < 60)) placesNew.push(p);
 }
 // Los lugares de OSM que ya estaban conservan tus textos; se actualizan solo categoría, ícono, posición y altura.
@@ -561,6 +566,27 @@ try {
   }
 } catch {
   console.warn('No se pudieron sumar los lugares extra (npm run extras).');
+}
+// Teléfonos, WhatsApp y horarios que cargaste en fuentes/datos-lugares.txt
+try {
+  const { execFileSync } = await import('node:child_process');
+  execFileSync(process.execPath, [(await import('node:url')).fileURLToPath(new URL('./datos.mjs', import.meta.url)), '--aplicar'], { stdio: 'inherit' });
+} catch {
+  console.warn('No se pudieron aplicar los datos de fuentes/datos-lugares.txt (npm run datos).');
+}
+// Correcciones tuyas: lugares movidos o eliminados desde /reubicar (fuentes/reubicados.txt y eliminados.txt)
+try {
+  const { execFileSync } = await import('node:child_process');
+  execFileSync(process.execPath, [(await import('node:url')).fileURLToPath(new URL('./reubicar.mjs', import.meta.url))], { stdio: 'inherit' });
+} catch {
+  console.warn('No se pudieron aplicar las correcciones (npm run reubicar).');
+}
+// Fotos y fotos 360° de fuentes/fotos y fuentes/fotos360 (se vuelven a poner porque arriba se rearmó la lista)
+try {
+  const { execFileSync } = await import('node:child_process');
+  execFileSync(process.execPath, [(await import('node:url')).fileURLToPath(new URL('./fotos.mjs', import.meta.url)), '--silencioso'], { stdio: 'inherit' });
+} catch {
+  console.warn('No se pudieron poner las fotos (npm run fotos).');
 }
 // Recorridos a pie y en auto armados con estos lugares
 try {

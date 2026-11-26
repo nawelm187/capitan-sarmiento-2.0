@@ -52,7 +52,7 @@ for (const [file, raw] of sources) {
   for (const m of src.matchAll(/import\s+(?:([\w*$\s,{}]+?)\s+from\s+)?['"]([^'"]+)['"]/g)) {
     const [, clause, spec] = m;
     if (!spec.startsWith('.')) {
-      if (!/^three(\/addons\/.*)?$/.test(spec) && !/^node:/.test(spec) && spec !== 'osmtogeojson') err(`${rel(file)}: import desconocido "${spec}"`);
+      if (!/^three(\/addons\/.*)?$/.test(spec) && !/^node:/.test(spec) && spec !== 'osmtogeojson' && spec !== 'playwright' && spec !== 'jpeg-js') err(`${rel(file)}: import desconocido "${spec}"`);
       continue;
     }
     const target = path.resolve(path.dirname(file), spec);
@@ -94,7 +94,7 @@ for (const f of jsFiles) {
 }
 
 for (const f of jsFiles) {
-  if (path.basename(f) !== 'main.js' && !html.includes(`rel="modulepreload" href="js/${path.basename(f)}"`)) warn(`index.html: falta <link rel="modulepreload" href="js/${path.basename(f)}"> (el arranque sería más lento)`);
+  if (!['main.js', 'main2d.js', 'entry.js'].includes(path.basename(f)) && !html.includes(`rel="modulepreload" href="js/${path.basename(f)}"`)) warn(`index.html: falta <link rel="modulepreload" href="js/${path.basename(f)}"> (el arranque sería más lento)`);
 }
 for (const m of (sw.match(/const DATA_FILES = \[([\s\S]*?)\]\.map/)?.[1] ?? '').matchAll(/'([^']+)'/g)) {
   if (!existsSync(path.join(ROOT, 'data', m[1])) && !/guides|landmarks|casonas|mascots/.test(m[1])) err(`sw.js: DATA_FILES incluye "data/${m[1]}" que no existe`);

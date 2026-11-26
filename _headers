@@ -1,0 +1,9 @@
+# Para Cloudflare Pages / Netlify (GitHub Pages ignora este archivo; ahí la protección va en el <meta> del index.html).
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(self), microphone=(self), camera=(), payment=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+/sw.js
+  Cache-Control: no-cache

@@ -5,6 +5,7 @@
 //
 // Solo sirve la carpeta del proyecto, en modo lectura.
 
+import { analizar, TIPOS as TIPOS_REV } from './revisar-lib.mjs';
 import { execFile } from 'node:child_process';
 import { createReadStream, existsSync } from 'node:fs';
 import { appendFile, readFile, stat, writeFile } from 'node:fs/promises';
@@ -25,7 +26,7 @@ const runNode = (script, args = [], timeout = 120000) => new Promise((resolve) =
 const readJson = async (rel, fallback) => JSON.parse(await readFile(path.join(ROOT, rel), 'utf8').catch(() => JSON.stringify(fallback)));
 const body = (req) => new Promise((resolve, reject) => {
   let b = '';
-  req.on('data', (c) => { b += c; if (b.length > 1e5) req.destroy(); });
+  req.on('data', (c) => { b += c; if (b.length > 3e6) req.destroy(); });
   req.on('end', () => { try { resolve(JSON.parse(b || '{}')); } catch (e) { reject(e); } });
 });
 const json = (res, code, obj) => res.writeHead(code, { 'content-type': 'application/json; charset=utf-8' }).end(JSON.stringify(obj));
@@ -33,12 +34,36 @@ const isLocal = (req) => /^(127\.0\.0\.1|::1|::ffff:127\.0\.0\.1)$/.test(req.soc
 
 async function api(req, res, pathname) {
   if (!isLocal(req)) return json(res, 403, { error: 'Solo desde esta PC.' });
+  if (pathname === '/api/barrios' && req.method === 'GET') return json(res, 200, await readJson('data/barrios.json', []));
   if (pathname === '/api/pendientes' && req.method === 'GET') {
     const [pend, places] = await Promise.all([readJson('data/pendientes.json', []), readJson('data/places.json', [])]);
     return json(res, 200, { pendientes: pend, ubicados: places.filter((p) => String(p.id).startsWith('extra-')).length });
   }
   if (req.method !== 'POST') return json(res, 405, { error: 'Método no permitido' });
   const d = await body(req);
+  if (pathname === '/api/barrios') {
+    const list = Array.isArray(d.barrios) ? d.barrios : null;
+    if (!list || list.length > 200) return json(res, 400, { error: 'Datos inválidos.' });
+    const num = (v, a, b) => typeof v === 'number' && Number.isFinite(v) && v >= a && v <= b;
+    const out = [];
+    for (const b of list) {
+      const polygon = (b.polygon || []).filter((p) => Array.isArray(p) && num(p[0], -180, 180) && num(p[1], -90, 90)).map(([x, y]) => [Math.round(x * 1e6) / 1e6, Math.round(y * 1e6) / 1e6]);
+      const name = clean(b.name, 60);
+      if (!name || polygon.length < 3 || polygon.length > 2000) continue;
+      const item = { id: slug(name) || 'barrio', name, polygon };
+      if (/^#[0-9a-f]{6}$/i.test(b.color || '')) item.color = b.color;
+      if (b.approx) item.approx = true;
+      out.push(item);
+    }
+    const seen = new Set();
+    for (const b of out) { let id = b.id, n = 2; while (seen.has(id)) id = `${b.id}-${n++}`; b.id = id; seen.add(id); }
+    await writeFile(path.join(ROOT, 'data', 'barrios.json'), JSON.stringify(out, null, 1) + '\n');
+    const mp = path.join(ROOT, 'data', 'meta.json');
+    const meta = JSON.parse(await readFile(mp, 'utf8'));
+    meta.dataRev = Date.now().toString(36);
+    await writeFile(mp, JSON.stringify(meta, null, 2) + '\n');
+    return json(res, 200, { ok: true, count: out.length });
+  }
   if (pathname === '/api/ubicar') {
     const { TYPES: KINDS } = await import('../js/kinds.js');
     const name = clean(d.name, 120);
@@ -67,6 +92,42 @@ async function api(req, res, pathname) {
     await appendFile(file, name + '\n');
     await runNode('extras.mjs');
     return json(res, 200, { ok: true });
+  }
+  if (pathname === '/api/reubicar') {
+    const idOk = (x) => /^[\w.:-]{1,80}$/.test(String(x ?? ''));
+    const mover = (Array.isArray(d.mover) ? d.mover : []).filter((m) => idOk(m.id) && Math.abs(+m.lat) <= 90 && Math.abs(+m.lng) <= 180 && Number.isFinite(+m.lat) && Number.isFinite(+m.lng)).slice(0, 500);
+    const eliminar = (Array.isArray(d.eliminar) ? d.eliminar : []).filter((m) => idOk(m.id)).slice(0, 500);
+    const merge = async (name, header, nuevos, fmt) => {
+      const file = path.join(FUENTES, name);
+      const viejas = existsSync(file) ? (await readFile(file, 'utf8')).split(/\r?\n/).filter((l) => l.trim() && !l.startsWith('#')) : [];
+      const ids = new Set(nuevos.map((n) => n.id));
+      const quedan = viejas.filter((l) => !ids.has(l.split('|')[0].trim()));
+      await writeFile(file, header + '\n' + [...quedan, ...nuevos.map(fmt)].join('\n') + '\n');
+    };
+    await merge('reubicados.txt', '# Lugares que moviste de lugar (id | latitud, longitud | nombre). Borrá una línea para que vuelva a su lugar original.', mover, (m) => `${m.id} | ${(+m.lat).toFixed(6)}, ${(+m.lng).toFixed(6)} | ${clean(m.name, 80)}`);
+    await merge('eliminados.txt', '# Lugares que eliminaste de la guía (id | nombre). Borrá una línea para recuperarlos con npm run lugares.', eliminar, (m) => `${m.id} | ${clean(m.name, 80)}`);
+    const r = await runNode('reubicar.mjs');
+    return json(res, r.ok ? 200 : 500, r.ok ? { ok: true, movidos: mover.length, eliminados: eliminar.length } : { error: r.out.slice(-400) });
+  }
+  if (pathname === '/api/revisar') {
+    const texto = String(d.texto ?? '').slice(0, 200000);
+    const items = analizar(texto);
+    if (d.accion !== 'aprobar') return json(res, 200, { items });
+    const quiero = new Set((Array.isArray(d.indices) ? d.indices : []).map(Number));
+    const hechos = []; const tools = new Set();
+    for (const [i, it] of items.entries()) {
+      if (!quiero.has(i) || !it.valido) continue;
+      const cfg = TIPOS_REV[it.tipo];
+      const file = path.join(ROOT, cfg.archivo);
+      const viejo = existsSync(file) ? await readFile(file, 'utf8') : '';
+      if (viejo.split(/\r?\n/).some((l) => l.trim() === it.escribir)) { hechos.push({ i, ya: true }); continue; }
+      const extra = it.tipo === 'ERROR' ? `# ${new Date().toISOString().slice(0, 10)}\n` : '';
+      await writeFile(file, viejo + (viejo && !viejo.endsWith('\n') ? '\n' : '') + extra + it.escribir + '\n');
+      hechos.push({ i, ya: false });
+      if (cfg.tool) tools.add(cfg.tool);
+    }
+    for (const t of tools) await runNode(t, t === 'datos.mjs' ? ['--aplicar'] : []);
+    return json(res, 200, { ok: true, hechos, ejecutados: [...tools] });
   }
   if (pathname === '/api/armar') {
     const r = await runNode('lugares.mjs', [], 580000);
@@ -101,6 +162,9 @@ const server = createServer(async (req, res) => {
       try { return await api(req, res, rel); } catch (e) { return json(res, 500, { error: String(e.message || e) }); }
     }
     if (rel === '/ubicar' || rel === '/ubicar/') rel = '/tools/ubicar.html';
+    if (rel === '/revisar' || rel === '/revisar/') rel = '/tools/revisar.html';
+    if (rel === '/reubicar' || rel === '/reubicar/') rel = '/tools/reubicar.html';
+    if (rel === '/barrios' || rel === '/barrios/') rel = '/tools/barrios.html';
     if (rel.endsWith('/')) rel += 'index.html';
     const file = path.normalize(path.join(ROOT, rel));
     if (file !== ROOT && !file.startsWith(ROOT + path.sep)) {
@@ -128,4 +192,7 @@ server.on('error', (e) => {
 server.listen(PORT, () => {
   console.log(`Guía Sarmiento en http://localhost:${PORT}  (Ctrl+C para cortar)`);
   console.log(`Para ubicar los lugares pendientes con un paso a paso: http://localhost:${PORT}/ubicar`);
+  console.log(`Para dibujar los barrios sobre el mapa: http://localhost:${PORT}/barrios`);
+  console.log(`Para revisar mensajes que te mandan (opiniones, perdidos, datos): http://localhost:${PORT}/revisar`);
+  console.log(`Para mover o eliminar lugares mal ubicados: http://localhost:${PORT}/reubicar`);
 });

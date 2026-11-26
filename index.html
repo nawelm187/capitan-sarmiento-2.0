@@ -3,9 +3,11 @@
 <head>
 <meta charset="utf-8">
 <title>Guía Sarmiento</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://gc.zgo.at; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https:; media-src 'self' blob: data:; connect-src 'self' https:; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Maqueta 3D interactiva de Capitán Sarmiento: dónde comer, dónde dormir, qué ver y recorridos a pie o en auto.">
-<meta name="theme-color" content="#0f1d33">
+<meta name="theme-color" content="#1a1524">
 <meta name="color-scheme" content="dark">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -46,14 +48,50 @@
   } catch (_) {}
 })();
 </script>
+<script>
+// Aviso si la carga se cuelga: en vez de quedarse en 0 % muestra qué pasó y cómo salir.
+(function () {
+  var shown = false;
+  function aviso(motivo) {
+    if (shown) return;
+    var pct = document.getElementById('splash-pct');
+    var sp = document.getElementById('splash');
+    if (!sp || sp.classList.contains('hide')) return;
+    shown = true;
+    var d = document.createElement('div');
+    d.style.cssText = 'margin-top:14px;max-width:460px;font:14px/1.45 system-ui,sans-serif;background:rgba(0,0,0,.35);padding:12px 14px;border-radius:12px';
+    d.innerHTML = '<b>La web no pudo arrancar.</b><br>' + motivo + '<br><br>Probá: <b>Ctrl+F5</b>. Si sigue igual: <button id="wd-reset" style="padding:6px 10px;border-radius:8px;border:0;cursor:pointer">Borrar caché y reintentar</button>';
+    sp.appendChild(d);
+    document.getElementById('wd-reset').onclick = function () {
+      var t = [];
+      if (navigator.serviceWorker) t.push(navigator.serviceWorker.getRegistrations().then(function (r) { return Promise.all(r.map(function (x) { return x.unregister(); })); }));
+      if (window.caches) t.push(caches.keys().then(function (k) { return Promise.all(k.map(function (x) { return caches.delete(x); })); }));
+      Promise.all(t).catch(function () {}).then(function () { location.reload(); });
+    };
+  }
+  window.addEventListener('error', function (e) {
+    var t = e.target && e.target.src ? ' (' + e.target.src.split('/').slice(-2).join('/') + ')' : '';
+    if (e.target && e.target !== window) { if (e.target.tagName === 'SCRIPT') aviso('No se pudo cargar un archivo' + t + '.'); return; }
+    aviso('Error: ' + (e.message || 'desconocido') + (e.filename ? ' en ' + e.filename.split('/').pop() + ':' + e.lineno : '') + '.');
+  }, true);
+  window.addEventListener('unhandledrejection', function (e) { aviso('Error: ' + ((e.reason && e.reason.message) || e.reason) + '.'); });
+  setTimeout(function () {
+    var pct = document.getElementById('splash-pct');
+    if (pct && parseInt(pct.textContent, 10) > 5) return; // va cargando, solo es lento
+    aviso('Tardó más de 25 segundos sin avanzar (internet, o un archivo viejo guardado).');
+  }, 25000);
+})();
+</script>
 <link rel="preload" as="image" href="img/logo-sarmiento.webp" type="image/webp">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Guía de Capitán Sarmiento","url":"https://nawelm187.github.io/guia-sarmiento/","inLanguage":"es-AR","about":{"@type":"Place","name":"Capitán Sarmiento","geo":{"@type":"GeoCoordinates","latitude":-34.1728,"longitude":-59.7886},"containedInPlace":{"@type":"AdministrativeArea","name":"Provincia de Buenos Aires, Argentina"}}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="dns-prefetch" href="https://api.open-meteo.com">
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Inter:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Inter:wght@400;500;600&display=swap"></noscript>
 <link rel="stylesheet" href="css/style.css">
@@ -64,6 +102,8 @@
   "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
 } }
 </script>
+<script>window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); window.__bip = e; });</script>
+<template id="preloads">
 <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.min.js" crossorigin>
 <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/controls/OrbitControls.js" crossorigin>
 <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/loaders/GLTFLoader.js" crossorigin>
@@ -91,8 +131,16 @@
 <link rel="modulepreload" href="js/config.js">
 <link rel="modulepreload" href="js/geo.js">
 <link rel="modulepreload" href="js/icons.js">
+<link rel="modulepreload" href="js/barrios.js">
 <link rel="modulepreload" href="js/labels.js">
 <link rel="modulepreload" href="js/layers.js">
+<link rel="modulepreload" href="js/prefs.js">
+<link rel="modulepreload" href="js/streets.js">
+<link rel="modulepreload" href="js/voz.js">
+<link rel="modulepreload" href="js/avisos.js">
+<link rel="modulepreload" href="js/streetlabels.js">
+<link rel="modulepreload" href="js/cerca.js">
+<link rel="modulepreload" href="js/hours.js">
 <link rel="modulepreload" href="js/landmarks.js">
 <link rel="modulepreload" href="js/life.js">
 <link rel="modulepreload" href="js/roads.js">
@@ -107,6 +155,41 @@
 <link rel="modulepreload" href="js/util.js">
 <link rel="modulepreload" href="js/wide.js">
 <link rel="modulepreload" href="js/world.js">
+<link rel="modulepreload" href="js/poi-config.js">
+<link rel="modulepreload" href="js/partido-layer.js">
+<link rel="modulepreload" href="js/map2d.js">
+<link rel="modulepreload" href="js/comercio.js">
+<link rel="modulepreload" href="js/perdidos.js">
+<link rel="modulepreload" href="js/midia.js">
+<link rel="modulepreload" href="js/anim.js">
+<link rel="modulepreload" href="js/visitas.js">
+<link rel="modulepreload" href="js/panorama.js">
+<link rel="modulepreload" href="js/favoritos.js">
+<link rel="modulepreload" href="js/temporada.js">
+<link rel="modulepreload" href="js/finde.js">
+<link rel="modulepreload" href="js/clima.js">
+<link rel="modulepreload" href="js/escuchar.js">
+<link rel="modulepreload" href="js/comandos.js">
+<link rel="modulepreload" href="js/manoslibres.js">
+<link rel="modulepreload" href="js/calendario.js">
+<link rel="modulepreload" href="js/reporte.js">
+<link rel="modulepreload" href="js/llegando.js">
+<link rel="modulepreload" href="js/historia.js">
+<link rel="modulepreload" href="js/oficios.js">
+<link rel="modulepreload" href="js/rural.js">
+<link rel="modulepreload" href="js/calzar.js">
+<link rel="modulepreload" href="js/i18n.js">
+<link rel="modulepreload" href="js/opiniones.js">
+<link rel="modulepreload" href="js/buscador.js">
+<link rel="modulepreload" href="js/intro.js">
+<link rel="modulepreload" href="js/instalar.js">
+<link rel="modulepreload" href="js/qr.js">
+</template>
+<script>
+// El mapa liviano 2D no usa three.js: en ese modo no se precarga nada de la maqueta 3D.
+try { var _p = JSON.parse(localStorage.getItem('guia-accesibilidad') || 'null'); window.__lite = !!(_p && (_p.map2d || _p.simple)); } catch (e) { window.__lite = false; }
+if (!window.__lite) document.head.appendChild(document.getElementById('preloads').content);
+</script>
 </head>
 <body>
   <div id="splash" role="status" aria-live="polite">
@@ -133,6 +216,6 @@
     </div>
   </noscript>
 
-  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/entry.js"></script>
 </body>
 </html>

@@ -313,3 +313,96 @@ No hay que cambiar nada del código: las rutas ya son relativas.
 - Las filas con ubicación fuera del área del mapa también quedan sin dibujar; para incluirlas: `npm run mapa -- --center=-34.1728,-59.7886 --half=5000`.
 - `npm run geocodificar` intenta ubicar solo los pendientes por su dirección (solo si OpenStreetMap tiene esa casa con ese número) y rearma el mapa.
 - Para ubicar los pendientes con un paso a paso: `npm run serve` y abrir `http://localhost:8080/ubicar` (solo funciona en tu PC).
+
+## Botones de zoom, barrios y mapa grande
+
+- **Botones + y −** (abajo a la derecha): acercan y alejan el mapa para quien no tiene rueda. Mantener apretado repite; las teclas `+` y `-` hacen lo mismo.
+- **Barrios:** botón «Barrios» (arriba a la derecha) que muestra u oculta las zonas de color con su nombre; tocar un nombre acerca la cámara al barrio. El botón aparece cuando hay barrios en `data/barrios.json`. Para cargarlos:
+  - `npm run barrios` baja de OpenStreetMap los que estén dibujados (si no hay ninguno, lo avisa y no inventa nada).
+  - `npm run serve` y abrir `http://localhost:8080/barrios`: se dibujan con clics sobre el mapa de calles y casas, se renombran, se les cambia el color o se marcan «límites aproximados» (se ven más tenues y con «aprox.»). Se guarda con el botón *Guardar*.
+- **Mapa grande** (el balneario y La Luisa, o todo el partido): `npm run mapa -- --center=-34.151,-59.859 --half=8500 --foco=-34.1728,-59.7886 --edificios-osm`
+  - `--center` y `--half` son el centro y el radio en metros del mapa (8500 = un cuadrado de 17 km, que cubre el pueblo, el balneario y La Luisa); `--foco` es el punto donde arranca la cámara (el pueblo); `--edificios-osm` suma las casas de OpenStreetMap donde no hay otras.
+  - Con más de 2,4 km de radio el suelo se dibuja en dos niveles (general + baldosas nítidas donde hay casas) y el zoom máximo y la niebla crecen con el mapa. Si va lento en celulares viejos, volvé al mapa de siempre con `npm run mapa -- --center=-34.1728,-59.7886 --half=2000`.
+  - Después corré `npm run lugares` y `npm run extras` para que los lugares lejanos se dibujen.
+- `npm run duplicados` muestra los lugares repetidos y `npm run duplicados -- --aplicar` los junta (deja una copia de seguridad en `data/places.antes-de-duplicados.json`).
+
+## Dónde arranca la cámara
+
+`npm run inicio -- museo` hace que la web abra cerca del primer lugar cuyo nombre incluya "museo". Sin argumentos vuelve al automático (Banco Nación si existe). `npm run inicio -- ninguno` abre en el punto central del mapa.
+
+## Farmacia de turno
+
+Escribí en `fuentes/turnos.txt` una línea por período: `2026-11-23 | 2026-11-29 | Farmacia Bava | de 8 a 8`. Corré `npm run turnos`. El nombre puede ser solo una parte del nombre en el mapa. La web muestra la de hoy arriba de la lista de lugares.
+
+## Puentes, pesca y agua
+
+`npm run puentes` baja de OpenStreetMap los puentes con nombre y después `npm run lugares` los suma. Para agregar uno a mano: `fuentes/puentes-manual.txt` con `Nombre | puente | lat, lng` (o `pesca` en vez de `puente`).
+
+## Farmacia de turno automática
+
+`npm run turnos -- --web` lee la página de turnos y guarda `data/turnos.json`. En GitHub, el archivo `.github/workflows/turnos.yml` lo hace solo todos los días (pestaña Actions → "Farmacia de turno" → Run workflow para probarlo a mano).
+
+## Barrios que faltan
+
+Escribí cada uno en `fuentes/barrios-puntos.txt` con el link de Google Maps del medio del barrio y corré `npm run barrios`. Después ajustá los límites en `http://localhost:8080/barrios`.
+
+## Accesibilidad
+
+Botón "Accesibilidad" (abajo del panel y en «?»): tamaño de letra, alto contraste, sin movimiento y modo lista sin 3D. Se guarda en el navegador de cada persona.
+
+## Hoy, abierto ahora, reportes y respaldos
+
+- `fuentes/agenda.txt` (eventos) y `fuentes/novedades.txt` → `npm run agenda` → pestaña «Hoy».
+- `npm run contacto -- --whatsapp=5493564123456` activa «Reportar un dato».
+- `npm run respaldo` hace una copia de `data/` y `fuentes/` en `respaldos/`.
+
+## Buscar calles y direcciones
+
+Escribí en el buscador «Mármol», «Mármol 536» o «Mármol y Planes». Las calles salen de OpenStreetMap. Los números se estiman con los lugares cargados que tienen dirección en esa calle: cuantos más lugares tengan su dirección bien escrita (`Mármol 536`), mejor la estimación.
+
+## Audio y «cerca mío»
+
+El audio usa la voz en español que tenga el navegador o el celular (Web Speech API). «Cerca mío» pide permiso de ubicación cuando se toca el botón; la ubicación no se guarda ni se envía a ningún lado.
+
+## Avisos del camino y del tiempo
+
+`fuentes/avisos.txt`: `2026-11-24 | 2026-11-26 | ruta | Ruta 8 con desvío | Obras entre el km 150 y 153.` y después `npm run agenda`. Se muestran arriba de todo mientras estén vigentes. Además la web arma avisos automáticos con el pronóstico (no oficiales).
+
+
+## Teléfonos, WhatsApp y horarios (1.17.0)
+
+`npm run datos` crea `fuentes/datos-lugares.txt` con los lugares que no tienen teléfono u horario. Completá lo que sepas (`Nombre | teléfono | whatsapp | horario | dirección`) y corré el comando otra vez. Ese archivo es tuyo: las actualizaciones no lo pisan.
+
+
+## Dibujar los límites de los barrios (1.18.0)
+
+`npm run serve` → http://localhost:8080/barrios. Elegí un barrio de la lista (los «aprox.» son solo una primera idea), arrastrá sus puntos o tocá **Redibujar el borde de cero** y marcá las esquinas siguiendo las calles. Con el fondo de calles o satélite se ve dónde está cada cosa. **Guardar** y después Ctrl+F5 en el mapa.
+
+
+## Mapa liviano 2D y La Luisa (1.19.0)
+
+Accesibilidad → «Mapa liviano 2D» (se recarga la página). Para sumar los edificios de otro pueblo, dejá su archivo en `fuentes/` con un nombre que empiece con `edificios` y corré `npm run mapa …`. Si todavía no lo tenés: `npm run luisa` arma casas aproximadas sobre las calles de La Luisa.
+
+
+## QR, instalar y comercios (1.20.0)
+
+- `npm run qr` (afiche de la guía), `npm run qr -- --lugares` (QR de cada lugar), `npm run qr -- --lugar="Farmacia"`. Abrí el .html de `qr/` y Ctrl+P.
+- Para recibir datos de los comercios: `npm run contacto -- --whatsapp=549...`. Los mensajes que te lleguen se pegan en `fuentes/sugerencias.txt` y `npm run datos` los aplica.
+
+## Fotos de los lugares
+
+Copiá fotos livianas a `fuentes/fotos/` (el nombre del archivo = nombre del lugar, ej. `Panadería La Esquina.jpg`) y corré `npm run fotos`.
+
+## Perdidos y encontrados
+
+Escribí los avisos en `fuentes/perdidos.txt` (el archivo trae un ejemplo) y corré `npm run perdidos`. Las fotos van en `fuentes/fotos/`.
+
+## Contador de visitas y fotos 360°
+
+- Visitas: creá tu cuenta en goatcounter.com y corré `npm run visitas -- --codigo=TUCODIGO`.
+- 360°: copiá la foto esférica a `fuentes/fotos360/` (nombre del lugar) y corré `npm run fotos`.
+
+## Opiniones, velocidad
+
+- Opiniones aprobadas: pegalas en `fuentes/opiniones.txt` y corré `npm run opiniones`.
+- `npm run velocidad` abre un informe de Lighthouse con la guía abierta en localhost:8080.

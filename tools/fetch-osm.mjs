@@ -106,9 +106,13 @@ for (const f of gj.features) {
   if (!kind) continue;
 
   const h = parseFloat(p.height) || (parseFloat(p['building:levels']) ? parseFloat(p['building:levels']) * 3 : 0) || 4;
+  const NOMBRES = { white: '#f0eee8', red: '#a8403a', brown: '#8a6a4f', grey: '#9a9ea2', gray: '#9a9ea2', black: '#4a4a4d', beige: '#d8c8a8', yellow: '#e6d08a', green: '#6f9a74', blue: '#6a8fb8', orange: '#d98a50', pink: '#e0aaa6', cream: '#eee2c4', tan: '#c9b08a' };
+  const color = (v) => { const t = String(v || '').trim().toLowerCase(); return /^#[0-9a-f]{6}$/.test(t) ? t : NOMBRES[t] || null; };
+  const wc = kind === 'building' ? color(p['building:colour'] || p['building:color']) : null;
+  const rc = kind === 'building' ? color(p['roof:colour'] || p['roof:color']) : null;
   features.push({
     type: 'Feature',
-    properties: { kind, h: kind === 'building' ? Math.round(h * 10) / 10 : 0, hw: p.highway || null, name: p.name || null },
+    properties: { kind, h: kind === 'building' ? Math.round(h * 10) / 10 : 0, hw: p.highway || null, name: p.name || null, ...(wc ? { wc } : {}), ...(rc ? { rc } : {}) },
     geometry: { type: g.type, coordinates: roundCoords(g.coordinates) },
   });
   counts[kind] = (counts[kind] || 0) + 1;
