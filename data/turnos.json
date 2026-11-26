@@ -1,0 +1,23 @@
+[
+ {
+  "from": "2026-11-23",
+  "to": "2026-11-23",
+  "placeId": "osm-n5973696883",
+  "note": "de 8:30 a 8:30",
+  "web": true
+ },
+ {
+  "from": "2026-11-24",
+  "to": "2026-11-24",
+  "placeId": "osm-n8909891877",
+  "note": "de 8:30 a 8:30",
+  "web": true
+ },
+ {
+  "from": "2026-11-25",
+  "to": "2026-11-25",
+  "placeId": "extra-farmacia-perez",
+  "note": "de 8:30 a 8:30",
+  "web": true
+ }
+]

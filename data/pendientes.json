@@ -1,13 +1,5 @@
 [
  {
-  "id": "extra-las-casitas-de-blanca-nieves",
-  "name": "Las Casitas de Blanca Nieves",
-  "type": "atractivo",
-  "address": "",
-  "status": "",
-  "verify": false
- },
- {
   "id": "extra-bodegon-sarmiento",
   "name": "Bodegón Sarmiento",
   "type": "restaurante",
@@ -16,40 +8,20 @@
   "verify": false
  },
  {
-  "id": "extra-piletas-camping-capitan-sarmiento",
-  "name": "Piletas Camping Capitán Sarmiento",
-  "type": "atractivo",
-  "address": "Predio sobre RN 8",
-  "status": "parque acuático; no es el camping municipal",
-  "verify": false,
-  "outside": true
+  "id": "extra-la-estacion-cerveceria",
+  "name": "La Estación (cervecería)",
+  "type": "bar",
+  "address": "",
+  "status": "",
+  "verify": false
  },
  {
-  "id": "extra-camping-y-balneario-municipal-capitan-sarmiento",
-  "name": "Camping y Balneario Municipal Capitán Sarmiento",
-  "type": "camping",
-  "address": "Predio recreativo sobre RN 8",
-  "status": "FUERA_DEL_MAPA",
-  "verify": false,
-  "outside": true
- },
- {
-  "id": "extra-cooperativa-electrica-rural-de-la-luisa",
-  "name": "Cooperativa Eléctrica Rural de La Luisa",
-  "type": "cooperativa",
-  "address": "Cabo Fregotte 1247, La Luisa",
-  "status": "cotejar dirección",
-  "verify": false,
-  "outside": true
- },
- {
-  "id": "extra-club-atletico-union-labradores",
-  "name": "Club Atlético Unión Labradores",
-  "type": "club",
-  "address": "Domingo Fidel Sarmiento s/n, La Luisa",
-  "status": "FUERA_DEL_MAPA",
-  "verify": false,
-  "outside": true
+  "id": "extra-la-mancha-verde-hotel",
+  "name": "La Mancha Verde Hotel",
+  "type": "hotel",
+  "address": "",
+  "status": "",
+  "verify": false
  },
  {
   "id": "extra-estancia-la-posta",
@@ -61,83 +33,35 @@
   "outside": true
  },
  {
-  "id": "extra-estetica-y-masajes",
-  "name": "Estética y Masajes",
-  "type": "peluqueria",
-  "address": "R. Favaloro 9",
+  "id": "extra-centro-provincial-de-atencion-capitan-sarmiento",
+  "name": "Centro Provincial de Atención — Capitán Sarmiento",
+  "type": "clinica",
+  "address": "La Pampa 436, entre Cardenal Samoré y Circunvalación",
   "status": "",
   "verify": false
  },
  {
-  "id": "extra-camara-de-industria-comercio-bienes-raices-y-afines",
-  "name": "Cámara de Industria, Comercio, Bienes Raíces y Afines",
-  "type": "estudio",
-  "address": "José Mármol 803",
+  "id": "extra-flga-daniela-wuthrich",
+  "name": "Flga. Daniela Wüthrich",
+  "type": "clinica",
+  "address": "España 831",
   "status": "",
   "verify": false
  },
  {
-  "id": "extra-radio-fm-universo-97-3-mhz",
-  "name": "Radio FM Universo 97.3 MHz",
-  "type": "servicio",
-  "address": "José Mármol 857",
+  "id": "extra-farmacia-lagorio",
+  "name": "Farmacia Lagorio",
+  "type": "farmacia",
+  "address": "Av. Roque Sáenz Peña 598",
   "status": "",
   "verify": false
  },
  {
-  "id": "extra-centro-de-jubilados-y-pensionados",
-  "name": "Centro de Jubilados y Pensionados",
-  "type": "servicio",
-  "address": "Av. Rivadavia 593",
-  "status": "",
-  "verify": false
- },
- {
-  "id": "extra-livecom-srl",
-  "name": "Livecom SRL",
-  "type": "servicio",
-  "address": "Av. Rivadavia 472",
-  "status": "",
-  "verify": false
- },
- {
-  "id": "extra-transporte-de-carga-sarradell-e-hijos",
-  "name": "Transporte de Carga Sarradell e Hijos",
-  "type": "servicio",
-  "address": "Domingo F. Sarmiento 1400",
-  "status": "",
-  "verify": false
- },
- {
-  "id": "extra-transporte-bailo-hnos",
-  "name": "Transporte Bailo Hnos.",
-  "type": "servicio",
-  "address": "Av. Roque Sáenz Peña 501",
-  "status": "",
-  "verify": false
- },
- {
-  "id": "extra-guarneri-hector-julio-negocios-inmobiliarios",
-  "name": "Guarneri Héctor Julio Negocios Inmobiliarios",
-  "type": "inmobiliaria",
-  "address": "Presidente Perón 479",
-  "status": "",
-  "verify": false
- },
- {
-  "id": "extra-lavadero-capitan-sarmiento-rafael-alvarez",
-  "name": "Lavadero Capitán Sarmiento — Rafael Álvarez",
-  "type": "lavadero",
-  "address": "Av. Sáenz Peña 1055",
-  "status": "",
-  "verify": false
- },
- {
-  "id": "extra-granja-tres-arroyos-s-a-planta-cahuane",
-  "name": "Granja Tres Arroyos S.A. — Planta Cahuane",
-  "type": "servicio",
-  "address": "Ruta 8 s/n",
-  "status": "confirmar acceso",
-  "verify": false
+  "id": "extra-cooperativa-agricola-ganadera-sarmiento-ltda",
+  "name": "Cooperativa Agrícola Ganadera Sarmiento Ltda.",
+  "type": "cooperativa",
+  "address": "Bv. Mitre 500",
+  "status": "verificar si comparte predio con Mu-coop",
+  "verify": true
  }
 ]

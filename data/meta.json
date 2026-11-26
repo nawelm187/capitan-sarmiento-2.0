@@ -1,6 +1,6 @@
 {
-  "version": "1.6.2",
-  "date": "2026-11-14",
+  "version": "1.33.1",
+  "date": "2026-11-26",
   "name": "Guía Sarmiento",
   "town": "Capitán Sarmiento",
   "kicker": "Provincia de Buenos Aires",
@@ -10,11 +10,11 @@
   ],
   "tagline": "Dónde comer, dónde dormir, qué ver y paseos para hacer a pie o en auto, sobre una maqueta 3D del pueblo.",
   "center": {
-    "lat": -34.1728,
-    "lng": -59.7886
+    "lat": -34.151,
+    "lng": -59.859
   },
   "osm": {
-    "halfSizeMeters": 2000
+    "halfSizeMeters": 8500
   },
   "wideExtentMeters": 9000,
   "satellite": null,
@@ -40,9 +40,19 @@
     "Hacer un paseo o visitar un lugar es una decisión tuya y la tomás bajo tu propia responsabilidad. Los trayectos son orientativos: el estado de las calles y las rutas, el clima, el tránsito y la seguridad pueden variar.",
     "Quien hace esta guía no se responsabiliza por accidentes, pérdidas, daños u otros inconvenientes que ocurran durante una visita, ni por lo que ofrezcan, cobren o hagan terceros."
   ],
-  "dataRev": "mwh1dz7e",
+  "dataRev": "mwx5dt4v",
   "buildingSources": [
     "Overture Maps Foundation (Google Open Buildings)"
   ],
-  "importedBuildings": 10986
+  "importedBuildings": 11064,
+  "focus": {
+    "lat": -34.1728,
+    "lng": -59.7886
+  },
+  "startPlace": "museo",
+  "contact": {
+    "whatsapp": "5492478409909"
+  },
+  "approxZonas": "-34.1295,-59.9305,950",
+  "approxBuildings": 730
 }
